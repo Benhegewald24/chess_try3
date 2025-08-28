@@ -1,6 +1,10 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
+
+import static chess.ChessPiece.PieceType.ROOK;
 
 /**
  * Represents a single chess piece
@@ -11,8 +15,33 @@ import java.util.Collection;
 public class ChessPiece
 {
 
+    ChessGame.TeamColor pieceColor;
+    ChessPiece.PieceType type;
+
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type)
     {
+        this.pieceColor = pieceColor;
+        this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
     }
 
     /**
@@ -28,7 +57,7 @@ public class ChessPiece
      */
     public ChessGame.TeamColor getTeamColor()
     {
-        throw new RuntimeException("Not implemented");
+        return this.pieceColor;
     }
 
     /**
@@ -36,7 +65,7 @@ public class ChessPiece
      */
     public PieceType getPieceType()
     {
-        throw new RuntimeException("Not implemented");
+        return this.type;
     }
 
     /**
@@ -48,6 +77,45 @@ public class ChessPiece
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
-        throw new RuntimeException("Not implemented");
+        //throw new RuntimeException("Not implemented");
+        ArrayList<ChessMove> moves = new ArrayList<>();
+
+        ChessPiece pi = board.getPiece(myPosition);
+
+        if (pi.getPieceType() == ROOK)
+        {
+            board.RookMoves(board, myPosition, moves);
+            return moves;
+        }
+
+        if (pi.getPieceType() == PieceType.KNIGHT)
+        {
+            board.KnightMoves(board, myPosition, moves);
+            return moves;
+        }
+
+        if (pi.getPieceType() == PieceType.BISHOP)
+        {
+            board.BishopMoves(board, myPosition, moves);
+            return moves;
+        }
+
+        if (pi.getPieceType() == PieceType.QUEEN)
+        {
+            board.QueenMoves(board, myPosition, moves);
+            return moves;
+        }
+
+        if (pi.getPieceType() == PieceType.KING)
+        {
+            board.KingMoves(board, myPosition, moves);
+            return moves;
+        }
+
+        else
+        {
+            board.PawnMoves(board, myPosition, moves);
+            return moves;
+        }
     }
 }
