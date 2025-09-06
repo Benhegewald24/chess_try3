@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -22,18 +23,18 @@ public class ChessBoard
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
-        return Objects.equals(squares, that.squares);
+        return Objects.deepEquals(squares, that.squares);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(squares);
+        return Arrays.deepHashCode(squares);
     }
 
     @Override
     public String toString() {
         return "ChessBoard{" +
-                "squares=" + squares +
+                "squares=" + Arrays.toString(squares) +
                 '}';
     }
 
@@ -196,7 +197,6 @@ public class ChessBoard
         ChessPiece pi32 = new ChessPiece(BLACK, ROOK);
         board.addPiece(p32, pi32);
 
-        board.squares = this.squares;
-        //this.squares = board.squares;
+        this.squares = board.squares;
     }
 }
