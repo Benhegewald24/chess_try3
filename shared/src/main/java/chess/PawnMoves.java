@@ -19,6 +19,23 @@ public class PawnMoves
             rrow1++;
             ChessPosition po2 = new ChessPosition(rrow1, ccol1);
 
+            ccol1++;
+            ChessPosition po6 = new ChessPosition(rrow1, ccol1);
+            if (ccol1 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor() != board.getPiece(startPosition).getTeamColor()) //White capture right
+            {
+                ChessMove mo6 = new ChessMove(startPosition, po6, null);
+                moves.add(mo6);
+            }
+
+            ccol1-=2;
+            ChessPosition po7 = new ChessPosition(rrow1, ccol1);
+            if (ccol1 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor() != board.getPiece(startPosition).getTeamColor()) //White capture left
+            {
+                ChessMove mo7 = new ChessMove(startPosition, po7, null);
+                moves.add(mo7);
+            }
+            ccol1++;
+
             if (board.getPiece(po2) == null)
             {
                 ChessMove mo2 = new ChessMove(startPosition, po2, null);
@@ -177,6 +194,24 @@ public class PawnMoves
         {
             rrow11--;
             ChessPosition po12 = new ChessPosition(rrow11, ccol11);
+
+            ccol11++;
+            ChessPosition po6 = new ChessPosition(rrow11, ccol11);
+
+            if (ccol11 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor() != board.getPiece(startPosition).getTeamColor()) //White capture right
+            {
+                ChessMove mo6 = new ChessMove(startPosition, po6, null);
+                moves.add(mo6);
+            }
+
+            ccol11-=2;
+            ChessPosition po7 = new ChessPosition(rrow11, ccol11);
+            if (ccol11 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor() != board.getPiece(startPosition).getTeamColor()) //White capture left
+            {
+                ChessMove mo7 = new ChessMove(startPosition, po7, null);
+                moves.add(mo7);
+            }
+            ccol11++;
 
             if (board.getPiece(po12) == null)
             {

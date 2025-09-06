@@ -77,19 +77,19 @@ public class ChessBoard
         board.addPiece(p2, pi2);
 
         ChessPosition p3 = new ChessPosition(1,3);
-        ChessPiece pi3 = new ChessPiece(WHITE, ChessPiece.PieceType.BISHOP);
+        ChessPiece pi3 = new ChessPiece(WHITE, BISHOP);
         board.addPiece(p3, pi3);
 
         ChessPosition p4 = new ChessPosition(1,4);
-        ChessPiece pi4 = new ChessPiece(WHITE, ChessPiece.PieceType.QUEEN);
+        ChessPiece pi4 = new ChessPiece(WHITE, QUEEN);
         board.addPiece(p4, pi4);
 
         ChessPosition p5 = new ChessPosition(1,5);
-        ChessPiece pi5 = new ChessPiece(WHITE, ChessPiece.PieceType.KING);
+        ChessPiece pi5 = new ChessPiece(WHITE, KING);
         board.addPiece(p5, pi5);
 
         ChessPosition p6 = new ChessPosition(1,6);
-        ChessPiece pi6 = new ChessPiece(WHITE, ChessPiece.PieceType.BISHOP);
+        ChessPiece pi6 = new ChessPiece(WHITE, BISHOP);
         board.addPiece(p6, pi6);
 
         ChessPosition p7 = new ChessPosition(1,7);
@@ -196,6 +196,7 @@ public class ChessBoard
         ChessPiece pi32 = new ChessPiece(BLACK, ROOK);
         board.addPiece(p32, pi32);
 
-        this.squares = board.squares;
+        board.squares = this.squares;
+        //this.squares = board.squares;
     }
 }
