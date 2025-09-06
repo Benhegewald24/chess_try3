@@ -25,7 +25,8 @@ public class ChessPiece
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
         if (o == null || getClass() != o.getClass()) return false;
         ChessPiece that = (ChessPiece) o;
         return pieceColor == that.pieceColor && type == that.type;
@@ -37,7 +38,8 @@ public class ChessPiece
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "ChessPiece{" +
                 "pieceColor=" + pieceColor +
                 ", type=" + type +
@@ -77,45 +79,46 @@ public class ChessPiece
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
-        //throw new RuntimeException("Not implemented");
         ArrayList<ChessMove> moves = new ArrayList<>();
+        PieceType type1 = board.getPiece(myPosition).getPieceType();
 
-        ChessPiece pi = board.getPiece(myPosition);
-
-        if (pi.getPieceType() == ROOK)
+        if (type1 == PieceType.ROOK)
         {
-            board.RookMoves(board, myPosition, moves);
+            RookMoves r1 = new RookMoves();
+            r1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (pi.getPieceType() == PieceType.KNIGHT)
+        if (type1 == PieceType.KNIGHT)
         {
-            board.KnightMoves(board, myPosition, moves);
+            KnightMoves kn1 = new KnightMoves();
+            kn1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (pi.getPieceType() == PieceType.BISHOP)
+        if (type1 == PieceType.BISHOP)
         {
-            board.BishopMoves(board, myPosition, moves);
+            BishopMoves b1 = new BishopMoves();
+            b1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (pi.getPieceType() == PieceType.QUEEN)
+        if (type1 == PieceType.QUEEN)
         {
-            board.QueenMoves(board, myPosition, moves);
+            QueenMoves q1 = new QueenMoves();
+            q1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (pi.getPieceType() == PieceType.KING)
+        if (type1 == PieceType.KING)
         {
-            board.KingMoves(board, myPosition, moves);
+            KingMoves k1 = new KingMoves();
+            k1.move(board, myPosition, moves);
             return moves;
         }
 
-        else
-        {
-            board.PawnMoves(board, myPosition, moves);
-            return moves;
-        }
+        PawnMoves p1 = new PawnMoves();
+        p1.move(board, myPosition, moves);
+        return moves;
     }
 }
