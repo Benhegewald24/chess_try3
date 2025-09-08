@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
-import static chess.ChessPiece.PieceType.ROOK;
+import static chess.ChessPiece.PieceType.*;
 
 /**
  * Represents a single chess piece
@@ -82,35 +82,35 @@ public class ChessPiece
         ArrayList<ChessMove> moves = new ArrayList<>();
         PieceType type1 = board.getPiece(myPosition).getPieceType();
 
-        if (type1 == PieceType.ROOK)
+        if (type1 == ROOK)
         {
             RookMoves r1 = new RookMoves();
             r1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (type1 == PieceType.KNIGHT)
+        if (type1 == KNIGHT)
         {
             KnightMoves kn1 = new KnightMoves();
             kn1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (type1 == PieceType.BISHOP)
+        if (type1 == BISHOP)
         {
             BishopMoves b1 = new BishopMoves();
             b1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (type1 == PieceType.QUEEN)
+        if (type1 == QUEEN)
         {
             QueenMoves q1 = new QueenMoves();
             q1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (type1 == PieceType.KING)
+        if (type1 == KING)
         {
             KingMoves k1 = new KingMoves();
             k1.move(board, myPosition, moves);

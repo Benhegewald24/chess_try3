@@ -45,7 +45,7 @@ public class ChessPosition
      */
     public int getRow()
     {
-        return this.row;
+        return row;
     }
 
     /**
@@ -54,6 +54,6 @@ public class ChessPosition
      */
     public int getColumn()
     {
-        return this.col;
+        return col;
     }
 }
