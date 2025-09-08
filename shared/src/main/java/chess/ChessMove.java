@@ -47,7 +47,7 @@ public class ChessMove
      */
     public ChessPosition getStartPosition()
     {
-        return this.startPosition;
+        return startPosition;
     }
 
     /**
@@ -55,7 +55,7 @@ public class ChessMove
      */
     public ChessPosition getEndPosition()
     {
-        return this.endPosition;
+        return endPosition;
     }
 
     /**
@@ -66,6 +66,6 @@ public class ChessMove
      */
     public ChessPiece.PieceType getPromotionPiece()
     {
-        return this.promotionPiece;
+        return promotionPiece;
     }
 }
