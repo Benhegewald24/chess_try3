@@ -59,7 +59,7 @@ public class ChessPiece
      */
     public ChessGame.TeamColor getTeamColor()
     {
-        return this.pieceColor;
+        return pieceColor;
     }
 
     /**
@@ -67,7 +67,7 @@ public class ChessPiece
      */
     public PieceType getPieceType()
     {
-        return this.type;
+        return type;
     }
 
     /**
