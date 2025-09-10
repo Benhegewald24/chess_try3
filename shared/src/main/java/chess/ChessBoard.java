@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -87,18 +86,21 @@ public class ChessBoard
             ChessPiece pie = new ChessPiece(WHITE, my_type.get(i - 1));
             board.addPiece(pos, pie);
         }
+
         for (int i = 1; i < 9; i++)
         {
             ChessPosition pos = new ChessPosition(8, i);
             ChessPiece pie = new ChessPiece(BLACK, my_type.get(i - 1));
             board.addPiece(pos, pie);
         }
+
         for (int i = 1; i < 9; i++)
         {
             ChessPosition pos = new ChessPosition(7, i);
             ChessPiece pie = new ChessPiece(BLACK, PAWN);
             board.addPiece(pos, pie);
         }
+
         for (int i = 1; i < 9; i++)
         {
             ChessPosition pos = new ChessPosition(2, i);
