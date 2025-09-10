@@ -23,6 +23,8 @@ public class ChessGame
         return team;
     }
 
+    public int counter = 2;
+
     /**
      * Set's which teams turn it is
      *
@@ -30,7 +32,16 @@ public class ChessGame
      */
     public void setTeamTurn(TeamColor team)
     {
-       this.team = team;
+        if (counter % 2 == 0)
+        {
+            this.team = TeamColor.WHITE;
+        }
+
+        else
+        {
+            this.team = TeamColor.BLACK;
+        }
+        counter++;
     }
 
     /**
