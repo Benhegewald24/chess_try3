@@ -137,9 +137,9 @@ public class ChessGame
         {
             return false;
         }
+
         else //if in check, King can either block with other piece or move
         {
-            //step 1 find the desired King's location
             for (int i = 1; i < 9; i++)
             {
                 for (int j = 1; j < 9; j++)
@@ -176,7 +176,7 @@ public class ChessGame
                 }
             }
         }
-        return true; //this should never trigger?
+        return true;
     }
 
     /**
@@ -186,9 +186,28 @@ public class ChessGame
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
      */
-    public boolean isInStalemate(TeamColor teamColor)
+    public boolean isInStalemate(TeamColor teamColor) throws InvalidMoveException
     {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor) || isInCheckmate(teamColor))
+        {
+            return false;
+        }
+
+        for (int i = 1; i < 9; i++)
+        {
+            for (int j = 1; j < 9; j++)
+            {
+                ChessPosition po = new ChessPosition(i, j);
+                if (board.getPiece(po).getTeamColor() == teamColor)
+                {
+                    if (!validMoves(po).isEmpty())
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
