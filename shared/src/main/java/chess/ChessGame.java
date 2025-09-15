@@ -1,5 +1,7 @@
 package chess;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -59,10 +61,22 @@ public class ChessGame
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition)
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException
     {
         ChessPiece pi = new ChessPiece(board.getPiece(startPosition).pieceColor, board.getPiece(startPosition).getPieceType());
-        throw new RuntimeException("Not implemented");
+        ArrayList<ChessMove> unfiltered_moves = (ArrayList<ChessMove>) pi.pieceMoves(board, startPosition);
+        ArrayList<ChessMove> valid_moves = (ArrayList<ChessMove>) pi.pieceMoves(board, startPosition);
+
+        for (ChessMove move : unfiltered_moves)
+        {
+            makeMove(move);
+
+            if (!isInCheck(board.getPiece(move.endPosition).pieceColor) && !isInCheckmate(board.getPiece(move.endPosition).pieceColor) && !isInStalemate(board.getPiece(move.endPosition).pieceColor))
+            {
+                valid_moves.add(move);
+            }
+        }
+        return valid_moves;
     }
 
     /**
