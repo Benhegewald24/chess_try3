@@ -87,7 +87,16 @@ public class ChessGame
      */
     public void makeMove(ChessMove move) throws InvalidMoveException
     {
-        throw new RuntimeException("Not implemented");
+        if (move.promotionPiece == null) //non-pawn
+        {
+            board.addPiece(move.endPosition, board.getPiece(move.startPosition));
+        }
+        else //pawn promotion
+        {
+            ChessPiece pi = new ChessPiece(board.getPiece(move.startPosition).getTeamColor(), move.promotionPiece);
+            board.addPiece(move.endPosition, pi);
+        }
+        board.addPiece(move.startPosition, null);
     }
 
     /**
