@@ -101,6 +101,12 @@ public class ChessGame
         board.addPiece(move.startPosition, null);
     }
 
+    public void undoMove(ChessMove move)
+    {
+        board.addPiece(move.startPosition, board.getPiece(move.startPosition));
+        board.addPiece(move.endPosition, null);
+    }
+
     /**
      * Determines if the given team is in check
      *
@@ -125,7 +131,8 @@ public class ChessGame
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
-    public boolean isInCheckmate(TeamColor teamColor) throws InvalidMoveException {
+    public boolean isInCheckmate(TeamColor teamColor) throws InvalidMoveException
+    {
         if (!isInCheck(teamColor))
         {
             return false;
@@ -138,19 +145,38 @@ public class ChessGame
                 for (int j = 1; j < 9; j++)
                 {
                     ChessPosition po = new ChessPosition(i, j);
-                    if (board.getPiece(po).getPieceType() == KING && board.getPiece(po).getTeamColor() == teamColor)
+                    if (board.getPiece(po).getPieceType() == KING && board.getPiece(po).getTeamColor() == teamColor) // move
                     {
                         ChessPosition king_position = new ChessPosition(i, j);
-                        if (!validMoves(king_position).isEmpty()) //so this means the king is able to move
+                        if (!validMoves(king_position).isEmpty()) // king is able to move
                         {
                             return false;
                         }
                         break;
                     }
+
+                    else if (board.getPiece(po).getPieceType() != KING && board.getPiece(po).getTeamColor() == teamColor) // block
+                    {
+                        //ChessPiece pie = new ChessPiece(teamColor, board.getPiece(po).getPieceType());
+                        validMoves(po);
+                        for (ChessMove move : valid_moves)
+                        {
+                            makeMove(move);
+                            if (!isInCheck(team))
+                            {
+                                undoMove(move);
+                                return false;
+                            }
+                            else
+                            {
+                                undoMove(move);
+                            }
+                        }
+                    }
                 }
             }
-            //if (validMoves())
         }
+        return true; //this should never trigger?
     }
 
     /**
