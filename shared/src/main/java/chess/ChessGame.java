@@ -157,7 +157,6 @@ public class ChessGame
 
                     else if (board.getPiece(po).getPieceType() != KING && board.getPiece(po).getTeamColor() == teamColor) // block
                     {
-                        //ChessPiece pie = new ChessPiece(teamColor, board.getPiece(po).getPieceType());
                         validMoves(po);
                         for (ChessMove move : valid_moves)
                         {
@@ -188,7 +187,7 @@ public class ChessGame
      */
     public boolean isInStalemate(TeamColor teamColor) throws InvalidMoveException
     {
-        if (!isInCheck(teamColor) || isInCheckmate(teamColor))
+        if (isInCheck(teamColor) || isInCheckmate(teamColor))
         {
             return false;
         }
