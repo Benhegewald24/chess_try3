@@ -61,6 +61,7 @@ public class ChessGame
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition)
     {
+        ChessPiece pi = new ChessPiece(board.getPiece(startPosition).pieceColor, board.getPiece(startPosition).getPieceType());
         throw new RuntimeException("Not implemented");
     }
 
