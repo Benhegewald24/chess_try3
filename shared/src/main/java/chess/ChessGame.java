@@ -34,7 +34,7 @@ public class ChessGame
      *
      * @param team the team whose turn it is
      */
-    public void setTeamTurn(TeamColor team) throws InvalidMoveException
+    public void setTeamTurn(TeamColor team)
     {
         if (counter % 2 == 0)
         {
@@ -121,7 +121,7 @@ public class ChessGame
             for (int j = 1; j < 9; j++)
             {
                 ChessPosition po = new ChessPosition(i, j);
-                if (board.getPiece(po).getTeamColor() != teamColor)
+                if (board.getPiece(po) != null && board.getPiece(po).getTeamColor() != teamColor)
                 {
                     ArrayList<ChessMove> valid_moves = new ArrayList<>();
                     valid_moves = (ArrayList<ChessMove>) validMoves(po);
