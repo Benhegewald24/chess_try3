@@ -34,7 +34,7 @@ public class ChessGame
      *
      * @param team the team whose turn it is
      */
-    public void setTeamTurn(TeamColor team)
+    public void setTeamTurn(TeamColor team) throws InvalidMoveException
     {
         if (counter % 2 == 0)
         {
@@ -93,6 +93,7 @@ public class ChessGame
         {
             board.addPiece(move.endPosition, board.getPiece(move.startPosition));
         }
+
         else //pawn promotion
         {
             ChessPiece pi = new ChessPiece(board.getPiece(move.startPosition).getTeamColor(), move.promotionPiece);
@@ -101,7 +102,7 @@ public class ChessGame
         board.addPiece(move.startPosition, null);
     }
 
-    public void undoMove(ChessMove move)
+    public void undoMove(ChessMove move) throws InvalidMoveException
     {
         board.addPiece(move.startPosition, board.getPiece(move.startPosition));
         board.addPiece(move.endPosition, null);
@@ -113,13 +114,26 @@ public class ChessGame
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor)
+    public boolean isInCheck(TeamColor teamColor) throws InvalidMoveException
     {
-        for (ChessMove move : valid_moves)
+        for (int i = 1; i < 9; i++)
         {
-            if (board.getPiece(move.endPosition).getPieceType() == KING && board.getPiece(move.startPosition).getTeamColor() != teamColor)
+            for (int j = 1; j < 9; j++)
             {
-                return true;
+                ChessPosition po = new ChessPosition(i, j);
+                if (board.getPiece(po).getTeamColor() != teamColor)
+                {
+                    ArrayList<ChessMove> valid_moves = new ArrayList<>();
+                    valid_moves = (ArrayList<ChessMove>) validMoves(po);
+
+                    for (ChessMove move : valid_moves)
+                    {
+                        if (board.getPiece(move.endPosition).getPieceType() == KING && board.getPiece(move.endPosition).getTeamColor() == teamColor);
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
         }
         return false;
@@ -157,11 +171,13 @@ public class ChessGame
 
                     else if (board.getPiece(po).getPieceType() != KING && board.getPiece(po).getTeamColor() == teamColor) // block
                     {
-                        validMoves(po);
+                        ArrayList<ChessMove> valid_moves = new ArrayList<>();
+                        valid_moves = (ArrayList<ChessMove>) validMoves(po);
+
                         for (ChessMove move : valid_moves)
                         {
                             makeMove(move);
-                            if (!isInCheck(team))
+                            if (!isInCheck(teamColor))
                             {
                                 undoMove(move);
                                 return false;
