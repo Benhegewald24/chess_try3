@@ -89,23 +89,27 @@ public class ChessGame
      */
     public void makeMove(ChessMove move) throws InvalidMoveException
     {
-        if (move.promotionPiece == null) //non-pawn
+        if (board != null && move.promotionPiece == null) //non-pawn
         {
             board.addPiece(move.endPosition, board.getPiece(move.startPosition));
+            board.addPiece(move.startPosition, null);
         }
 
         else //pawn promotion
         {
-            ChessPiece pi = new ChessPiece(board.getPiece(move.startPosition).getTeamColor(), move.promotionPiece);
-            board.addPiece(move.endPosition, pi);
+            if (board != null)
+            {
+                ChessPiece pi = new ChessPiece(board.getPiece(move.startPosition).getTeamColor(), move.promotionPiece);
+                board.addPiece(move.endPosition, pi);
+                board.addPiece(move.startPosition, null);
+            }
         }
-        board.addPiece(move.startPosition, null);
     }
 
-    public void undoMove(ChessMove move) throws InvalidMoveException
+    public void undoMove(ChessMove move)
     {
         board.addPiece(move.startPosition, board.getPiece(move.startPosition));
-        board.addPiece(move.endPosition, null);
+        board.addPiece(move.endPosition, board.getPiece(move.endPosition));
     }
 
     /**
@@ -121,7 +125,7 @@ public class ChessGame
             for (int j = 1; j < 9; j++)
             {
                 ChessPosition po = new ChessPosition(i, j);
-                if (board.getPiece(po) != null && board.getPiece(po).getTeamColor() != teamColor)
+                if (board != null && board.getPiece(po) != null && board.getPiece(po).getTeamColor() != teamColor)
                 {
                     ArrayList<ChessMove> valid_moves = new ArrayList<>();
                     valid_moves = (ArrayList<ChessMove>) validMoves(po);
