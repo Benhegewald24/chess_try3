@@ -3,7 +3,10 @@ package chess;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
 import static chess.ChessPiece.PieceType.KING;
 
 /**
@@ -17,7 +20,32 @@ public class ChessGame
     TeamColor team;
     ChessBoard board;
 
-    public ChessGame() {}
+    public ChessGame()
+    {
+        this.team = WHITE;
+        this.board = new ChessBoard();
+        board.resetBoard();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return team == chessGame.team && Objects.equals(board, chessGame.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(team, board);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "team=" + team +
+                ", board=" + board +
+                '}';
+    }
 
     /**
      * @return Which team's turn it is
@@ -27,7 +55,6 @@ public class ChessGame
         return team;
     }
 
-    public int counter = 2;
 
     /**
      * Set's which teams turn it is
@@ -36,16 +63,7 @@ public class ChessGame
      */
     public void setTeamTurn(TeamColor team)
     {
-        if (counter % 2 == 0)
-        {
-            this.team = TeamColor.WHITE;
-        }
-
-        else
-        {
-            this.team = TeamColor.BLACK;
-        }
-        counter++;
+        this.team = team;
     }
 
     /**
@@ -103,6 +121,16 @@ public class ChessGame
                 board.addPiece(move.endPosition, pi);
                 board.addPiece(move.startPosition, null);
             }
+        }
+
+        if (team == WHITE)
+        {
+            setTeamTurn(BLACK);
+        }
+
+        else
+        {
+            setTeamTurn(WHITE);
         }
     }
 
@@ -217,7 +245,7 @@ public class ChessGame
             for (int j = 1; j < 9; j++)
             {
                 ChessPosition po = new ChessPosition(i, j);
-                if (board.getPiece(po).getTeamColor() == teamColor)
+                if (board.getPiece(po) != null && board.getPiece(po).getTeamColor() == teamColor)
                 {
                     if (!validMoves(po).isEmpty())
                     {
