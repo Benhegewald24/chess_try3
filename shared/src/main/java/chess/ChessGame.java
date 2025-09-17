@@ -83,17 +83,46 @@ public class ChessGame
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException
     {
-        ChessPiece pi = new ChessPiece(board.getPiece(startPosition).pieceColor, board.getPiece(startPosition).getPieceType());
-        ArrayList<ChessMove> unfiltered_moves = (ArrayList<ChessMove>) pi.pieceMoves(board, startPosition);
-        ArrayList<ChessMove> valid_moves = (ArrayList<ChessMove>) pi.pieceMoves(board, startPosition);
+        ChessPiece starting_piece = board.getPiece(startPosition);
+        ArrayList<ChessMove> unfiltered_moves = (ArrayList<ChessMove>) starting_piece.pieceMoves(board, startPosition);
+        ArrayList<ChessMove> valid_moves = (ArrayList<ChessMove>) starting_piece.pieceMoves(board, startPosition);
+
+        if (starting_piece == null)
+        {
+            return unfiltered_moves;
+        }
 
         for (ChessMove move : unfiltered_moves)
         {
-            makeMove(move);
+            ChessPiece dead_piece = board.getPiece(move.getEndPosition());
+            board.removePiece(startPosition);
 
-            if (!isInCheck(board.getPiece(move.endPosition).pieceColor) && !isInCheckmate(board.getPiece(move.endPosition).pieceColor) && !isInStalemate(board.getPiece(move.endPosition).pieceColor))
+            if (move.getPromotionPiece() == null)
+            {
+                board.addPiece(move.getEndPosition(), starting_piece);
+            }
+
+            else
+            {
+                ChessPiece pie2 = new ChessPiece(starting_piece.getTeamColor(), move.getPromotionPiece());
+                board.addPiece(move.getEndPosition(), pie2);
+            }
+
+            if (!isInCheck(starting_piece.getTeamColor()))
             {
                 valid_moves.add(move);
+            }
+            board.removePiece(move.getEndPosition());
+
+            if (dead_piece != null)
+            {
+                board.addPiece(move.getEndPosition(), dead_piece);
+                board.addPiece(startPosition, starting_piece);
+            }
+
+            else
+            {
+                board.addPiece(startPosition, starting_piece);
             }
         }
         return valid_moves;
