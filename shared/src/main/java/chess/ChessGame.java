@@ -180,6 +180,17 @@ public class ChessGame
         }
     }
 
+    public void undoMakeMove(ChessMove move, ChessPiece moving_piece, ChessPiece dead) //helper method (3 arguments)
+    {
+        board.addPiece(move.getStartPosition(), moving_piece);
+        board.removePiece(move.getEndPosition());
+
+        if (dead != null)
+        {
+            board.addPiece(move.getEndPosition(), dead);
+        }
+    }
+
     /**
      * Determines if the given team is in check
      *
@@ -246,25 +257,37 @@ public class ChessGame
             {
                 for (int j = 1; j < 9; j++)
                 {
-                    ChessPosition po = new ChessPosition(i, j);
-                    if (board.getPiece(po) != null && board.getPiece(po).getPieceType() == KING && board.getPiece(po).getTeamColor() == teamColor) // move
-                    {
-                        ChessPosition king_position = new ChessPosition(i, j);
-                        if (!validMoves(king_position).isEmpty()) // king is able to move
-                        {
-                            return false;
-                        }
-                        break;
-                    }
+                    ChessPosition pos = new ChessPosition(i, j);
 
-                    else if (board.getPiece(po) != null && board.getPiece(po).getPieceType() != KING && board.getPiece(po).getTeamColor() == teamColor) // block
+                    if (board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() == teamColor)
                     {
-                        ArrayList<ChessMove> valid_moves;
-                        valid_moves = (ArrayList<ChessMove>) validMoves(po);
+                        ArrayList<ChessMove> unfiltered_moves;
+                        unfiltered_moves = (ArrayList<ChessMove>) board.getPiece(pos).pieceMoves(board, pos);
 
-                        for (ChessMove move : valid_moves)
+                        for (ChessMove move : unfiltered_moves)
                         {
-                            makeMove(move);
+                            ChessPiece moving_piece = board.getPiece(pos);
+                            ChessPiece dead = board.getPiece(move.getEndPosition());
+                            board.removePiece(pos);
+
+                            if (move.getPromotionPiece() == null) //no pawn promote
+                            {
+                                board.addPiece(move.getEndPosition(), moving_piece);
+                            }
+
+                            else //pawn promote
+                            {
+                                ChessPiece pie = new ChessPiece(board.getPiece(pos).getTeamColor(), move.getPromotionPiece());
+                                board.addPiece(move.getEndPosition(), pie);
+                            }
+
+                            if (!isInCheck(teamColor))
+                            {
+                                undoMakeMove(move, moving_piece, dead);
+                                return false;
+                            }
+
+                            undoMakeMove(move, moving_piece, dead);
                         }
                     }
                 }
