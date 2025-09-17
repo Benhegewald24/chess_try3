@@ -82,7 +82,7 @@ public class ChessGame
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition)
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException
     {
         ChessPiece starting_piece = board.getPiece(startPosition);
         ArrayList<ChessMove> valid = new ArrayList<>();
@@ -186,7 +186,7 @@ public class ChessGame
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor)
+    public boolean isInCheck(TeamColor teamColor) throws InvalidMoveException
     {
         for (int i = 1; i < 9; i++)
         {
