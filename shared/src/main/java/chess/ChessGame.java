@@ -82,15 +82,22 @@ public class ChessGame
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException
+    public Collection<ChessMove> validMoves(ChessPosition startPosition)
     {
         ChessPiece starting_piece = board.getPiece(startPosition);
+        ArrayList<ChessMove> valid = new ArrayList<>();
+
+        if (starting_piece == null)
+        {
+            return valid;
+        }
+
         ArrayList<ChessMove> unfiltered_moves = (ArrayList<ChessMove>) starting_piece.pieceMoves(board, startPosition);
-        ArrayList<ChessMove> valid_moves = (ArrayList<ChessMove>) starting_piece.pieceMoves(board, startPosition);
 
         for (ChessMove move : unfiltered_moves)
         {
             ChessPiece dead_piece = board.getPiece(move.getEndPosition());
+            board.removePiece(startPosition);
 
             if (move.getPromotionPiece() == null)
             {
@@ -105,9 +112,10 @@ public class ChessGame
 
             if (!isInCheck(starting_piece.getTeamColor()))
             {
-                valid_moves.add(move);
+                valid.add(move);
             }
-            board.addPiece(move.getEndPosition(), null);
+
+            board.removePiece(move.getEndPosition());
 
             if (dead_piece != null)
             {
@@ -120,7 +128,7 @@ public class ChessGame
                 board.addPiece(startPosition, starting_piece);
             }
         }
-        return valid_moves;
+        return valid;
     }
 
     /**
@@ -131,31 +139,34 @@ public class ChessGame
      */
     public void makeMove(ChessMove move) throws InvalidMoveException
     {
-        if (board != null)
+
+        if (board == null)
         {
-            ChessPiece starting_piece = board.getPiece(move.getStartPosition());
-            ChessPosition startPosition = move.getStartPosition();
+            return;
+        }
 
-            if (starting_piece != null && starting_piece.getTeamColor() != getTeamTurn() || !validMoves(move.getStartPosition()).contains(move)) // If given a move for the wrong team (not their turn), throw an InvalidMoveException.
+        ChessPiece starting_piece = board.getPiece(move.getStartPosition());
+        ChessPosition startPosition = move.getStartPosition();
+
+        if (starting_piece != null && starting_piece.getTeamColor() != getTeamTurn() || !validMoves(move.getStartPosition()).contains(move)) // If given a move for the wrong team (not their turn), throw an InvalidMoveException.
+        {
+            throw new InvalidMoveException();
+        }
+
+        if (!validMoves(startPosition).isEmpty())
+        {
+            if (move.getPromotionPiece() != null)
             {
-                throw new InvalidMoveException();
+                ChessPiece pie2 = new ChessPiece(starting_piece.getTeamColor(), move.getPromotionPiece());
+                board.addPiece(move.getEndPosition(), pie2);
             }
 
-            if (!validMoves(startPosition).isEmpty())
+            else
             {
-                if (move.getPromotionPiece() != null)
-                {
-                    ChessPiece pie2 = new ChessPiece(starting_piece.getTeamColor(), move.getPromotionPiece());
-                    board.addPiece(move.getEndPosition(), pie2);
-                }
-
-                else
-                {
-                    board.addPiece(move.getEndPosition(), starting_piece);
-                }
-
-                board.addPiece(move.getStartPosition(), null);
+                board.addPiece(move.getEndPosition(), starting_piece);
             }
+
+            board.removePiece(move.getStartPosition());
         }
 
         if (team == WHITE)
@@ -169,24 +180,13 @@ public class ChessGame
         }
     }
 
-//    public void undoMove(ChessMove move, ChessPiece moving_piece, ChessPiece dead_piece) //helper with extra method arguments
-//    {
-//        board.addPiece(move.getStartPosition(), moving_piece);
-//        board.addPiece(move.getEndPosition(), null);
-//
-//        if (dead_piece != null)
-//        {
-//            board.addPiece(move.getEndPosition(), dead_piece);
-//        }
-//    }
-
     /**
      * Determines if the given team is in check
      *
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor) throws InvalidMoveException
+    public boolean isInCheck(TeamColor teamColor)
     {
         for (int i = 1; i < 9; i++)
         {
@@ -206,7 +206,7 @@ public class ChessGame
                     continue;
                 }
 
-                ArrayList<ChessMove> unfiltered_moves = new ArrayList<>();
+                ArrayList<ChessMove> unfiltered_moves;
                 unfiltered_moves = (ArrayList<ChessMove>) pi.pieceMoves(board, po);
 
                 if (pi.getTeamColor() != teamColor)
@@ -257,23 +257,14 @@ public class ChessGame
                         break;
                     }
 
-                    else if (board.getPiece(po).getPieceType() != KING && board.getPiece(po).getTeamColor() == teamColor) // block
+                    else if (board.getPiece(po) != null && board.getPiece(po).getPieceType() != KING && board.getPiece(po).getTeamColor() == teamColor) // block
                     {
-                        ArrayList<ChessMove> valid_moves = new ArrayList<>();
+                        ArrayList<ChessMove> valid_moves;
                         valid_moves = (ArrayList<ChessMove>) validMoves(po);
 
                         for (ChessMove move : valid_moves)
                         {
                             makeMove(move);
-//                            if (!isInCheck(teamColor))
-//                            {
-//                                undoMove(move);
-//                                return false;
-//                            }
-//                            else
-//                            {
-//                                undoMove(move);
-//                            }
                         }
                     }
                 }
