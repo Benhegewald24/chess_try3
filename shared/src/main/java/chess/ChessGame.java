@@ -168,15 +168,7 @@ public class ChessGame
             board.removePiece(move.getStartPosition());
         }
 
-        if (team == WHITE)
-        {
-            setTeamTurn(BLACK);
-        }
-
-        else
-        {
-            setTeamTurn(WHITE);
-        }
+         setTeamTurn(team == WHITE ? BLACK : WHITE);
     }
 
     public void undoMakeMove(ChessMove move, ChessPiece moving_piece, ChessPiece dead) //helper method (3 arguments)
