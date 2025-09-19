@@ -104,8 +104,10 @@ public class ChessPiece
 
         if (type1 == QUEEN)
         {
-            QueenMoves q1 = new QueenMoves();
-            q1.move(board, myPosition, moves);
+            RookMoves r2 = new RookMoves();
+            BishopMoves b2 = new BishopMoves();
+            r2.move(board, myPosition, moves);
+            b2.move(board, myPosition, moves);
             return moves;
         }
 
