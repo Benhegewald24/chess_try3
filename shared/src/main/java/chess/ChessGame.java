@@ -1,6 +1,5 @@
 package chess;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -155,7 +154,7 @@ public class ChessGame
 
         if (!validMoves(startPosition).isEmpty())
         {
-            if (move.getPromotionPiece() != null)
+            if (move.getPromotionPiece() != null && starting_piece != null)
             {
                 ChessPiece pie2 = new ChessPiece(starting_piece.getTeamColor(), move.getPromotionPiece());
                 board.addPiece(move.getEndPosition(), pie2);
