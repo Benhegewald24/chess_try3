@@ -21,7 +21,7 @@ public class BishopMoves
                 moves.add(mo1);
             }
 
-            else if (board.getPiece(po1) != null && board.getPiece(po1).getTeamColor() != board.getPiece(startPosition).getTeamColor())
+            else if (board.getPiece(po1).getTeamColor() != board.getPiece(startPosition).getTeamColor())
             {
                 ChessMove mo1 = new ChessMove(startPosition, po1, null);
                 moves.add(mo1);
@@ -49,7 +49,7 @@ public class BishopMoves
                 moves.add(mo2);
             }
 
-            else if (board.getPiece(po2) != null && board.getPiece(po2).getTeamColor() != board.getPiece(startPosition).getTeamColor())
+            else if (board.getPiece(po2).getTeamColor() != board.getPiece(startPosition).getTeamColor())
             {
                 ChessMove mo2 = new ChessMove(startPosition, po2, null);
                 moves.add(mo2);
@@ -77,7 +77,7 @@ public class BishopMoves
                 moves.add(mo3);
             }
 
-            else if (board.getPiece(po3) != null && board.getPiece(po3).getTeamColor() != board.getPiece(startPosition).getTeamColor())
+            else if (board.getPiece(po3).getTeamColor() != board.getPiece(startPosition).getTeamColor())
             {
                 ChessMove mo3 = new ChessMove(startPosition, po3, null);
                 moves.add(mo3);
@@ -105,7 +105,7 @@ public class BishopMoves
                 moves.add(mo4);
             }
 
-            else if (board.getPiece(po4) != null && board.getPiece(po4).getTeamColor() != board.getPiece(startPosition).getTeamColor())
+            else if (board.getPiece(po4).getTeamColor() != board.getPiece(startPosition).getTeamColor())
             {
                 ChessMove mo4 = new ChessMove(startPosition, po4, null);
                 moves.add(mo4);
