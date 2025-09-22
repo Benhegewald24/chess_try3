@@ -16,14 +16,14 @@ import static chess.ChessPiece.PieceType.KING;
  */
 public class ChessGame
 {
-    TeamColor team;
     ChessBoard board;
+    TeamColor team;
 
     public ChessGame()
     {
-        this.team = WHITE;
-        this.board = new ChessBoard();
+        board = new ChessBoard();
         board.resetBoard();
+        team = WHITE;
     }
 
     @Override
@@ -208,8 +208,7 @@ public class ChessGame
                     continue;
                 }
 
-                ArrayList<ChessMove> unfiltered_moves;
-                unfiltered_moves = (ArrayList<ChessMove>) pi.pieceMoves(board, po);
+                ArrayList<ChessMove> unfiltered_moves = (ArrayList<ChessMove>) pi.pieceMoves(board, po);
 
                 if (pi.getTeamColor() != teamColor)
                 {
