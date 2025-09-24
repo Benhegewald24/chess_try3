@@ -10,10 +10,45 @@ public class Server
     public Server()
     {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
+        // Ben's note: This is the constructor
+        // Register your endpoints and exception handlers here.}
+    }
 
-        // Register your endpoints and exception handlers here.
+    public void registerUser()
+    {
 
     }
+
+    public void logInUser()
+    {
+
+    }
+
+    public void logOutUser()
+    {
+
+    }
+
+    public void listGames()
+    {
+
+    }
+
+    public void createGame()
+    {
+
+    }
+
+    public void joinGame()
+    {
+
+    }
+
+    public void clearDB()
+    {
+
+    }
+
 
     public int run(int desiredPort)
     {
