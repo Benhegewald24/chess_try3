@@ -1,10 +1,10 @@
 package server;
 
 import io.javalin.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Scanner;
+import java.util.*;
 
 public class Server
 {
@@ -21,43 +21,7 @@ public class Server
     public void registerUser()
     {
         Scanner user_input = new Scanner(System.in);
-        Dictionary<String, String> dict = new Dictionary<String, String>()
-        {
-            @Override
-            public int size() {
-                return 0;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public Enumeration<String> keys() {
-                return null;
-            }
-
-            @Override
-            public Enumeration<String> elements() {
-                return null;
-            }
-
-            @Override
-            public String get(Object key) {
-                return "";
-            }
-
-            @Override
-            public String put(String key, String value) {
-                return "";
-            }
-
-            @Override
-            public String remove(Object key) {
-                return "";
-            }
-        };
+        Map<String, String> my_map = new HashMap<>();
 
         System.out.println("Username: ");
         String username = user_input.nextLine();
@@ -65,8 +29,10 @@ public class Server
         String password = user_input.nextLine();
         System.out.println("Email: ");
         String email = user_input.nextLine();
-        // format this data into Json
-        //send to Register handler (not sure where this is... reread instructions)
+        my_map.put("username",username);
+        my_map.put("password", password);
+        my_map.put("email", email);
+        //send map to Register handler (not sure where this is supposed to be... may need to create)
     }
 
     public void logInUser()
