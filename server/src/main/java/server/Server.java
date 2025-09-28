@@ -35,6 +35,11 @@ public class Server
         //send map to Register handler (not sure where this is supposed to be... may need to create)
     }
 
+    public void register_handler()
+    {
+        //this handler calls Service
+    }
+
     public void logInUser()
     {
         // print to screen: "Username: "
