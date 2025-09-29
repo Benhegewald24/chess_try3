@@ -1,8 +1,7 @@
 package server;
 
 import io.javalin.*;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import service.RegisterHandler;
 
 import java.util.*;
 
@@ -20,8 +19,9 @@ public class Server
 
     public void registerUser()
     {
+        RegisterHandler rr = new RegisterHandler();
         Scanner user_input = new Scanner(System.in);
-        Map<String, String> my_map = new HashMap<>();
+        HashMap<String, String> my_map = new HashMap<>();
 
         System.out.println("Username: ");
         String username = user_input.nextLine();
@@ -32,7 +32,9 @@ public class Server
         my_map.put("username",username);
         my_map.put("password", password);
         my_map.put("email", email);
-        //send map to Register handler (not sure where this is supposed to be... may need to create)
+
+        rr.register(my_map); //send map to Register handler (RegisterHandler)
+
     }
 
     public void register_handler()
