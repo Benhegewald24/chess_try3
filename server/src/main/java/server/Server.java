@@ -1,7 +1,7 @@
 package server;
 
+import handler.*;
 import io.javalin.*;
-import service.RegisterHandler;
 
 import java.util.*;
 
@@ -33,13 +33,7 @@ public class Server
         my_map.put("password", password);
         my_map.put("email", email);
 
-        rr.register(my_map); //send map to Register handler (RegisterHandler)
-
-    }
-
-    public void register_handler()
-    {
-        //this handler calls Service
+        rr.register_h(my_map); //send map to Register handler (RegisterHandler)
     }
 
     public void logInUser()

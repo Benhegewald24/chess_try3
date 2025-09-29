@@ -1,10 +1,14 @@
 package service;
 
+import handler.*;
+
 public class UserService
 {
     public RegisterResult register(RegisterHandler registerRequest)
     {
         RegisterResult reg_result = new RegisterResult();
+        //pass to register
+
         return reg_result;
     }
 
