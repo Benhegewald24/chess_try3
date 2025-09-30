@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.UserData;
 import java.util.HashMap;
 
 public class DataAccess
@@ -17,4 +18,15 @@ public class DataAccess
             temp_db.put("username", username);
         }
     }
+
+    public void createUser(UserData ud) throws DataAccessException {}
+    public void clear() {}
+    public void createGame() {}
+    public void getGame()  {}
+    public void listGames() {}
+    public void updateGame() {}
+    public void createAuth() {}
+    public void getAuth() {}
+    public void deleteAuth() {}
+
 }

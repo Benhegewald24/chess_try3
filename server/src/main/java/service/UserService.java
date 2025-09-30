@@ -16,6 +16,7 @@ public class UserService
     public RegisterResult register(RegisterHandler registerRequest)
     {
         RegisterResult reg_result = new RegisterResult();
+        //the register endpoint returns an authToken in the body of responses
 
         return reg_result;
     }
@@ -23,6 +24,7 @@ public class UserService
     public LoginResult login(LoginHandler loginRequest)
     {
         LoginResult li_result = new LoginResult();
+        //the login endpoint returns an authToken in the body of responses
         return li_result;
     }
 
@@ -33,7 +35,7 @@ public class UserService
 
     public void listgames(ListGamesHandler listRequest)
     {
-
+        //the list games endpoint provides an authToken in the HTTP authorization header.
     }
 
     public void creategame(CreateGameHandler createGameRequest) //this also takes in an authToken as a second parameter!
@@ -41,9 +43,10 @@ public class UserService
 
     }
 
-    public void joingame(JoinGameHandler joinGameRequest) //this also takes in an authToken as a second parameter!
+    public JoinGameResponse joingame(JoinGameHandler joinGameRequest) //this also takes in an authToken as a second parameter!
     {
-
+        JoinGameResponse jg_response= new JoinGameResponse();
+        return jg_response;
     }
 
     public static void cleargame(ClearGameHandler clearGameRequest)
