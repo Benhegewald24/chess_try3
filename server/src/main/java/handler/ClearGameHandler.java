@@ -1,4 +1,12 @@
 package handler;
 
-public class ClearGameHandler {
+import service.UserService;
+
+public class ClearGameHandler
+{
+    public void clear(ClearGameHandler ClearGameRequest)
+    {
+        UserService.cleargame(ClearGameRequest);
+    }
+
 }

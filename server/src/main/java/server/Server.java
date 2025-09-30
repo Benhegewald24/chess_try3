@@ -66,7 +66,8 @@ public class Server
 
     public void clearDB()
     {
-
+        ClearGameHandler clear_game_request = new ClearGameHandler();
+        clear_game_request.clear(clear_game_request);
     }
 
 

@@ -1,6 +1,4 @@
 package service;
 
-public class LoginResult
-{
-
+public class LoginResult {
 }
