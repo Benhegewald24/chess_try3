@@ -5,7 +5,7 @@ import io.javalin.*;
 
 import java.util.*;
 
-public class Server
+public class Server //The Server should be serializing and deserializing!
 {
 
     private final Javalin javalin;
