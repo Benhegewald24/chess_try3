@@ -2,7 +2,7 @@ package model;
 import java.util.HashMap;
 import java.util.UUID;
 
-public record AuthData()
+public record AuthData() //Authdata couples authToken to username... so from AuthData you can access UserData
 {
     static String authToken;
     static String userName;
