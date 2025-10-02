@@ -12,9 +12,8 @@ public class Server //The Server should be serializing and deserializing!
     private final Javalin javalin;
 
     public Server()
-    {
-        // Ben's note: This is the constructor
-        // Register your endpoints and exception handlers here.}
+    {   // Ben's note: This is the constructor
+        // Register your endpoints and exception handlers here.
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
         javalin.delete("/db", clearDB());
         javalin.post("/user", registerUser());

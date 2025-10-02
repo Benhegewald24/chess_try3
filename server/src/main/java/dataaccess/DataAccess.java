@@ -1,17 +1,33 @@
 package dataaccess;
 
+import model.AuthData;
 import model.UserData;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DataAccess
 {
-    public void getUser(String username)
+    HashSet<UserData> temp_db = new HashSet<>();
+
+    public boolean getUser(String username)
     {
+        // if (username in temp_db)
+        //  {
+        //      return UserData;
+        //  }
+
+        // else
+        //  {
+        //      Find UserData by username
+        //  }
+
         //search the db for the user using the username. return the User object
     }
 
     public void createUser(UserData ud) throws DataAccessException
     {
+        temp_db.add(ud);
         //add user to the database. Some object should hold all 3 pieces of info.
     }
 
@@ -42,6 +58,9 @@ public class DataAccess
 
     public void createAuth()
     {
+        AuthData ad = new AuthData();
+        ad.
+
         // Create a new authorization... I thought this was already done in AuthData Class... so maybe just call that class for an Authtoken?
         // is authorizaiton the same as an authToken?
     }

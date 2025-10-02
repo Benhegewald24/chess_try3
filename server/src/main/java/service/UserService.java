@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccess;
 import handler.*;
+import model.UserData;
 
 public class UserService
 {
@@ -16,9 +17,16 @@ public class UserService
     public RegisterResult register(RegisterHandler registerRequest)
     {
         RegisterResult reg_result = new RegisterResult();
-        //the register endpoint returns an authToken in the body of responses
+        DataAccess da = new DataAccess();
+        UserData ud = new UserData();
+
+        da.getUser(registerRequest.username);
+        da.createUser(Userdata);
+        da.createAuth();
 
         return reg_result;
+
+        //the register endpoint returns an authToken in the body of responses
     }
 
     public LoginResult login(LoginHandler loginRequest)
