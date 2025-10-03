@@ -4,7 +4,7 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
-import requests.RegisterRequest;
+import requests.*;
 
 public class UserService
 {
@@ -38,35 +38,35 @@ public class UserService
         //the register endpoint returns an authToken in the body of responses
     }
 
-    public LoginResult login(LoginHandler loginRequest)
+    public LoginResult login(LoginRequest loginRequest)
     {
         LoginResult li_result = new LoginResult();
         //the login endpoint returns an authToken in the body of responses
         return li_result;
     }
 
-    public void logout(LogoutHandler logoutRequest)
+    public void logout(LogoutRequest logoutRequest)
     {
 
     }
 
-    public void listgames(ListGamesHandler listRequest)
+    public void listgames(ListGamesRequest listRequest)
     {
         //the list games endpoint provides an authToken in the HTTP authorization header.
     }
 
-    public void creategame(CreateGameHandler createGameRequest) //this also takes in an authToken as a second parameter!
+    public void creategame(CreateGameRequest createGameRequest, String authToken) //this also takes in an authToken as a second parameter!
     {
 
     }
 
-    public JoinGameResponse joingame(JoinGameHandler joinGameRequest) //this also takes in an authToken as a second parameter!
+    public JoinGameResponse joingame(JoinGameRequest joinGameRequest, String authToken) //this also takes in an authToken as a second parameter!
     {
         JoinGameResponse jg_response= new JoinGameResponse();
         return jg_response;
     }
 
-    public static void cleargame(ClearGameHandler clearGameRequest)
+    public static void cleargame(ClearRequest clearGameRequest)
     {
         //if (InternalServerError)
         //{

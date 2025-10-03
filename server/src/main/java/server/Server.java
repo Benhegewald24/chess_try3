@@ -5,6 +5,7 @@ import io.javalin.*;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
+import requests.ClearRequest;
 
 import java.util.*;
 
@@ -58,14 +59,13 @@ public class Server //The Server should be serializing and deserializing!
 
     private void clearDB(@NotNull Context context)
     {
-        ClearGameHandler clear_game_request = new ClearGameHandler();
-        clear_game_request.clear(clear_game_request);
+        ClearRequest clearRequest = new ClearRequest();
+        clearDB(clearRequest);
         //this method should return nothing?
     }
 
     private void registerUser(@NotNull Context context)
     {
-        rr.register_h(); //send map to Register handler (RegisterHandler)
         context.result();
 
         //this method should return {"username" : "", "authToken" : ""} which is a Json Object
