@@ -8,7 +8,8 @@ import java.util.Set;
 
 public class DataAccess
 {
-    HashSet<UserData> temp_db = new HashSet<>();
+    HashSet<UserData> temp_db_user = new HashSet<>();
+    HashSet<AuthData> temp_db_auth = new HashSet<>();
 
     public boolean getUser(String username)
     {
@@ -27,7 +28,7 @@ public class DataAccess
 
     public void createUser(UserData ud) throws DataAccessException
     {
-        temp_db.add(ud);
+        temp_db_user.add(ud);
         //add user to the database. Some object should hold all 3 pieces of info.
     }
 
@@ -56,12 +57,11 @@ public class DataAccess
         // Updates a chess game. It should replace the chess game string corresponding to a given gameID. This is used when players join a game or when a move is made.
     }
 
-    public void createAuth()
+    public void createAuth(AuthData auth_data)
     {
-        AuthData ad = new AuthData();
-        ad.
-
-        // Create a new authorization... I thought this was already done in AuthData Class... so maybe just call that class for an Authtoken?
+        String authToken = auth_data.generateToken();
+        temp_db_auth.add(auth_data);
+        // Create a new authorization...
         // is authorizaiton the same as an authToken?
     }
 

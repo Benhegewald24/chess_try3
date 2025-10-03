@@ -1,8 +1,10 @@
 package service;
 
 import dataaccess.DataAccess;
-import handler.*;
+import dataaccess.DataAccessException;
+import model.AuthData;
 import model.UserData;
+import requests.RegisterRequest;
 
 public class UserService
 {
@@ -14,18 +16,25 @@ public class UserService
         this.dataAccess = dataAccess;
     }
 
-    public RegisterResult register(RegisterHandler registerRequest)
-    {
+    public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
         RegisterResult reg_result = new RegisterResult();
         DataAccess da = new DataAccess();
         UserData ud = new UserData();
+        AuthData ad = new AuthData();
 
         da.getUser(registerRequest.username);
-        da.createUser(Userdata);
-        da.createAuth();
+        da.createUser(ud);
+        da.createAuth(ad);
 
-        return reg_result;
+        if (da.getUser(registerRequest.username == failure))
+        {
+            return AlreadyTakenException;
+        }
 
+        else
+        {
+            return reg_result;
+        }
         //the register endpoint returns an authToken in the body of responses
     }
 
