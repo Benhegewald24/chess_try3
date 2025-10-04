@@ -43,7 +43,7 @@ public class DataAccess
         //maybe this calls reset game (look at stuff from phase 1).
     }
 
-    public void getGame()
+    public void getGame(String GameID)
     {
         // Retrieve a specified game with the given game ID. Not sure what form the game ID takes... string? int? JSON?
     }
@@ -66,9 +66,10 @@ public class DataAccess
         // is authorizaiton the same as an authToken?
     }
 
-    public void getAuth() //takes as input an authToken.
+    public void getAuth(String authToken) //takes as input an authToken.
     {
         //Retrieves an authorization
+        // Ben's Note: This probably calls AuthData model?
     }
 
     public void deleteAuth()

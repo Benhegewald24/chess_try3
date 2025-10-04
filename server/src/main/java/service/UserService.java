@@ -5,7 +5,7 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import requests.*;
-import results.ClearResult;
+import results.*;
 
 public class UserService
 {
@@ -17,7 +17,8 @@ public class UserService
         this.dataAccess = dataAccess;
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
+    public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException
+    {
         RegisterResult reg_result = new RegisterResult();
         DataAccess da = new DataAccess();
         UserData ud = new UserData();
@@ -46,25 +47,56 @@ public class UserService
         return li_result;
     }
 
-    public void logout(LogoutRequest logoutRequest)
+    public LogoutResult logout(LogoutRequest logoutRequest)
     {
-
+        LogoutResult lor = new LogoutResult();
+        return lor;
     }
 
-    public void listgames(ListGamesRequest listRequest)
+    public ListGamesRequest listgames(ListGamesRequest listRequest) //the list games endpoint provides an authToken in the HTTP authorization header.
     {
-        //the list games endpoint provides an authToken in the HTTP authorization header.
+        ListGamesRequest lgr = new ListGamesRequest();
+        return lgr;
     }
 
-    public void creategame(CreateGameRequest createGameRequest, String authToken) //this also takes in an authToken as a second parameter!
+    public CreateGameResult creategame(CreateGameRequest createGameRequest, String authToken) //this also takes in an authToken as a second parameter!
     {
-
+        try
+        {
+            CreateGameResult cgr = new CreateGameResult();
+            return cgr;
+        }
+        catch (InvalidGameNameException igne)
+        {
+            throw igne;
+        }
+        catch (InvalidAuthTokenException iate) // Error 401 Invalid AuthToken
+        {
+            throw igte;
+        }
     }
 
-    public JoinGameResponse joingame(JoinGameRequest joinGameRequest, String authToken) //this also takes in an authToken as a second parameter!
+    public JoinGameResult joingame(JoinGameRequest joinGameRequest, String authToken) //this also takes in an authToken as a second parameter!
     {
-        JoinGameResponse jg_response = new JoinGameResponse();
-        return jg_response;
+        try
+        {
+
+            JoinGameResult jgr = new JoinGameResult();
+            return jgr;
+        }
+
+        catch (InvalidGameNameException igne) // Error 400 Game does not exist
+        {
+            throw igne;
+        }
+        catch (InvalidAuthTokenException iate) // Error 401 Invalid AuthToken
+        {
+            throw igte;
+        }
+        catch (InvalidGameIDException igide) //Error 403 Game Already Full
+        {
+            throw igide;
+        }
     }
 
     public static ClearResult cleargame()
