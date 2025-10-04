@@ -1,13 +1,9 @@
 package server;
 
-import handler.*;
 import io.javalin.*;
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
-import requests.ClearRequest;
-
-import java.util.*;
+import service.UserService;
 
 public class Server //The Server should be serializing and deserializing!
 {
@@ -23,7 +19,7 @@ public class Server //The Server should be serializing and deserializing!
         javalin.post("/session", this::logInUser);
         javalin.delete("/session", this::logOutUser);
         javalin.get("/game", this::listGames);
-        javalin.post("game", this::createGame);
+        javalin.post("/game", this::createGame);
         javalin.put("/game", this::joinGame);
     }
 
@@ -57,11 +53,10 @@ public class Server //The Server should be serializing and deserializing!
          //this method should return {"username" : "", "authToken" : ""} which is a Json Object
     }
 
-    private void clearDB(@NotNull Context context)
+    private void clearDB(@NotNull Context context) //this method should return nothing?
     {
-        ClearRequest clearRequest = new ClearRequest();
-        clearDB(clearRequest);
-        //this method should return nothing?
+        UserService.cleargame();
+        return {};
     }
 
     private void registerUser(@NotNull Context context)

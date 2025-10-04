@@ -8,8 +8,8 @@ import java.util.Set;
 
 public class DataAccess
 {
-    HashSet<UserData> temp_db_user = new HashSet<>();
-    HashSet<AuthData> temp_db_auth = new HashSet<>();
+    static HashSet<UserData> temp_db_user = new HashSet<>();
+    static HashSet<AuthData> temp_db_auth = new HashSet<>();
 
     public boolean getUser(String username)
     {
@@ -32,9 +32,10 @@ public class DataAccess
         //add user to the database. Some object should hold all 3 pieces of info.
     }
 
-    public void clear() //used during testing
+    public static void clear() //used during testing
     {
-        //db.clear();
+        temp_db_user.clear();
+        temp_db_auth.clear();
     }
 
     public void createGame()

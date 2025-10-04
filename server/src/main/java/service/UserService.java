@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import requests.*;
+import results.ClearResult;
 
 public class UserService
 {
@@ -62,15 +63,22 @@ public class UserService
 
     public JoinGameResponse joingame(JoinGameRequest joinGameRequest, String authToken) //this also takes in an authToken as a second parameter!
     {
-        JoinGameResponse jg_response= new JoinGameResponse();
+        JoinGameResponse jg_response = new JoinGameResponse();
         return jg_response;
     }
 
-    public static void cleargame(ClearRequest clearGameRequest)
+    public static ClearResult cleargame()
     {
-        //if (InternalServerError)
-        //{
-        //  return UserData
-        // }
+        try
+        {
+            DataAccess.clear();
+            ClearResult cr = new ClearResult();
+            return cr;
+        }
+
+        catch (Exception e)
+        {
+            throw e; //implement InternalServerError
+        }
     }
 }
