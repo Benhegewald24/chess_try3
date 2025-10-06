@@ -9,4 +9,24 @@ public record GameData()
     static String blackUsername;
     static String gameName;
     static ChessGame game;
+
+    public void createGameData()
+    {
+
+    }
+
+    public void readGameData()
+    {
+
+    }
+
+    public void updateGameData()
+    {
+
+    }
+
+    public void deleteGameData()
+    {
+
+    }
 }

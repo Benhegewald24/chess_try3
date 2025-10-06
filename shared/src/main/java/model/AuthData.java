@@ -14,4 +14,24 @@ public record AuthData() //Authdata couples authToken to username... so from Aut
         my_map.put(userName, authToken);
         return authToken;
     }
+
+    public void createAuthData()
+    {
+
+    }
+
+    public void readAuthData()
+    {
+
+    }
+
+    public void updateAuthData()
+    {
+
+    }
+
+    public void deleteAuthData()
+    {
+
+    }
 }
