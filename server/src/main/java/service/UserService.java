@@ -24,39 +24,63 @@ public class UserService
         UserData ud = new UserData();
         AuthData ad = new AuthData();
 
-        da.getUser(registerRequest.username);
         da.createUser(ud);
         da.createAuth(ad);
 
-        if (da.getUser(registerRequest.username == failure))
+        try
         {
-            return AlreadyTakenException;
+            da.getUser(registerRequest.username);
+            return reg_result;
         }
 
-        else
+        catch (AlreadyTakenException ate)
         {
-            return reg_result;
+            ate;
         }
         //the register endpoint returns an authToken in the body of responses
     }
 
     public LoginResult login(LoginRequest loginRequest)
     {
+        try
+        {
         LoginResult li_result = new LoginResult();
         //the login endpoint returns an authToken in the body of responses
         return li_result;
+        }
+
+        catch (InvalidUsernameException iue)
+        {
+            throw iue;
+        }
+
     }
 
     public LogoutResult logout(LogoutRequest logoutRequest)
     {
-        LogoutResult lor = new LogoutResult();
-        return lor;
-    }
+        try
+        {
+            LogoutResult lor = new LogoutResult();
+            return lor;
+        }
 
+       catch(InvalidAuthTokenException iate) // Error 401 Invalid AuthToken
+        {
+            throw iate;
+        }
+    }
     public ListGamesRequest listgames(ListGamesRequest listRequest) //the list games endpoint provides an authToken in the HTTP authorization header.
     {
-        ListGamesRequest lgr = new ListGamesRequest();
-        return lgr;
+        try
+        {
+            ListGamesRequest lgr = new ListGamesRequest();
+            return lgr;
+        }
+
+        catch (InvalidAuthTokenException iate) // Error 401 Invalid AuthToken
+        {
+            throw iate;
+        }
     }
 
     public CreateGameResult creategame(CreateGameRequest createGameRequest, String authToken) //this also takes in an authToken as a second parameter!
@@ -66,13 +90,14 @@ public class UserService
             CreateGameResult cgr = new CreateGameResult();
             return cgr;
         }
+
         catch (InvalidGameNameException igne)
         {
             throw igne;
         }
         catch (InvalidAuthTokenException iate) // Error 401 Invalid AuthToken
         {
-            throw igte;
+            throw iate;
         }
     }
 
@@ -80,7 +105,6 @@ public class UserService
     {
         try
         {
-
             JoinGameResult jgr = new JoinGameResult();
             return jgr;
         }
@@ -108,9 +132,9 @@ public class UserService
             return cr;
         }
 
-        catch (Exception e)
+        catch (InternalErrorException iee)
         {
-            throw e; //implement InternalServerError
+            throw iee;
         }
     }
 }

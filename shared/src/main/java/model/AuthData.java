@@ -8,16 +8,11 @@ public record AuthData() //Authdata couples authToken to username... so from Aut
     static String userName;
     static HashMap<String, String> my_map;
 
-    public String generateToken() //created when a user registers or logs in. Associates username to the authToken
+    public String createAuthData() //created when a user registers or logs in. Associates username to the authToken
     {
         authToken = UUID.randomUUID().toString();
         my_map.put(userName, authToken);
         return authToken;
-    }
-
-    public void createAuthData()
-    {
-
     }
 
     public void readAuthData()

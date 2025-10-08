@@ -45,11 +45,6 @@ public class Server //The Server should be serializing and deserializing!
 
     private void logInUser(@NotNull Context context)
     {
-        // print to screen: "Username: "
-        // store user input
-        // print to screen: "Password: "
-        // password (initialized above) = userinput (whatever the user types)
-
          //this method should return {"username" : "", "authToken" : ""} which is a Json Object
     }
 
@@ -75,6 +70,10 @@ public class Server //The Server should be serializing and deserializing!
     public void stop()
     {
         javalin.stop();
+    }
+
+    public class AlreadyTakenException() extends Exception
+    {
 
     }
 }

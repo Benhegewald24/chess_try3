@@ -60,7 +60,7 @@ public class DataAccess
 
     public void createAuth(AuthData auth_data)
     {
-        String authToken = auth_data.generateToken();
+        String authToken = auth_data.createAuthData();
         temp_db_auth.add(auth_data);
         // Create a new authorization...
         // is authorizaiton the same as an authToken?
