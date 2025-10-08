@@ -35,7 +35,7 @@ public class UserService
 
         catch (AlreadyTakenException ate)
         {
-            ate;
+            throw ate;
         }
         //the register endpoint returns an authToken in the body of responses
     }
@@ -44,9 +44,9 @@ public class UserService
     {
         try
         {
-        LoginResult li_result = new LoginResult();
-        //the login endpoint returns an authToken in the body of responses
-        return li_result;
+            LoginResult li_result = new LoginResult();
+            //the login endpoint returns an authToken in the body of responses
+            return li_result;
         }
 
         catch (InvalidUsernameException iue)
@@ -69,6 +69,7 @@ public class UserService
             throw iate;
         }
     }
+
     public ListGamesRequest listgames(ListGamesRequest listRequest) //the list games endpoint provides an authToken in the HTTP authorization header.
     {
         try
