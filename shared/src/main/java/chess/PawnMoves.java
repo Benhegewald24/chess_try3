@@ -21,7 +21,8 @@ public class PawnMoves
 
             ccol1++;
             ChessPosition po6 = new ChessPosition(rrow1, ccol1);
-            if (ccol1 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor() != board.getPiece(startPosition).getTeamColor()) //White capture right
+            if (ccol1 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor()) //White capture right
             {
                 ChessMove mo6 = new ChessMove(startPosition, po6, null);
                 moves.add(mo6);
@@ -29,7 +30,8 @@ public class PawnMoves
 
             ccol1-=2;
             ChessPosition po7 = new ChessPosition(rrow1, ccol1);
-            if (ccol1 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor() != board.getPiece(startPosition).getTeamColor()) //White capture left
+            if (ccol1 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor()) //White capture left
             {
                 ChessMove mo7 = new ChessMove(startPosition, po7, null);
                 moves.add(mo7);
@@ -80,13 +82,15 @@ public class PawnMoves
 
             ccol4++;
             ChessPosition po6 = new ChessPosition(rrow4, ccol4);
-            if (ccol4 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor() != board.getPiece(startPosition).getTeamColor() && rrow4 != 8) //White capture right
+            if (ccol4 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor() && rrow4 != 8) //White capture right
             {
                 ChessMove mo6 = new ChessMove(startPosition, po6, null);
                 moves.add(mo6);
             }
 
-            if (ccol4 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor() != board.getPiece(startPosition).getTeamColor() && rrow4 == 8) //White capture right with promotion
+            if (ccol4 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor() && rrow4 == 8) //White capture right with promotion
             {
                 ChessMove mo22 = new ChessMove(startPosition, po6, BISHOP);
                 moves.add(mo22);
@@ -100,13 +104,15 @@ public class PawnMoves
 
             ccol4-=2;
             ChessPosition po7 = new ChessPosition(rrow4, ccol4);
-            if (ccol4 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor() != board.getPiece(startPosition).getTeamColor() && rrow4 != 8) //White capture left
+            if (ccol4 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor() && rrow4 != 8) //White capture left
             {
                 ChessMove mo7 = new ChessMove(startPosition, po7, null);
                 moves.add(mo7);
             }
 
-            if (ccol4 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor() != board.getPiece(startPosition).getTeamColor() && rrow4 == 8) //White capture left
+            if (ccol4 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor() && rrow4 == 8) //White capture left
             {
                 ChessMove mo32 = new ChessMove(startPosition, po7, BISHOP);
                 moves.add(mo32);
@@ -147,13 +153,15 @@ public class PawnMoves
 
             ccol5++;
             ChessPosition po6 = new ChessPosition(rrow5, ccol5);
-            if (ccol5 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor() != board.getPiece(startPosition).getTeamColor() && rrow5 != 1) // Black capture right
+            if (ccol5 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor() && rrow5 != 1) // Black capture right
             {
                 ChessMove mo6 = new ChessMove(startPosition, po6, null);
                 moves.add(mo6);
             }
 
-            if (ccol5 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor() != board.getPiece(startPosition).getTeamColor() && rrow5 == 1) // Black capture right
+            if (ccol5 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor() && rrow5 == 1) // Black capture right
             {
                 ChessMove mo52 = new ChessMove(startPosition, po6, BISHOP);
                 moves.add(mo52);
@@ -167,13 +175,15 @@ public class PawnMoves
 
             ccol5-=2;
             ChessPosition po7 = new ChessPosition(rrow5, ccol5);
-            if (ccol5 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor() != board.getPiece(startPosition).getTeamColor() && rrow5 != 1) //Black capture left
+            if (ccol5 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor() && rrow5 != 1) //Black capture left
             {
                 ChessMove mo7 = new ChessMove(startPosition, po7, null);
                 moves.add(mo7);
             }
 
-            if (ccol5 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor() != board.getPiece(startPosition).getTeamColor() && rrow5 == 1) //Black capture left
+            if (ccol5 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor() && rrow5 == 1) //Black capture left
             {
                 ChessMove mo52 = new ChessMove(startPosition, po7, BISHOP);
                 moves.add(mo52);
@@ -198,7 +208,8 @@ public class PawnMoves
             ccol11++;
             ChessPosition po6 = new ChessPosition(rrow11, ccol11);
 
-            if (ccol11 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor() != board.getPiece(startPosition).getTeamColor()) //White capture right
+            if (ccol11 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor()) //White capture right
             {
                 ChessMove mo6 = new ChessMove(startPosition, po6, null);
                 moves.add(mo6);
@@ -206,7 +217,8 @@ public class PawnMoves
 
             ccol11-=2;
             ChessPosition po7 = new ChessPosition(rrow11, ccol11);
-            if (ccol11 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor() != board.getPiece(startPosition).getTeamColor()) //White capture left
+            if (ccol11 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor()
+                    != board.getPiece(startPosition).getTeamColor()) //White capture left
             {
                 ChessMove mo7 = new ChessMove(startPosition, po7, null);
                 moves.add(mo7);

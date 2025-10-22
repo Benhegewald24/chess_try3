@@ -29,7 +29,7 @@ public class ChessGame
     @Override
     public boolean equals(Object o)
     {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {return false;}
         ChessGame chessGame = (ChessGame) o;
         return team == chessGame.team && Objects.equals(board, chessGame.board);
     }
@@ -147,7 +147,9 @@ public class ChessGame
         ChessPiece starting_piece = board.getPiece(move.getStartPosition());
         ChessPosition startPosition = move.getStartPosition();
 
-        if (starting_piece != null && starting_piece.getTeamColor() != getTeamTurn() || !validMoves(move.getStartPosition()).contains(move)) // If given a move for the wrong team (not their turn), throw an InvalidMoveException.
+        if (starting_piece != null && starting_piece.getTeamColor()
+                != getTeamTurn() || !validMoves(move.getStartPosition()).contains(move))
+            // If given a move for the wrong team (not their turn), throw an InvalidMoveException.
         {
             throw new InvalidMoveException();
         }
@@ -209,19 +211,25 @@ public class ChessGame
                 }
 
                 ArrayList<ChessMove> unfiltered_moves = (ArrayList<ChessMove>) pi.pieceMoves(board, po);
+                boolean bool = is_in_check_helper(unfiltered_moves, pi, teamColor);
+                if (bool) {return true;}
+            }
+        }
+        return false;
+    }
 
-                if (pi.getTeamColor() != teamColor)
+    public boolean is_in_check_helper(ArrayList<ChessMove> unfiltered_moves, ChessPiece pi, TeamColor teamColor)
+    {
+        if (pi.getTeamColor() != teamColor)
+        {
+            for (ChessMove move : unfiltered_moves)
+            {
+                ChessPosition pos2 = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
+                ChessPiece pie = board.getPiece(pos2);
+
+                if (pie != null && pie.getPieceType() == KING && pie.getTeamColor() == teamColor)
                 {
-                    for (ChessMove move : unfiltered_moves)
-                    {
-                        ChessPosition pos2 = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
-                        ChessPiece pie = board.getPiece(pos2);
-
-                        if (pie != null && pie.getPieceType() == KING && pie.getTeamColor() == teamColor)
-                        {
-                            return true;
-                        }
-                    }
+                    return true;
                 }
             }
         }
