@@ -3,14 +3,6 @@ import java.util.ArrayList;
 
 public class RookMoves
 {
-//    public ChessPosition original_position_setter(ChessPosition startPosition)
-//    {
-//        int rrow  = startPosition.getRow();
-//        int ccol = startPosition.getColumn();
-//        ChessPosition po = new ChessPosition(rrow, ccol);
-//        return po;
-//    }
-
     public void move(ChessBoard board, ChessPosition startPosition, ArrayList<ChessMove> moves) {
         int rrow1 = startPosition.getRow();
         int ccol1 = startPosition.getColumn();
