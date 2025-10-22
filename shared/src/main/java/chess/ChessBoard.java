@@ -1,5 +1,4 @@
 package chess;
-
 import java.util.*;
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -73,27 +72,27 @@ public class ChessBoard
     {
         ChessBoard board = new ChessBoard();
 
-        ArrayList<ChessPiece.PieceType> my_type = new ArrayList<>();
-        my_type.add(ROOK);
-        my_type.add(KNIGHT);
-        my_type.add(BISHOP);
-        my_type.add(QUEEN);
-        my_type.add(KING);
-        my_type.add(BISHOP);
-        my_type.add(KNIGHT);
-        my_type.add(ROOK);
+        ArrayList<ChessPiece.PieceType> myType = new ArrayList<>();
+        myType.add(ROOK);
+        myType.add(KNIGHT);
+        myType.add(BISHOP);
+        myType.add(QUEEN);
+        myType.add(KING);
+        myType.add(BISHOP);
+        myType.add(KNIGHT);
+        myType.add(ROOK);
 
         for (int i = 1; i < 9; i++)
         {
             ChessPosition pos = new ChessPosition(1, i);
-            ChessPiece pie = new ChessPiece(WHITE, my_type.get(i - 1));
+            ChessPiece pie = new ChessPiece(WHITE, myType.get(i - 1));
             board.addPiece(pos, pie);
         }
 
         for (int i = 1; i < 9; i++)
         {
             ChessPosition pos = new ChessPosition(8, i);
-            ChessPiece pie = new ChessPiece(BLACK, my_type.get(i - 1));
+            ChessPiece pie = new ChessPiece(BLACK, myType.get(i - 1));
             board.addPiece(pos, pie);
         }
 

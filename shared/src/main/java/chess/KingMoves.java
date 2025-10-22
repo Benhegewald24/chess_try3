@@ -1,5 +1,4 @@
 package chess;
-
 import java.util.ArrayList;
 
 public class KingMoves
@@ -156,25 +155,25 @@ public class KingMoves
             }
         }
 
-        int rrow8 = startPosition.getRow();
-        int ccol8 = startPosition.getColumn();
+        int rrow88 = startPosition.getRow();
+        int ccol88 = startPosition.getColumn();
 
-        if (rrow8 < 8 && ccol8 > 1) //NW
+        if (rrow88 < 8 && ccol88 > 1) //NW
         {
-            rrow8++;
-            ccol8--;
-            ChessPosition po8 = new ChessPosition(rrow8, ccol8);
+            rrow88++;
+            ccol88--;
+            ChessPosition po88 = new ChessPosition(rrow88, ccol88);
 
-            if (board.getPiece(po8) == null)
+            if (board.getPiece(po88) == null)
             {
-                ChessMove mo8 = new ChessMove(startPosition, po8, null);
-                moves.add(mo8);
+                ChessMove mo88 = new ChessMove(startPosition, po88, null);
+                moves.add(mo88);
             }
 
-            if (board.getPiece(po8) != null && board.getPiece(po8).getTeamColor() != board.getPiece(startPosition).getTeamColor())
+            if (board.getPiece(po88) != null && board.getPiece(po88).getTeamColor() != board.getPiece(startPosition).getTeamColor())
             {
-                ChessMove mo8 = new ChessMove(startPosition, po8, null);
-                moves.add(mo8);
+                ChessMove mo88 = new ChessMove(startPosition, po88, null);
+                moves.add(mo88);
             }
         }
     }

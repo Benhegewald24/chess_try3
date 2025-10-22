@@ -9,17 +9,17 @@ import java.util.Collection;
 
 public class DataAccess
 {
-    private final Map<String, UserData> dict_of_users = new HashMap<>();
-    private final Map<Integer, GameData> dict_of_games = new HashMap<>();
-    private final Map<String, AuthData> dict_of_authTokens = new HashMap<>();
-    private int game_id_counter = 1;
+    private final Map<String, UserData> dictOfUsers = new HashMap<>();
+    private final Map<Integer, GameData> dictOfGames = new HashMap<>();
+    private final Map<String, AuthData> dictOfAuthTokens = new HashMap<>();
+    private int gameIDCounter = 1;
 
     public void clear()
     {
-        dict_of_users.clear();
-        dict_of_games.clear();
-        dict_of_authTokens.clear();
-        game_id_counter = 1;
+        dictOfUsers.clear();
+        dictOfGames.clear();
+        dictOfAuthTokens.clear();
+        gameIDCounter = 1;
     }
 
     public void createUser(UserData user) throws DataAccessException
@@ -29,12 +29,12 @@ public class DataAccess
             throw new DataAccessException("Invalid username");
         }
 
-        if (dict_of_users.containsKey(user.username()))
+        if (dictOfUsers.containsKey(user.username()))
         {
             throw new DataAccessException("Username already taken");
         }
 
-        dict_of_users.put(user.username(), user);
+        dictOfUsers.put(user.username(), user);
     }
 
     public UserData getUser(String username) throws DataAccessException
@@ -43,7 +43,7 @@ public class DataAccess
         {
             throw new DataAccessException("Username can't be null");
         }
-        return dict_of_users.get(username);
+        return dictOfUsers.get(username);
     }
 
     public int createGame(String gameName) throws DataAccessException
@@ -53,32 +53,32 @@ public class DataAccess
             throw new DataAccessException("Game name can't be null / empty");
         }
         
-        int gameId = game_id_counter++;
+        int gameId = gameIDCounter++;
         ChessGame newGame = new ChessGame();
         GameData gameData = new GameData(gameId, null, null, gameName, newGame);
         //Inputs for a gameData object: (int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game)
 
-        dict_of_games.put(gameId, gameData);
+        dictOfGames.put(gameId, gameData);
         return gameId;
     }
 
     public GameData getGame(int gameID)
     {
-        return dict_of_games.get(gameID);
+        return dictOfGames.get(gameID);
     }
 
     public Collection<GameData> listGames()
     {
-        return dict_of_games.values();
+        return dictOfGames.values();
     }
 
     public void updateGame(GameData game) throws DataAccessException
     {
-        if (game == null || !dict_of_games.containsKey(game.gameID()))
+        if (game == null || !dictOfGames.containsKey(game.gameID()))
         {
             throw new DataAccessException("Invalid game");
         }
-        dict_of_games.put(game.gameID(), game);
+        dictOfGames.put(game.gameID(), game);
     }
 
     public void createAuth(AuthData auth) throws DataAccessException
@@ -87,7 +87,7 @@ public class DataAccess
         {
             throw new DataAccessException("Auth / authToken can't be null");
         }
-        dict_of_authTokens.put(auth.authToken(), auth);
+        dictOfAuthTokens.put(auth.authToken(), auth);
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException
@@ -96,7 +96,7 @@ public class DataAccess
         {
             throw new DataAccessException("AuthToken can't be null");
         }
-        return dict_of_authTokens.get(authToken);
+        return dictOfAuthTokens.get(authToken);
     }
 
     public void deleteAuth(String authToken) throws DataAccessException
@@ -105,6 +105,6 @@ public class DataAccess
         {
             throw new DataAccessException("AuthToken can't be null");
         }
-        dict_of_authTokens.remove(authToken);
+        dictOfAuthTokens.remove(authToken);
     }
 }
