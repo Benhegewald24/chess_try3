@@ -1,141 +1,86 @@
 package service;
-
+import results.*;
+import requests.*;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
-import requests.*;
-import results.*;
+import java.util.UUID;
+
 
 public class UserService
 {
-
+    
     private final DataAccess dataAccess;
-
+    
     public UserService(DataAccess dataAccess)
     {
         this.dataAccess = dataAccess;
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException
+    public RegisterResult register(RegisterRequest request) throws DataAccessException
     {
-        RegisterResult reg_result = new RegisterResult();
-        DataAccess da = new DataAccess();
-        UserData ud = new UserData();
-        AuthData ad = new AuthData();
-
-        da.createUser(ud);
-        da.createAuth(ad);
-
-        try
+        if (request.username() == null || request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty())
         {
-            da.getUser(registerRequest.username);
-            return reg_result;
+            throw new DataAccessException("Error: bad request");
         }
 
-        catch (AlreadyTakenException ate)
+        UserData existingUser = dataAccess.getUser(request.username());
+        if (existingUser != null)
         {
-            throw ate;
+            throw new DataAccessException("Error: already taken");
         }
-        //the register endpoint returns an authToken in the body of responses
+
+        UserData newUser = new UserData(request.username(), request.password(), request.email());
+        dataAccess.createUser(newUser);
+
+        String authToken = UUID.randomUUID().toString();
+        AuthData authData = new AuthData(authToken, request.username());
+        dataAccess.createAuth(authData);
+        
+        return new RegisterResult(request.username(), authToken);
     }
 
-    public LoginResult login(LoginRequest loginRequest)
+    public LoginResult login(LoginRequest request) throws DataAccessException
     {
-        try
+        if (request.username() == null || request.password() == null)
         {
-            LoginResult li_result = new LoginResult();
-            //the login endpoint returns an authToken in the body of responses
-            return li_result;
+            throw new DataAccessException("Error: bad request");
         }
 
-        catch (InvalidUsernameException iue)
+        UserData user = dataAccess.getUser(request.username());
+        if (user == null)
         {
-            throw iue;
+            throw new DataAccessException("Error: unauthorized");
         }
 
+        if (!request.password().equals(user.password()))
+        {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        String authToken = UUID.randomUUID().toString();
+        AuthData authData = new AuthData(authToken, request.username());
+        dataAccess.createAuth(authData);
+        
+        return new LoginResult(user.username(), authToken);
+    }
+    
+    public LogoutResult logout(String authToken) throws DataAccessException
+    {
+        AuthData authData = dataAccess.getAuth(authToken);
+        if (authData == null)
+        {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        dataAccess.deleteAuth(authToken);
+        return new LogoutResult();
     }
 
-    public LogoutResult logout(LogoutRequest logoutRequest)
+    public ClearResult clear()
     {
-        try
-        {
-            LogoutResult lor = new LogoutResult();
-            return lor;
-        }
-
-       catch(InvalidAuthTokenException iate) // Error 401 Invalid AuthToken
-        {
-            throw iate;
-        }
-    }
-
-    public ListGamesRequest listgames(ListGamesRequest listRequest) //the list games endpoint provides an authToken in the HTTP authorization header.
-    {
-        try
-        {
-            ListGamesRequest lgr = new ListGamesRequest();
-            return lgr;
-        }
-
-        catch (InvalidAuthTokenException iate) // Error 401 Invalid AuthToken
-        {
-            throw iate;
-        }
-    }
-
-    public CreateGameResult creategame(CreateGameRequest createGameRequest, String authToken) //this also takes in an authToken as a second parameter!
-    {
-        try
-        {
-            CreateGameResult cgr = new CreateGameResult();
-            return cgr;
-        }
-
-        catch (InvalidGameNameException igne)
-        {
-            throw igne;
-        }
-        catch (InvalidAuthTokenException iate) // Error 401 Invalid AuthToken
-        {
-            throw iate;
-        }
-    }
-
-    public JoinGameResult joingame(JoinGameRequest joinGameRequest, String authToken) //this also takes in an authToken as a second parameter!
-    {
-        try
-        {
-            JoinGameResult jgr = new JoinGameResult();
-            return jgr;
-        }
-
-        catch (InvalidGameNameException igne) // Error 400 Game does not exist
-        {
-            throw igne;
-        }
-        catch (InvalidAuthTokenException iate) // Error 401 Invalid AuthToken
-        {
-            throw igte;
-        }
-        catch (InvalidGameIDException igide) //Error 403 Game Already Full
-        {
-            throw igide;
-        }
-    }
-
-    public static ClearResult cleargame()
-    {
-        try
-        {
-            DataAccess.clear();
-            ClearResult cr = new ClearResult();
-            return cr;
-        }
-
-        catch (InternalErrorException iee)
-        {
-            throw iee;
-        }
+        dataAccess.clear();
+        return new ClearResult();
     }
 }

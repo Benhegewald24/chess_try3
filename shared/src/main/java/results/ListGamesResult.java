@@ -1,6 +1,5 @@
 package results;
+import java.util.Collection;
+import model.GameData;
 
-import java.util.HashSet;
-
-public record ListGamesResult(String games) {}
-//need to fix parameters
+public record ListGamesResult(Collection<GameData> games) {}
