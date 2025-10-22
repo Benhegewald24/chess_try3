@@ -148,7 +148,7 @@ public class ChessGame
 
         if (startingPiece != null && startingPiece.getTeamColor()
                 != getTeamTurn() || !validMoves(move.getStartPosition()).contains(move))
-            // If given a move for the wrong team (not their turn), throw an InvalidMoveException.
+        // If given a move for the wrong team (not their turn), throw an InvalidMoveException.
         {
             throw new InvalidMoveException();
         }
@@ -169,7 +169,7 @@ public class ChessGame
             board.removePiece(move.getStartPosition());
         }
 
-         setTeamTurn(team == WHITE ? BLACK : WHITE);
+        setTeamTurn(team == WHITE ? BLACK : WHITE);
     }
 
     public void undoMakeMove(ChessMove move, ChessPiece movingPiece, ChessPiece dead) //helper method (3 arguments)
@@ -248,7 +248,7 @@ public class ChessGame
             return false;
         }
 
-       //if in check, King can either block with other piece or move
+        //if in check, King can either block with other piece or move
         for (int i = 1; i <= 8; i++)
         {
             for (int j = 1; j <= 8; j++)
@@ -257,43 +257,43 @@ public class ChessGame
 
                 if (board.getPiece(pos) != null && board.getPiece(pos).getTeamColor() == teamColor)
                 {
-                    return isInCheckmateHelper(pos, teamColor);
+                    ArrayList<ChessMove> unfilteredMoves;
+                    unfilteredMoves = (ArrayList<ChessMove>) board.getPiece(pos).pieceMoves(board, pos);
+
+                    for (ChessMove move : unfilteredMoves)
+                    {
+                        ChessPiece movingPiece = board.getPiece(pos);
+                        ChessPiece dead = board.getPiece(move.getEndPosition());
+                        board.removePiece(pos);
+
+                        return isInCheckmateHelper(move, movingPiece, pos, teamColor, dead);
+                    }
                 }
             }
         }
         return true;
     }
 
-    public boolean isInCheckmateHelper(ChessPosition pos, TeamColor teamColor)
+    public boolean isInCheckmateHelper(ChessMove move, ChessPiece movingPiece, ChessPosition pos, TeamColor teamColor, ChessPiece dead)
     {
-        ArrayList<ChessMove> unfilteredMoves;
-        unfilteredMoves = (ArrayList<ChessMove>) board.getPiece(pos).pieceMoves(board, pos);
-
-        for (ChessMove move : unfilteredMoves)
+        if (move.getPromotionPiece() == null) //no pawn promote
         {
-            ChessPiece movingPiece = board.getPiece(pos);
-            ChessPiece dead = board.getPiece(move.getEndPosition());
-            board.removePiece(pos);
-
-            if (move.getPromotionPiece() == null) //no pawn promote
-            {
-                board.addPiece(move.getEndPosition(), movingPiece);
-            }
-
-            else //pawn promote
-            {
-                ChessPiece pie = new ChessPiece(board.getPiece(pos).getTeamColor(), move.getPromotionPiece());
-                board.addPiece(move.getEndPosition(), pie);
-            }
-
-            if (!isInCheck(teamColor))
-            {
-                undoMakeMove(move, movingPiece, dead);
-                return false;
-            }
-
-            undoMakeMove(move, movingPiece, dead);
+            board.addPiece(move.getEndPosition(), movingPiece);
         }
+
+        else //pawn promote
+        {
+            ChessPiece pie = new ChessPiece(board.getPiece(pos).getTeamColor(), move.getPromotionPiece());
+            board.addPiece(move.getEndPosition(), pie);
+        }
+
+        if (!isInCheck(teamColor))
+        {
+            undoMakeMove(move, movingPiece, dead);
+            return false;
+        }
+
+        undoMakeMove(move, movingPiece, dead);
         return true;
     }
 
@@ -342,6 +342,6 @@ public class ChessGame
      */
     public ChessBoard getBoard()
     {
-       return board;
+        return board;
     }
 }
