@@ -48,7 +48,7 @@ public class DataAccess
 
     public int createGame(String gameName) throws DataAccessException
     {
-        if (gameName == null || gameName.isEmpty())
+        if (gameName == null)
         {
             throw new DataAccessException("Game name can't be null / empty");
         }

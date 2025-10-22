@@ -35,11 +35,11 @@ public class Server
         server.exception(Exception.class, this::exceptionHandler);
     }
 
-    private void clearHandler(Context context) throws DataAccessException
+    private void clearHandler(Context context)
     {
         userService.clear();
         context.status(200);
-        context.json(new ClearResult());
+        context.result("{}");
     }
     
     private void registerHandler(Context context) 
@@ -49,7 +49,7 @@ public class Server
             RegisterRequest request = gson.fromJson(context.body(), RegisterRequest.class);
             RegisterResult result = userService.register(request);
             context.status(200);
-            context.json(result);
+            context.result(gson.toJson(result));
         } 
 
         catch (DataAccessException dae) 
@@ -66,7 +66,7 @@ public class Server
             LoginRequest request = gson.fromJson(context.body(), LoginRequest.class);
             LoginResult result = userService.login(request);
             context.status(200);
-            context.json(result);
+            context.result(gson.toJson(result));
         } 
         
         catch (DataAccessException dae) 
@@ -85,13 +85,13 @@ public class Server
             if (authToken == null) 
             {
                 context.status(401);
-                context.json(Map.of("message", "Error: unauthorized"));
+                context.result(gson.toJson(Map.of("message", "Error: unauthorized")));
                 return;
             }
             
             LogoutResult result = userService.logout(authToken);
             context.status(200);
-            context.json(result);
+            context.result("{}");
         } 
         
         catch (DataAccessException dae) 
@@ -108,13 +108,13 @@ public class Server
             if (authToken == null) 
             {
                 context.status(401);
-                context.json(Map.of("message", "Error: unauthorized"));
+                context.result(gson.toJson(Map.of("message", "Error: unauthorized")));
                 return;
             }
             
             ListGamesResult result = gameService.listGames(authToken);
             context.status(200);
-            context.json(result);
+            context.result(gson.toJson(result));
         } 
         
         catch (DataAccessException dae) 
@@ -131,14 +131,14 @@ public class Server
             if (authToken == null) 
             {
                 context.status(401);
-                context.json(Map.of("message", "Error: unauthorized"));
+                context.result(gson.toJson(Map.of("message", "Error: unauthorized")));
                 return;
             }
             
             CreateGameRequest request = gson.fromJson(context.body(), CreateGameRequest.class);
             CreateGameResult result = gameService.createGame(request, authToken);
             context.status(200);
-            context.json(result);
+            context.result(gson.toJson(result));
         } 
         
         catch (DataAccessException dae) 
@@ -155,14 +155,14 @@ public class Server
             if (authToken == null) 
             {
                 context.status(401);
-                context.json(Map.of("message", "Error: unauthorized"));
+                context.result(gson.toJson(Map.of("message", "Error: unauthorized")));
                 return;
             }
             
             JoinGameRequest request = gson.fromJson(context.body(), JoinGameRequest.class);
-            JoinGameResult result = gameService.joinGame(request, authToken);
+            gameService.joinGame(request, authToken);
             context.status(200);
-            context.json(result);
+            context.result("{}");
         } 
         
         catch (DataAccessException dae) 
@@ -195,13 +195,13 @@ public class Server
         {
             context.status(500);
         }
-        context.json(Map.of("message", message));
+        context.result(gson.toJson(Map.of("message", message)));
     }
 
     private void exceptionHandler(Exception exception, Context context)
     {
         context.status(500);
-        context.json(Map.of("message", "Error: " + exception.getMessage()));
+        context.result(gson.toJson(Map.of("message", "Error: " + exception.getMessage())));
     }
     
     public int run(int desiredPort)

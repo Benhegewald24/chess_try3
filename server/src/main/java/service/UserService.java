@@ -20,7 +20,7 @@ public class UserService
 
     public RegisterResult register(RegisterRequest request) throws DataAccessException
     {
-        if (request.username() == null || request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty())
+        if (request.username() == null || request.password() == null)
         {
             throw new DataAccessException("Error: bad request");
         }
