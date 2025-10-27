@@ -3,7 +3,6 @@ import chess.ChessGame;
 import model.UserData;
 import model.GameData;
 import model.AuthData;
-
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
