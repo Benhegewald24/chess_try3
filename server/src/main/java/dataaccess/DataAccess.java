@@ -3,6 +3,8 @@ import chess.ChessGame;
 import model.UserData;
 import model.GameData;
 import model.AuthData;
+
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
@@ -22,7 +24,7 @@ public class DataAccess
         gameIDCounter = 1;
     }
 
-    public void createUser(UserData user) throws DataAccessException
+    public void createUser(UserData user) throws Exception
     {
         if (user == null || user.username() == null)
         {
@@ -37,8 +39,7 @@ public class DataAccess
         dictOfUsers.put(user.username(), user);
     }
 
-    public UserData getUser(String username) throws DataAccessException
-    {
+    public UserData getUser(String username) throws DataAccessException, SQLException {
         if (username == null)
         {
             throw new DataAccessException("Username can't be null");

@@ -12,7 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DatabaseTests {
+public class DatabaseTests
+{
 
     private static final TestUser TEST_USER = new TestUser("ExistingUser", "existingUserPassword", "eu@mail.com");
 
@@ -24,7 +25,8 @@ public class DatabaseTests {
 
 
     @BeforeAll
-    public static void startServer() {
+    public static void startServer()
+    {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
@@ -33,12 +35,14 @@ public class DatabaseTests {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setUp()
+    {
         serverFacade.clear();
     }
 
     @AfterAll
-    static void stopServer() {
+    static void stopServer()
+    {
         server.stop();
     }
 
@@ -46,7 +50,8 @@ public class DatabaseTests {
     @Test
     @DisplayName("Persistence Test")
     @Order(1)
-    public void persistenceTest() {
+    public void persistenceTest()
+    {
         int initialRowCount = getDatabaseRows();
 
         TestAuthResult regResult = serverFacade.register(TEST_USER);
@@ -84,7 +89,8 @@ public class DatabaseTests {
     @Test
     @DisplayName("Bcrypt")
     @Order(2)
-    public void bcrypt() {
+    public void bcrypt()
+    {
         serverFacade.register(TEST_USER);
         Assertions.assertEquals(200, serverFacade.getStatusCode(), "Unable to register");
         executeForAllTables(this::checkTableForPassword);
@@ -93,7 +99,8 @@ public class DatabaseTests {
     @Test
     @DisplayName("Database Error Handling")
     @Order(3)
-    public void databaseErrorHandling() throws ReflectiveOperationException {
+    public void databaseErrorHandling() throws ReflectiveOperationException
+    {
         /*
         This test simulates an interruption in connecting to MySQL after the server is already running (it started with 
         MySQL working normally). If this happens, this should be considered an "Internal Server Error" and the response 
@@ -123,8 +130,10 @@ public class DatabaseTests {
                 () -> serverFacade.joinPlayer(new TestJoinRequest(ChessGame.TeamColor.WHITE, 1), UUID.randomUUID().toString())
         );
 
-        try {
-            for (Supplier<TestResult> operation : operations) {
+        try
+        {
+            for (Supplier<TestResult> operation : operations)
+            {
                 TestResult result = operation.get();
                 Assertions.assertEquals(500, serverFacade.getStatusCode(),
                         "Server response code was not 500 Internal Error");
@@ -132,20 +141,26 @@ public class DatabaseTests {
                 Assertions.assertTrue(result.getMessage().toLowerCase(Locale.ROOT).contains("error"),
                         "Error message didn't contain the word \"Error\"");
             }
-        } finally {
+        } finally
+        {
             Method loadFromResources = databaseManagerClass.getDeclaredMethod("loadPropertiesFromResources");
             loadFromResources.setAccessible(true);
             loadFromResources.invoke(obj);
         }
     }
 
-    private int getDatabaseRows() {
+    private int getDatabaseRows()
+    {
         AtomicInteger rows = new AtomicInteger();
-        executeForAllTables((tableName, connection) -> {
-            try (var statement = connection.createStatement()) {
+        executeForAllTables((tableName, connection) ->
+        {
+            try (var statement = connection.createStatement())
+            {
                 var sql = "SELECT count(*) FROM " + tableName;
-                try (var resultSet = statement.executeQuery(sql)) {
-                    if (resultSet.next()) {
+                try (var resultSet = statement.executeQuery(sql))
+                {
+                    if (resultSet.next())
+                    {
                         rows.addAndGet(resultSet.getInt(1));
                     }
                 }
@@ -155,13 +170,17 @@ public class DatabaseTests {
         return rows.get();
     }
 
-    private void checkTableForPassword(String table, Connection connection) throws SQLException {
+    private void checkTableForPassword(String table, Connection connection) throws SQLException
+    {
         String sql = "SELECT * FROM " + table;
-        try (Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery(sql)) {
+        try (Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery(sql))
+        {
             ResultSetMetaData rsmd = rs.getMetaData();
             int columns = rsmd.getColumnCount();
-            while (rs.next()) {
-                for (int i = 1; i <= columns; i++) {
+            while (rs.next())
+            {
+                for (int i = 1; i <= columns; i++)
+                {
                     String value = rs.getString(i);
                     Assertions.assertFalse(value.contains(TEST_USER.getPassword()),
                             "Found clear text password in database");
@@ -170,25 +189,33 @@ public class DatabaseTests {
         }
     }
 
-    private void executeForAllTables(TableAction tableAction) {
+    private void executeForAllTables(TableAction tableAction)
+    {
         String sql = """
                     SELECT table_name
                     FROM information_schema.tables
                     WHERE table_schema = DATABASE();
                 """;
 
-        try (Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
-            try (var resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
+        try (Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql))
+        {
+            try (var resultSet = preparedStatement.executeQuery())
+            {
+                while (resultSet.next())
+                {
                     tableAction.execute(resultSet.getString(1), conn);
                 }
             }
-        } catch (ReflectiveOperationException | SQLException e) {
+        }
+
+        catch (ReflectiveOperationException | SQLException e)
+        {
             Assertions.fail(e.getMessage(), e);
         }
     }
 
-    private Connection getConnection() throws ReflectiveOperationException {
+    private Connection getConnection() throws ReflectiveOperationException
+    {
         Class<?> clazz = findDatabaseManager();
         Method getConnectionMethod = clazz.getDeclaredMethod("getConnection");
         getConnectionMethod.setAccessible(true);
@@ -197,18 +224,23 @@ public class DatabaseTests {
         return (Connection) getConnectionMethod.invoke(obj);
     }
 
-    private Class<?> findDatabaseManager() throws ClassNotFoundException {
-        if(databaseManagerClass != null) {
+    private Class<?> findDatabaseManager() throws ClassNotFoundException
+    {
+        if(databaseManagerClass != null)
+        {
             return databaseManagerClass;
         }
 
-        for (Package p : getClass().getClassLoader().getDefinedPackages()) {
-            try {
+        for (Package p : getClass().getClassLoader().getDefinedPackages())
+        {
+            try
+            {
                 Class<?> clazz = Class.forName(p.getName() + ".DatabaseManager");
                 clazz.getDeclaredMethod("getConnection");
                 databaseManagerClass = clazz;
                 return clazz;
-            } catch (ReflectiveOperationException ignored) {}
+            }
+            catch (ReflectiveOperationException ignored) {}
         }
         throw new ClassNotFoundException("Unable to load database in order to verify persistence. " +
                 "Are you using DatabaseManager to set your credentials? " +
@@ -216,8 +248,8 @@ public class DatabaseTests {
     }
 
     @FunctionalInterface
-    private interface TableAction {
+    private interface TableAction
+    {
         void execute(String tableName, Connection connection) throws SQLException;
     }
-
 }
