@@ -38,7 +38,8 @@ public class DataAccess
         dictOfUsers.put(user.username(), user);
     }
 
-    public UserData getUser(String username) throws DataAccessException, SQLException {
+    public UserData getUser(String username) throws DataAccessException, SQLException
+    {
         if (username == null)
         {
             throw new DataAccessException("Username can't be null");

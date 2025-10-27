@@ -5,12 +5,14 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
+
+import java.sql.SQLException;
 import java.util.UUID;
+import org.mindrot.jbcrypt.*;
 
 
 public class UserService
 {
-    
     private final DataAccess dataAccess;
     
     public UserService(DataAccess dataAccess)
@@ -18,11 +20,11 @@ public class UserService
         this.dataAccess = dataAccess;
     }
 
-    public RegisterResult register(RegisterRequest request) throws DataAccessException
+    public RegisterResult register(RegisterRequest request) throws Exception
     {
         if (request.username() == null || request.password() == null)
         {
-            throw new DataAccessException("Error: bad request");
+            throw new Exception("Error: bad request");
         }
 
         UserData existingUser = dataAccess.getUser(request.username());
@@ -31,7 +33,8 @@ public class UserService
             throw new DataAccessException("Error: already taken");
         }
 
-        UserData newUser = new UserData(request.username(), request.password(), request.email());
+        var hashPwd = BCrypt.hashpw(existingUser.password(), BCrypt.gensalt());
+        UserData newUser = new UserData(request.username(), hashPwd, request.email());
         dataAccess.createUser(newUser);
 
         String authToken = UUID.randomUUID().toString();
@@ -41,7 +44,7 @@ public class UserService
         return new RegisterResult(request.username(), authToken);
     }
 
-    public LoginResult login(LoginRequest request) throws DataAccessException
+    public LoginResult login(LoginRequest request) throws DataAccessException, SQLException
     {
         if (request.username() == null || request.password() == null)
         {

@@ -17,6 +17,11 @@ public class DatabaseManager
         loadPropertiesFromResources();
     }
 
+    //Ben's Note:
+    //add this to the configure function
+
+    //DatabaseManager.createDatabase();
+
     /**
      * Creates the database if it does not already exist.
      */
@@ -51,7 +56,6 @@ public class DatabaseManager
     {
         try
         {
-            //do not wrap the following line with a try-with-resources
             var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
             conn.setCatalog(databaseName);
             return conn;
