@@ -18,6 +18,7 @@ public class DatabaseManager
     }
 
     //Ben's Note:
+    //start HERE TOMORROW!
     //add this to the configure function
 
     //DatabaseManager.createDatabase();
