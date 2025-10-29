@@ -1,5 +1,8 @@
 package dataaccess;
+import com.google.gson.Gson;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.sql.SQLException;
 
 public class MySqlDataAccess extends DataAccess
@@ -40,7 +43,8 @@ public class MySqlDataAccess extends DataAccess
 
     public void clear()
     {
-        String[] statements = {
+        String[] statements =
+                {
                 "TRUNCATE user",
                 "TRUNCATE game",
                 "TRUNCATE auth"
@@ -59,9 +63,7 @@ public class MySqlDataAccess extends DataAccess
         {
             throw new RuntimeException(e);
         }
-
     }
-
 
     public void createUser(UserData user) throws Exception
     {
@@ -69,16 +71,19 @@ public class MySqlDataAccess extends DataAccess
         {
             throw new DataAccessException("Invalid username");
         }
-
+        
         try (var connection = DatabaseManager.getConnection())
         {
             var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+            String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+         
             try (var preparedStatement = connection.prepareStatement(statement))
             {
+                preparedStatement.setString(1, user.username());
+                preparedStatement.setString(2, hashedPassword);
+                preparedStatement.setString(3, user.email());
                 preparedStatement.executeUpdate();
             }
-//            var json = new Gson().toJson(user);
-//            var id = executeUpdate(statement, user.username(), user.password(), user.email());
         }
         catch (Exception e)
         {
@@ -95,10 +100,10 @@ public class MySqlDataAccess extends DataAccess
 
         try (var connection = DatabaseManager.getConnection())
         {
-            var sql_instructions = "SELECT username, password, email FROM user WHERE username=?";
-            try (var prep = connection.prepareStatement(sql_instructions))
+            var statement = "SELECT username, password, email FROM user WHERE username=?";
+            try (var preparedStatement = connection.prepareStatement(statement))
             {
-                try(var rs = prep.executeQuery())
+                try(var rs = preparedStatement.executeQuery())
                 {
                     if (rs.next())
                     {
