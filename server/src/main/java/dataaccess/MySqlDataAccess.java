@@ -7,6 +7,7 @@ public class MySqlDataAccess extends DataAccess
     public MySqlDataAccess() throws DataAccessException
     {
         configureDatabase();
+        createTables();
     }
 
     private void configureDatabase() throws DataAccessException
@@ -20,9 +21,9 @@ public class MySqlDataAccess extends DataAccess
         {
             String[] createStatements =
                     {
-                        "CREATE TABLE IF NOT EXISTS user ( 'username' varchar(256) NOT NULL, 'password' varchar(256) NOT NULL, 'email' varchar(256), PRIMARY KEY ('username')",
-                        "CREATE TABLE IF NOT EXISTS game ( 'gameID' int NOT NULL AUTO_INCREMENT, 'whiteUsername' varchar(256), 'blackUsername' varchar(256), 'gameName' varchar(256), 'game' varchar(256), PRIMARY KEY ('gameID')",
-                        "CREATE TABLE IF NOT EXISTS auth ( 'username' varchar(256) NOT NULL, 'authToken' varchar(256), PRIMARY KEY ('username')"
+                        "CREATE TABLE IF NOT EXISTS user ( `username` varchar(256) NOT NULL, `password` varchar(256) NOT NULL, `email` varchar(256) NOT NULL, PRIMARY KEY (`username`))",
+                        "CREATE TABLE IF NOT EXISTS game ( `gameID` int NOT NULL AUTO_INCREMENT, `whiteUsername` varchar(256), `blackUsername` varchar(256), `gameName` varchar(256), `game` varchar(256), PRIMARY KEY (`gameID`))",
+                        "CREATE TABLE IF NOT EXISTS auth ( `username` varchar(256) NOT NULL, `authToken` varchar(256), PRIMARY KEY (`authToken`))"
                     };
             for (var statement : createStatements)
             {
