@@ -4,9 +4,18 @@ import java.sql.SQLException;
 
 public class MySqlDataAccess extends DataAccess
 {
-    private void createTables() throws DataAccessException, SQLException
+    public MySqlDataAccess() throws DataAccessException
+    {
+        configureDatabase();
+    }
+
+    private void configureDatabase() throws DataAccessException
     {
         DatabaseManager.createDatabase();
+    }
+
+    private void createTables() throws DataAccessException, SQLException
+    {
         try (var connection = DatabaseManager.getConnection())
         {
             String[] createStatements =
@@ -64,17 +73,16 @@ public class MySqlDataAccess extends DataAccess
             var sql_instructions = "SELECT username, password, email FROM user WHERE username=?";
             try (var prep = connection.prepareStatement(sql_instructions))
             {
-                prep.setInt(1, username);
                 try(var rs = prep.executeQuery())
                 {
                     if (rs.next())
                     {
-                        return idk;
+                        return new UserData(username, "idk", "idk");
                     }
                 }
             }
         }
-        return dictOfUsers.get(username);
+        return null;
     }
 
 //    public int createGame(String gameName) throws DataAccessException

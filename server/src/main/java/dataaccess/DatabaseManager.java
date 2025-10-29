@@ -17,12 +17,6 @@ public class DatabaseManager
         loadPropertiesFromResources();
     }
 
-    //Ben's Note:
-    //start HERE TOMORROW!
-    //add this to the configure function
-
-    //DatabaseManager.createDatabase();
-
     /**
      * Creates the database if it does not already exist.
      */

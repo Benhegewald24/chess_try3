@@ -7,6 +7,8 @@ import requests.*;
 import dataaccess.DataAccessException;
 import io.javalin.*;
 import io.javalin.http.Context;
+
+import java.sql.SQLException;
 import java.util.Map;
 import com.google.gson.Gson;
 
@@ -55,6 +57,8 @@ public class Server
         catch (DataAccessException dae) 
         {
             handleDataAccessException(context, dae);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
     
@@ -72,6 +76,10 @@ public class Server
         catch (DataAccessException dae) 
         {
             handleDataAccessException(context, dae);
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
         }
     }
     
