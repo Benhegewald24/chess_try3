@@ -4,8 +4,7 @@ import java.sql.SQLException;
 
 public class MySqlDataAccess extends DataAccess
 {
-    public MySqlDataAccess() throws DataAccessException
-    {
+    public MySqlDataAccess() throws DataAccessException, SQLException {
         configureDatabase();
         createTables();
     }
@@ -22,7 +21,7 @@ public class MySqlDataAccess extends DataAccess
             String[] createStatements =
                     {
                         "CREATE TABLE IF NOT EXISTS user ( `username` varchar(256) NOT NULL, `password` varchar(256) NOT NULL, `email` varchar(256) NOT NULL, PRIMARY KEY (`username`))",
-                        "CREATE TABLE IF NOT EXISTS game ( `gameID` int NOT NULL AUTO_INCREMENT, `whiteUsername` varchar(256), `blackUsername` varchar(256), `gameName` varchar(256), `game` varchar(256), PRIMARY KEY (`gameID`))",
+                        "CREATE TABLE IF NOT EXISTS game ( `gameID` INT NOT NULL AUTO_INCREMENT, `whiteUsername` VARCHAR(256), `blackUsername` VARCHAR(256), `gameName` VARCHAR(256) NOT NULL, `gameJSON` TEXT NOT NULL, PRIMARY KEY (`gameID`))",
                         "CREATE TABLE IF NOT EXISTS auth ( `username` varchar(256) NOT NULL, `authToken` varchar(256), PRIMARY KEY (`authToken`))"
                     };
             for (var statement : createStatements)
@@ -38,6 +37,31 @@ public class MySqlDataAccess extends DataAccess
             throw new SQLException(mse.getMessage());
         }
     }
+
+    public void clear()
+    {
+        String[] statements = {
+                "TRUNCATE user",
+                "TRUNCATE game",
+                "TRUNCATE auth"
+        };
+        try (var connection = DatabaseManager.getConnection())
+        {
+            for (var statement : statements)
+            {
+                try (var preparedStatement = connection.prepareStatement(statement))
+                {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        }
+        catch (SQLException | DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 
     public void createUser(UserData user) throws Exception
     {
