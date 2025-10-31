@@ -71,12 +71,12 @@ public class MySqlDataAccess extends DataAccess
         {
             throw new DataAccessException("Invalid username");
         }
-        
+
         try (var connection = DatabaseManager.getConnection())
         {
             var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
             String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
-         
+
             try (var preparedStatement = connection.prepareStatement(statement))
             {
                 preparedStatement.setString(1, user.username());
@@ -103,11 +103,12 @@ public class MySqlDataAccess extends DataAccess
             var statement = "SELECT username, password, email FROM user WHERE username=?";
             try (var preparedStatement = connection.prepareStatement(statement))
             {
-                try(var rs = preparedStatement.executeQuery())
+                preparedStatement.setString(1, username);
+                try(var result = preparedStatement.executeQuery())
                 {
-                    if (rs.next())
+                    if (result.next())
                     {
-                        return new UserData(username, "idk", "idk");
+                        return new UserData(result.getString("username"), result.getString("password"), result.getString("email"));
                     }
                 }
             }
