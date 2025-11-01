@@ -212,5 +212,18 @@ public class MySqlDataAccess extends DataAccess
             throw new DataAccessException("AuthToken can't be null");
         }
 
+        try (var connection = DatabaseManager.getConnection())
+        {
+            var statement = "DELETE FROM auth WHERE authToken=?";
+            try (var preparedStatement = connection.prepareStatement(statement))
+            {
+                preparedStatement.setString(1, authToken);
+                preparedStatement.executeUpdate();
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
