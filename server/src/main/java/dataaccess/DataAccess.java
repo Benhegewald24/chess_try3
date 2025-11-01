@@ -82,7 +82,7 @@ public class DataAccess
         dictOfGames.put(game.gameID(), game);
     }
 
-    public void createAuth(AuthData auth) throws DataAccessException
+    public void createAuth(AuthData auth) throws Exception
     {
         if (auth == null || auth.authToken() == null)
         {

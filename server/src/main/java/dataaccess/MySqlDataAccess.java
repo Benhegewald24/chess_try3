@@ -1,5 +1,6 @@
 package dataaccess;
 import com.google.gson.Gson;
+import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -150,31 +151,66 @@ public class MySqlDataAccess extends DataAccess
 //        }
 //        dictOfGames.put(game.gameID(), game);
 //    }
-//
-//    public void createAuth(AuthData auth) throws DataAccessException
-//    {
-//        if (auth == null || auth.authToken() == null)
-//        {
-//            throw new DataAccessException("Auth / authToken can't be null");
-//        }
-//        dictOfAuthTokens.put(auth.authToken(), auth);
-//    }
-//
-//    public AuthData getAuth(String authToken) throws DataAccessException
-//    {
-//        if (authToken == null)
-//        {
-//            throw new DataAccessException("AuthToken can't be null");
-//        }
-//        return dictOfAuthTokens.get(authToken);
-//    }
-//
-//    public void deleteAuth(String authToken) throws DataAccessException
-//    {
-//        if (authToken == null)
-//        {
-//            throw new DataAccessException("AuthToken can't be null");
-//        }
-//        dictOfAuthTokens.remove(authToken);
-//    }
+
+    public void createAuth(AuthData auth) throws Exception
+    {
+        if (auth == null || auth.authToken() == null)
+        {
+            throw new DataAccessException("Auth / authToken can't be null");
+        }
+
+        try (var connection = DatabaseManager.getConnection())
+        {
+            var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+
+            try (var preparedStatement = connection.prepareStatement(statement))
+            {
+                preparedStatement.setString(1, auth.authToken());
+                preparedStatement.setString(2, auth.username());
+                preparedStatement.executeUpdate();
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e);
+        }
+    }
+
+    public AuthData getAuth(String authToken) throws DataAccessException
+    {
+        if (authToken == null)
+        {
+            throw new DataAccessException("AuthToken can't be null");
+        }
+        try (var connection = DatabaseManager.getConnection())
+        {
+            var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
+            try (var preparedStatement = connection.prepareStatement(statement))
+            {
+                preparedStatement.setString(1, authToken);
+                try(var result = preparedStatement.executeQuery())
+                {
+                    if (result.next())
+                    {
+                        return new AuthData(result.getString("authToken"), result.getString("username"));
+                    }
+                }
+
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public void deleteAuth(String authToken) throws DataAccessException
+    {
+        if (authToken == null)
+        {
+            throw new DataAccessException("AuthToken can't be null");
+        }
+
+    }
 }
