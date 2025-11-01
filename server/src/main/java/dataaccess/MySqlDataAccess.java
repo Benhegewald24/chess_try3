@@ -1,4 +1,5 @@
 package dataaccess;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.UserData;
@@ -8,7 +9,8 @@ import java.sql.SQLException;
 
 public class MySqlDataAccess extends DataAccess
 {
-    public MySqlDataAccess() throws DataAccessException, SQLException {
+    public MySqlDataAccess() throws DataAccessException, SQLException
+    {
         configureDatabase();
         createTables();
     }
@@ -117,22 +119,22 @@ public class MySqlDataAccess extends DataAccess
         return null;
     }
 
-//    public int createGame(String gameName) throws DataAccessException
-//    {
-//        if (gameName == null)
-//        {
-//            throw new DataAccessException("Game name can't be null / empty");
-//        }
-//
-//        int gameId = gameIDCounter++;
-//        ChessGame newGame = new ChessGame();
-//        GameData gameData = new GameData(gameId, null, null, gameName, newGame);
-//        //Inputs for a gameData object: (int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game)
-//
-//        dictOfGames.put(gameId, gameData);
-//        return gameId;
-//    }
-//
+    public int createGame(String gameName) throws DataAccessException
+    {
+        if (gameName == null)
+        {
+            throw new DataAccessException("Game name can't be null / empty");
+        }
+
+        ChessGame newGame = new ChessGame();
+
+
+        GameData gameData = new GameData(gameId, null, null, gameName, newGame);
+        //Inputs for a gameData object: (int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game)
+
+        return gameId;
+    }
+
 //    public GameData getGame(int gameID)
 //    {
 //        return dictOfGames.get(gameID);
@@ -195,12 +197,11 @@ public class MySqlDataAccess extends DataAccess
                         return new AuthData(result.getString("authToken"), result.getString("username"));
                     }
                 }
-
             }
         }
         catch (SQLException e)
         {
-            throw new RuntimeException(e);
+            throw new DataAccessException("authToken delete unsuccessful: " + e.getMessage());
         }
         return null;
     }
@@ -223,7 +224,7 @@ public class MySqlDataAccess extends DataAccess
         }
         catch (SQLException e)
         {
-            throw new RuntimeException(e);
+            throw new DataAccessException("authToken delete unsuccessful: " + e.getMessage());
         }
     }
 }

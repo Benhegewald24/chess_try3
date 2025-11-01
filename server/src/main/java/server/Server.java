@@ -54,14 +54,15 @@ public class Server
             context.result(gson.toJson(result));
         } 
 
-        catch (DataAccessException dae) 
+        catch (DataAccessException e)
         {
-            handleDataAccessException(context, dae);
-        } catch (Exception e) {
+            handleDataAccessException(context, e);
+        }
+        catch (Exception e)
+        {
             throw new RuntimeException(e);
         }
     }
-    
    
     private void loginHandler(Context context) 
     {
@@ -73,16 +74,15 @@ public class Server
             context.result(gson.toJson(result));
         } 
         
-        catch (DataAccessException dae) 
+        catch (DataAccessException e)
         {
-            handleDataAccessException(context, dae);
+            handleDataAccessException(context, e);
         }
         catch (SQLException e)
         {
             throw new RuntimeException(e);
         }
     }
-    
   
     private void logoutHandler(Context context) 
     {
@@ -97,14 +97,13 @@ public class Server
                 return;
             }
             
-            LogoutResult result = userService.logout(authToken);
             context.status(200);
             context.result("{}");
-        } 
-        
-        catch (DataAccessException dae) 
+        }
+
+        catch (Exception e)
         {
-            handleDataAccessException(context, dae);
+            throw new RuntimeException(e);
         }
     }
     
@@ -149,9 +148,9 @@ public class Server
             context.result(gson.toJson(result));
         } 
         
-        catch (DataAccessException dae) 
+        catch (DataAccessException e)
         {
-            handleDataAccessException(context, dae);
+            handleDataAccessException(context, e);
         }
     }
     
@@ -173,16 +172,15 @@ public class Server
             context.result("{}");
         } 
         
-        catch (DataAccessException dae) 
+        catch (DataAccessException e)
         {
-            handleDataAccessException(context, dae);
+            handleDataAccessException(context, e);
         }
     }
-    
 
-    private void handleDataAccessException(Context context, DataAccessException dae) 
+    private void handleDataAccessException(Context context, DataAccessException e)
     {
-        String message = dae.getMessage();
+        String message = e.getMessage();
         
         if (message.contains("bad request")) 
         {
