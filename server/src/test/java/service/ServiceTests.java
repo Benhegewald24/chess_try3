@@ -17,7 +17,7 @@ class ServiceTests
     private String validAuthToken;
     
     @BeforeEach
-    void setUp() throws DataAccessException 
+    void setUp() throws Exception
     {
         dataAccess = new DataAccess();
         userService = new UserService(dataAccess);
@@ -29,7 +29,7 @@ class ServiceTests
     }
     
     @Test
-    void clearPositiveTest() throws DataAccessException 
+    void clearPositiveTest() throws Exception
     {
         RegisterRequest registerRequest = new RegisterRequest("user1", "pass1", "email1@test.com");
         userService.register(registerRequest);
@@ -46,7 +46,7 @@ class ServiceTests
     }
     
     @Test
-    void registerPositiveTest() throws DataAccessException 
+    void registerPositiveTest() throws Exception
     {
         dataAccess.clear();
         userService = new UserService(dataAccess);
@@ -69,7 +69,7 @@ class ServiceTests
             userService.register(request);
             fail("Expected DataAccessException to be thrown");
         } 
-        catch (DataAccessException dae)
+        catch (Exception dae)
         {
             assertTrue(dae.getMessage().contains("already taken"));
         }
@@ -84,14 +84,14 @@ class ServiceTests
             userService.register(request);
             fail("Expected DataAccessException to be thrown");
         } 
-        catch (DataAccessException dae)
+        catch (Exception dae)
         {
             assertTrue(dae.getMessage().contains("bad request"));
         }
     }
     
     @Test
-    void loginPositiveTest() throws DataAccessException 
+    void loginPositiveTest() throws Exception
     {
         LoginRequest loginRequest = new LoginRequest("JohnSmith", "password");
         LoginResult result = userService.login(loginRequest);
@@ -111,7 +111,7 @@ class ServiceTests
             userService.login(loginRequest);
             fail("Expected DataAccessException to be thrown");
         } 
-        catch (DataAccessException dae)
+        catch (Exception dae)
         {
             assertTrue(dae.getMessage().contains("unauthorized"));
         }
@@ -126,7 +126,7 @@ class ServiceTests
             userService.login(loginRequest);
             fail("Expected DataAccessException to be thrown");
         } 
-        catch (DataAccessException dae)
+        catch (Exception dae)
         {
             assertTrue(dae.getMessage().contains("unauthorized"));
         }
@@ -255,7 +255,7 @@ class ServiceTests
     }
     
     @Test
-    void joinGameNegativeAlreadyTakenTest() throws DataAccessException 
+    void joinGameNegativeAlreadyTakenTest() throws Exception
     {
         CreateGameResult createResult = gameService.createGame(new CreateGameRequest("TestGame"), validAuthToken);
         int gameId = createResult.gameID();

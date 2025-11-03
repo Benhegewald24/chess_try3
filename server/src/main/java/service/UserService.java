@@ -44,8 +44,7 @@ public class UserService
         return new RegisterResult(request.username(), authToken);
     }
 
-    public LoginResult login(LoginRequest request) throws DataAccessException, SQLException
-    {
+    public LoginResult login(LoginRequest request) throws Exception {
         if (request.username() == null || request.password() == null)
         {
             throw new DataAccessException("Error: bad request");

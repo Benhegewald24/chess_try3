@@ -81,6 +81,8 @@ public class Server
         catch (SQLException e)
         {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
   
