@@ -14,7 +14,7 @@ import org.mindrot.jbcrypt.*;
 public class UserService
 {
     private final DataAccess dataAccess;
-    
+
     public UserService(DataAccess dataAccess)
     {
         this.dataAccess = dataAccess;
@@ -24,23 +24,23 @@ public class UserService
     {
         if (request.username() == null || request.password() == null)
         {
-            throw new Exception("Error: bad request");
+            throw new DataAccessException("Error: bad request");
         }
 
         UserData existingUser = dataAccess.getUser(request.username());
+
         if (existingUser != null)
         {
             throw new DataAccessException("Error: already taken");
         }
 
-        var hashPwd = BCrypt.hashpw(existingUser.password(), BCrypt.gensalt());
-        UserData newUser = new UserData(request.username(), hashPwd, request.email());
+        UserData newUser = new UserData(request.username(), request.password(), request.email());
         dataAccess.createUser(newUser);
 
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken, request.username());
         dataAccess.createAuth(authData);
-        
+
         return new RegisterResult(request.username(), authToken);
     }
 
@@ -56,7 +56,7 @@ public class UserService
             throw new DataAccessException("Error: unauthorized");
         }
 
-        if (!request.password().equals(user.password()))
+        if (!BCrypt.checkpw(request.password(), user.password()))
         {
             throw new DataAccessException("Error: unauthorized");
         }
@@ -64,10 +64,10 @@ public class UserService
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken, request.username());
         dataAccess.createAuth(authData);
-        
+
         return new LoginResult(user.username(), authToken);
     }
-    
+
     public LogoutResult logout(String authToken) throws DataAccessException
     {
         AuthData authData = dataAccess.getAuth(authToken);

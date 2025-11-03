@@ -13,92 +13,92 @@ import requests.JoinGameRequest;
 public class GameService
 {
     private final DataAccess dataAccess;
-    
-    public GameService(DataAccess dataAccess) 
+
+    public GameService(DataAccess dataAccess)
     {
         this.dataAccess = dataAccess;
     }
-    
-    public ListGamesResult listGames(String authToken) throws DataAccessException 
+
+    public ListGamesResult listGames(String authToken) throws DataAccessException
     {
         AuthData authData = dataAccess.getAuth(authToken);
-        if (authData == null) 
+        if (authData == null)
         {
             throw new DataAccessException("Error: unauthorized");
         }
-        
+
         return new ListGamesResult(dataAccess.listGames());
     }
-    
-  
-    public CreateGameResult createGame(CreateGameRequest request, String authToken) throws DataAccessException 
+
+
+    public CreateGameResult createGame(CreateGameRequest request, String authToken) throws DataAccessException
     {
         AuthData authData = dataAccess.getAuth(authToken);
-        if (authData == null) 
+        if (authData == null)
         {
             throw new DataAccessException("Error: unauthorized");
         }
-        
-        if (request.gameName() == null || request.gameName().isEmpty()) 
+
+        if (request.gameName() == null || request.gameName().isEmpty())
         {
             throw new DataAccessException("Error: bad request");
         }
-        
+
         int gameId = dataAccess.createGame(request.gameName());
-        
+
         return new CreateGameResult(gameId);
     }
-    
 
-    public JoinGameResult joinGame(JoinGameRequest request, String authToken) throws DataAccessException 
+
+    public JoinGameResult joinGame(JoinGameRequest request, String authToken) throws DataAccessException
     {
         AuthData authData = dataAccess.getAuth(authToken);
-        if (authData == null) 
+        if (authData == null)
         {
             throw new DataAccessException("Error: unauthorized");
         }
-        
-        if (request.playerColor() == null) 
+
+        if (request.playerColor() == null)
         {
             throw new DataAccessException("Error: bad request");
         }
-        
+
         GameData game = dataAccess.getGame(request.gameID());
 
         if (game == null)
         {
             throw new DataAccessException("Error: bad request");
         }
-        
+
         String playerColor = request.playerColor();
 
         if (playerColor.equals("WHITE"))
         {
-            if (game.whiteUsername() != null) 
+            if (game.whiteUsername() != null && !game.whiteUsername().isEmpty())
             {
                 throw new DataAccessException("Error: already taken");
             }
 
             GameData updatedGame = new GameData(game.gameID(), authData.username(), game.blackUsername(), game.gameName(), game.game());
             dataAccess.updateGame(updatedGame);
-        } 
+        }
 
         else if (playerColor.equals("BLACK"))
         {
-            if (game.blackUsername() != null) 
+            if (game.blackUsername() != null && !game.blackUsername().isEmpty())
             {
                 throw new DataAccessException("Error: already taken");
             }
 
             GameData updatedGame = new GameData(game.gameID(), game.whiteUsername(), authData.username(), game.gameName(),game.game());
             dataAccess.updateGame(updatedGame);
-        } 
-        
-        else 
+        }
+
+        else
         {
             throw new DataAccessException("Error: bad request");
         }
-        
+
         return new JoinGameResult();
     }
 }

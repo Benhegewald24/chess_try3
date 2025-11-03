@@ -28,9 +28,12 @@ public class MySqlDataAccess extends DataAccess
         {
             String[] createStatements =
                     {
-                        "CREATE TABLE IF NOT EXISTS user ( `username` varchar(256) NOT NULL, `password` varchar(256) NOT NULL, `email` varchar(256) NOT NULL, PRIMARY KEY (`username`))",
-                        "CREATE TABLE IF NOT EXISTS game ( `gameID` INT NOT NULL AUTO_INCREMENT, `whiteUsername` VARCHAR(256), `blackUsername` VARCHAR(256), `gameName` VARCHAR(256) NOT NULL, `gameJSON` TEXT NOT NULL, PRIMARY KEY (`gameID`))",
-                        "CREATE TABLE IF NOT EXISTS auth ( `authToken` varchar(256) NOT NULL, `username` varchar(256) NOT NULL, PRIMARY KEY (`authToken`))"
+                        "CREATE TABLE IF NOT EXISTS user (`username` varchar(256) NOT NULL, `password` varchar(256) NOT NULL," +
+                                " `email` varchar(256) NOT NULL, PRIMARY KEY (`username`))",
+                        "CREATE TABLE IF NOT EXISTS game (`gameID` INT NOT NULL AUTO_INCREMENT, `whiteUsername` VARCHAR(256)," +
+                                " `blackUsername` VARCHAR(256), `gameName` VARCHAR(256) NOT NULL, `gameJSON` TEXT NOT NULL, PRIMARY KEY (`gameID`))",
+                        "CREATE TABLE IF NOT EXISTS auth (`authToken` varchar(256) NOT NULL, `username` varchar(256) NOT NULL," +
+                                " PRIMARY KEY (`authToken`))"
                     };
             for (var statement : createStatements)
             {
@@ -75,6 +78,11 @@ public class MySqlDataAccess extends DataAccess
         if (user == null || user.username() == null)
         {
             throw new DataAccessException("Invalid username");
+        }
+
+        if (user.password() == null)
+        {
+            throw new DataAccessException("Error: bad request");
         }
 
         try
@@ -147,8 +155,8 @@ public class MySqlDataAccess extends DataAccess
             var statement = "INSERT INTO game (whiteUsername, blackUsername, gameName, gameJSON) VALUES (?, ?, ?, ?)";
             try (var preparedStatement = connection.prepareStatement(statement, java.sql.Statement.RETURN_GENERATED_KEYS))
             {
-                preparedStatement.setString(1, "");
-                preparedStatement.setString(2, "");
+                preparedStatement.setString(1, null);
+                preparedStatement.setString(2, null);
                 preparedStatement.setString(3, gameName);
                 preparedStatement.setString(4, newGameJSON);
                 preparedStatement.executeUpdate();
@@ -188,7 +196,11 @@ public class MySqlDataAccess extends DataAccess
                         String gameJSON = result.getString("gameJSON");
                         Gson gson = new Gson();
                         ChessGame game = gson.fromJson(gameJSON, ChessGame.class);
-                        return new GameData(result.getInt("gameID"), result.getString("whiteUsername"), result.getString("blackUsername"), result.getString("gameName"), game);
+
+                        String whiteUsername = result.getString("whiteUsername");
+                        String blackUsername = result.getString("blackUsername");
+
+                        return new GameData(result.getInt("gameID"), whiteUsername, blackUsername, result.getString("gameName"), game);
                     }
                 }
             }
@@ -215,8 +227,12 @@ public class MySqlDataAccess extends DataAccess
                     {
                         String gameJSON = result.getString("gameJSON");
                         ChessGame game = gson.fromJson(gameJSON, ChessGame.class);
+
+                        String whiteUsername = result.getString("whiteUsername");
+                        String blackUsername = result.getString("blackUsername");
+
                         GameData gameData = new GameData(result.getInt("gameID"),
-                                result.getString("whiteUsername"), result.getString("blackUsername"),
+                                whiteUsername, blackUsername,
                                 result.getString("gameName"), game);
                         games.add(gameData);
                     }
@@ -245,8 +261,11 @@ public class MySqlDataAccess extends DataAccess
             var statement = "UPDATE game SET whiteUsername=?, blackUsername=?, gameName=?, gameJSON=? WHERE gameID=?";
             try (var preparedStatement = connection.prepareStatement(statement))
             {
-                preparedStatement.setString(1, game.whiteUsername());
-                preparedStatement.setString(2, game.blackUsername());
+                String whiteUsername = game.whiteUsername();
+                String blackUsername = game.blackUsername();
+
+                preparedStatement.setString(1, whiteUsername);
+                preparedStatement.setString(2, blackUsername);
                 preparedStatement.setString(3, game.gameName());
                 preparedStatement.setString(4, gameJSON);
                 preparedStatement.setInt(5, game.gameID());

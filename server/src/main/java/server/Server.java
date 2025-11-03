@@ -1,13 +1,12 @@
 package server;
 import service.UserService;
 import service.GameService;
-import dataaccess.DataAccess;
+import dataaccess.MySqlDataAccess;
 import results.*;
 import requests.*;
 import dataaccess.DataAccessException;
 import io.javalin.*;
 import io.javalin.http.Context;
-
 import java.sql.SQLException;
 import java.util.Map;
 import com.google.gson.Gson;
@@ -18,10 +17,19 @@ public class Server
     private final UserService userService;
     private final GameService gameService;
     private final Gson gson;
-    
+
     public Server()
     {
-        var dataAccess = new DataAccess();
+        MySqlDataAccess dataAccess;
+        try
+        {
+            dataAccess = new MySqlDataAccess();
+        }
+        catch (DataAccessException | SQLException e)
+        {
+            throw new RuntimeException("Failed to initialize database");
+        }
+
         userService = new UserService(dataAccess);
         gameService = new GameService(dataAccess);
         gson = new Gson();
@@ -39,12 +47,20 @@ public class Server
 
     private void clearHandler(Context context)
     {
-        userService.clear();
-        context.status(200);
-        context.result("{}");
+        try
+        {
+            userService.clear();
+            context.status(200);
+            context.result("{}");
+        }
+        catch (RuntimeException e)
+        {
+            context.status(500);
+            context.result(gson.toJson(Map.of("message", "Error")));
+        }
     }
-    
-    private void registerHandler(Context context) 
+
+    private void registerHandler(Context context)
     {
         try
         {
@@ -52,7 +68,7 @@ public class Server
             RegisterResult result = userService.register(request);
             context.status(200);
             context.result(gson.toJson(result));
-        } 
+        }
 
         catch (DataAccessException e)
         {
@@ -60,120 +76,130 @@ public class Server
         }
         catch (Exception e)
         {
-            throw new RuntimeException(e);
+            context.status(500);
+            context.result(gson.toJson(Map.of("message", "Error")));
         }
     }
-   
-    private void loginHandler(Context context) 
+
+    private void loginHandler(Context context)
     {
-        try 
+        try
         {
             LoginRequest request = gson.fromJson(context.body(), LoginRequest.class);
             LoginResult result = userService.login(request);
             context.status(200);
             context.result(gson.toJson(result));
-        } 
-        
+        }
+
         catch (DataAccessException e)
         {
             handleDataAccessException(context, e);
         }
-        catch (SQLException e)
+        catch (Exception e)
         {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            context.status(500);
+            context.result(gson.toJson(Map.of("message", "Error")));
         }
     }
-  
-    private void logoutHandler(Context context) 
+
+    private void logoutHandler(Context context)
     {
-        try 
+        try
         {
             String authToken = context.header("authorization");
 
-            if (authToken == null) 
+            if (authToken == null)
             {
                 context.status(401);
                 context.result(gson.toJson(Map.of("message", "Error: unauthorized")));
                 return;
             }
-            
+
+            userService.logout(authToken);
             context.status(200);
             context.result("{}");
         }
-
+        catch (DataAccessException e)
+        {
+            handleDataAccessException(context, e);
+        }
         catch (Exception e)
         {
-            throw new RuntimeException(e);
+            context.status(500);
+            context.result(gson.toJson(Map.of("message", "Error")));
         }
     }
-    
-    private void listGamesHandler(Context context) 
+
+    private void listGamesHandler(Context context)
     {
-        try 
+        try
         {
             String authToken = context.header("authorization");
-            if (authToken == null) 
+            if (authToken == null)
             {
                 context.status(401);
                 context.result(gson.toJson(Map.of("message", "Error: unauthorized")));
                 return;
             }
-            
+
             ListGamesResult result = gameService.listGames(authToken);
             context.status(200);
             context.result(gson.toJson(result));
-        } 
-        
-        catch (DataAccessException dae) 
+        }
+
+        catch (DataAccessException dae)
         {
             handleDataAccessException(context, dae);
         }
+        catch (Exception e)
+        {
+            context.status(500);
+            context.result(gson.toJson(Map.of("message", "Error")));
+        }
     }
-    
-    private void createGameHandler(Context context) 
+
+    private void createGameHandler(Context context)
     {
-        try 
+        try
         {
             String authToken = context.header("authorization");
-            if (authToken == null) 
+            if (authToken == null)
             {
                 context.status(401);
                 context.result(gson.toJson(Map.of("message", "Error: unauthorized")));
                 return;
             }
-            
+
             CreateGameRequest request = gson.fromJson(context.body(), CreateGameRequest.class);
             CreateGameResult result = gameService.createGame(request, authToken);
             context.status(200);
             context.result(gson.toJson(result));
-        } 
-        
+        }
+
         catch (DataAccessException e)
         {
             handleDataAccessException(context, e);
         }
     }
-    
-    private void joinGameHandler(Context context) 
+
+    private void joinGameHandler(Context context)
     {
-        try 
+        try
         {
             String authToken = context.header("authorization");
-            if (authToken == null) 
+            if (authToken == null)
             {
                 context.status(401);
                 context.result(gson.toJson(Map.of("message", "Error: unauthorized")));
                 return;
             }
-            
+
             JoinGameRequest request = gson.fromJson(context.body(), JoinGameRequest.class);
             gameService.joinGame(request, authToken);
             context.status(200);
             context.result("{}");
-        } 
-        
+        }
+
         catch (DataAccessException e)
         {
             handleDataAccessException(context, e);
@@ -183,23 +209,23 @@ public class Server
     private void handleDataAccessException(Context context, DataAccessException e)
     {
         String message = e.getMessage();
-        
-        if (message.contains("bad request")) 
+
+        if (message.contains("bad request"))
         {
             context.status(400);
         }
-        
+
         else if (message.contains("unauthorized"))
         {
             context.status(401);
-        } 
-        
-        else if (message.contains("already taken")) 
+        }
+
+        else if (message.contains("already taken"))
         {
             context.status(403);
-        } 
-        
-        else 
+        }
+
+        else
         {
             context.status(500);
         }
@@ -209,15 +235,15 @@ public class Server
     private void exceptionHandler(Exception exception, Context context)
     {
         context.status(500);
-        context.result(gson.toJson(Map.of("message", "Error: " + exception.getMessage())));
+        context.result(gson.toJson(Map.of("message", "Error")));
     }
-    
+
     public int run(int desiredPort)
     {
         server.start(desiredPort);
         return server.port();
     }
-    
+
     public void stop()
     {
         server.stop();
