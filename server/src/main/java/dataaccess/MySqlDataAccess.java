@@ -128,20 +128,22 @@ public class MySqlDataAccess extends DataAccess
                 preparedStatement.setString(1, username);
                 try(var result = preparedStatement.executeQuery())
                 {
-                    if (result.next())
+                    if (!result.next())
                     {
-                        if (result.getString("password") == null || result.getString("password").isEmpty())
-                        {
-                            return null;
-                        }
-
-                        return new UserData(result.getString("username"), result.getString("password"), result.getString("email"));
+                        return null;
                     }
+
+                    if (result.getString("password") == null || result.getString("password").isEmpty())
+                    {
+                        return null;
+                    }
+
+                    return new UserData(result.getString("username"), result.getString("password"), result.getString("email"));
                 }
             }
         }
-        return null;
     }
+
 
     public int createGame(String gameName) throws DataAccessException
     {
