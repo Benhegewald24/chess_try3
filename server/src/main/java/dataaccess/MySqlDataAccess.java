@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.mindrot.jbcrypt.BCrypt;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,12 +27,9 @@ public class MySqlDataAccess extends DataAccess
         {
             String[] createStatements =
                     {
-                        "CREATE TABLE IF NOT EXISTS user (`username` varchar(256) NOT NULL, `password` varchar(256) NOT NULL," +
-                                " `email` varchar(256) NOT NULL, PRIMARY KEY (`username`))",
-                        "CREATE TABLE IF NOT EXISTS game (`gameID` INT NOT NULL AUTO_INCREMENT, `whiteUsername` VARCHAR(256)," +
-                                " `blackUsername` VARCHAR(256), `gameName` VARCHAR(256) NOT NULL, `gameJSON` TEXT NOT NULL, PRIMARY KEY (`gameID`))",
-                        "CREATE TABLE IF NOT EXISTS auth (`authToken` varchar(256) NOT NULL, `username` varchar(256) NOT NULL," +
-                                " PRIMARY KEY (`authToken`))"
+                        "CREATE TABLE IF NOT EXISTS user (`username` varchar(256) NOT NULL, `password` varchar(256) NOT NULL, `email` varchar(256) NOT NULL, PRIMARY KEY (`username`))",
+                        "CREATE TABLE IF NOT EXISTS game (`gameID` INT NOT NULL AUTO_INCREMENT, `whiteUsername` VARCHAR(256), `blackUsername` VARCHAR(256), `gameName` VARCHAR(256) NOT NULL, `gameJSON` TEXT NOT NULL, PRIMARY KEY (`gameID`))",
+                        "CREATE TABLE IF NOT EXISTS auth (`authToken` varchar(256) NOT NULL, `username` varchar(256) NOT NULL, PRIMARY KEY (`authToken`))"
                     };
             for (var statement : createStatements)
             {
@@ -98,12 +94,11 @@ public class MySqlDataAccess extends DataAccess
         try (var connection = DatabaseManager.getConnection())
         {
             var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-            String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
-
+            // Password is already hashed by UserService.register()
             try (var preparedStatement = connection.prepareStatement(statement))
             {
                 preparedStatement.setString(1, user.username());
-                preparedStatement.setString(2, hashedPassword);
+                preparedStatement.setString(2, user.password());  // Already hashed
                 preparedStatement.setString(3, user.email());
                 preparedStatement.executeUpdate();
             }
@@ -131,6 +126,11 @@ public class MySqlDataAccess extends DataAccess
                 {
                     if (result.next())
                     {
+                        if (result.getString("password") == null || result.getString("password").isEmpty())
+                        {
+                            return null;
+                        }
+
                         return new UserData(result.getString("username"), result.getString("password"), result.getString("email"));
                     }
                 }
@@ -170,14 +170,14 @@ public class MySqlDataAccess extends DataAccess
                     }
                     else
                     {
-                        throw new DataAccessException("createGame FAILED");
+                        throw new DataAccessException("Error: createGame FAILED");
                     }
                 }
             }
         }
         catch (SQLException e)
         {
-            throw new DataAccessException("Game NOT created");
+            throw new DataAccessException("Error: Game NOT created");
         }
     }
 
@@ -274,7 +274,7 @@ public class MySqlDataAccess extends DataAccess
         }
         catch (SQLException e)
         {
-            throw new DataAccessException("Game update failed");
+            throw new DataAccessException("Error: Game update failed");
         }
     }
 

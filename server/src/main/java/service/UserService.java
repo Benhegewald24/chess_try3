@@ -34,7 +34,9 @@ public class UserService
             throw new DataAccessException("Error: already taken");
         }
 
-        UserData newUser = new UserData(request.username(), request.password(), request.email());
+        // Hash the password before storing
+        String hashedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
+        UserData newUser = new UserData(request.username(), hashedPassword, request.email());
         dataAccess.createUser(newUser);
 
         String authToken = UUID.randomUUID().toString();
@@ -51,7 +53,7 @@ public class UserService
         }
 
         UserData user = dataAccess.getUser(request.username());
-        if (user == null)
+        if (user == null || user.password() == null || user.password().isEmpty())
         {
             throw new DataAccessException("Error: unauthorized");
         }

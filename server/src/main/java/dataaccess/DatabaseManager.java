@@ -31,7 +31,7 @@ public class DatabaseManager
 
         catch (SQLException exception)
         {
-            throw new DataAccessException("failed to create database");
+            throw new DataAccessException("Error: failed to create database");
         }
     }
 
@@ -58,7 +58,7 @@ public class DatabaseManager
 
         catch (SQLException exception)
         {
-            throw new DataAccessException("failed to get connection");
+            throw new DataAccessException("Error: failed to get connection");
         }
     }
 
