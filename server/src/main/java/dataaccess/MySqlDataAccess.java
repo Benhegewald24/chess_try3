@@ -94,7 +94,7 @@ public class MySqlDataAccess extends DataAccess
         try (var connection = DatabaseManager.getConnection())
         {
             var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-            // Password is already hashed by UserService.register()
+
             try (var preparedStatement = connection.prepareStatement(statement))
             {
                 preparedStatement.setString(1, user.username());
@@ -197,10 +197,8 @@ public class MySqlDataAccess extends DataAccess
                         Gson gson = new Gson();
                         ChessGame game = gson.fromJson(gameJSON, ChessGame.class);
 
-                        String whiteUsername = result.getString("whiteUsername");
-                        String blackUsername = result.getString("blackUsername");
-
-                        return new GameData(result.getInt("gameID"), whiteUsername, blackUsername, result.getString("gameName"), game);
+                        return new GameData(result.getInt("gameID"), result.getString("whiteUsername"),
+                                result.getString("blackUsername"), result.getString("gameName"), game);
                     }
                 }
             }
@@ -228,11 +226,8 @@ public class MySqlDataAccess extends DataAccess
                         String gameJSON = result.getString("gameJSON");
                         ChessGame game = gson.fromJson(gameJSON, ChessGame.class);
 
-                        String whiteUsername = result.getString("whiteUsername");
-                        String blackUsername = result.getString("blackUsername");
-
                         GameData gameData = new GameData(result.getInt("gameID"),
-                                whiteUsername, blackUsername,
+                                result.getString("whiteUsername"), result.getString("blackUsername"),
                                 result.getString("gameName"), game);
                         games.add(gameData);
                     }
