@@ -27,9 +27,13 @@ public class MySqlDataAccess extends DataAccess
         {
             String[] createStatements =
                     {
-                        "CREATE TABLE IF NOT EXISTS user (`username` varchar(256) NOT NULL, `password` varchar(256) NOT NULL, `email` varchar(256) NOT NULL, PRIMARY KEY (`username`))",
-                        "CREATE TABLE IF NOT EXISTS game (`gameID` INT NOT NULL AUTO_INCREMENT, `whiteUsername` VARCHAR(256), `blackUsername` VARCHAR(256), `gameName` VARCHAR(256) NOT NULL, `gameJSON` TEXT NOT NULL, PRIMARY KEY (`gameID`))",
-                        "CREATE TABLE IF NOT EXISTS auth (`authToken` varchar(256) NOT NULL, `username` varchar(256) NOT NULL, PRIMARY KEY (`authToken`))"
+                        "CREATE TABLE IF NOT EXISTS user (`username` varchar(256) NOT NULL, `password` varchar(256) NOT NULL," +
+                                " `email` varchar(256) NOT NULL, PRIMARY KEY (`username`))",
+                        "CREATE TABLE IF NOT EXISTS game (`gameID` INT NOT NULL AUTO_INCREMENT, `whiteUsername` VARCHAR(256)," +
+                                " `blackUsername` VARCHAR(256), `gameName` VARCHAR(256) NOT NULL, `gameJSON` TEXT NOT NULL," +
+                                " PRIMARY KEY (`gameID`))",
+                        "CREATE TABLE IF NOT EXISTS auth (`authToken` varchar(256) NOT NULL, `username` varchar(256) NOT NULL," +
+                                " PRIMARY KEY (`authToken`))"
                     };
             for (var statement : createStatements)
             {
@@ -98,7 +102,7 @@ public class MySqlDataAccess extends DataAccess
             try (var preparedStatement = connection.prepareStatement(statement))
             {
                 preparedStatement.setString(1, user.username());
-                preparedStatement.setString(2, user.password());  // Already hashed
+                preparedStatement.setString(2, user.password());
                 preparedStatement.setString(3, user.email());
                 preparedStatement.executeUpdate();
             }
