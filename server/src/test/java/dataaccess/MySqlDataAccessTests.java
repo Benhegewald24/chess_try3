@@ -96,12 +96,9 @@ public class MySqlDataAccessTests
     }
 
     @Test
-    void getGameNegativeTest()
+    void getGameNegativeTest() throws Exception
     {
-        UserData user = new UserData(null, "password123", "ben@byu.edu");
-
-        try { dataAccess.getUser(user.username()); }
-        catch (Exception e) { assertTrue(e.getMessage().contains("Username can't be null")); }
+        assertNull(dataAccess.getGame(999));
     }
 
     @Test
