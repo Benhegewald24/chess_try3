@@ -45,7 +45,7 @@ public class Server
         server.exception(Exception.class, this::exceptionHandler);
     }
 
-    private void clearHandler(Context context)
+    public void clearHandler(Context context)
     {
         try
         {
@@ -60,7 +60,7 @@ public class Server
         }
     }
 
-    private void registerHandler(Context context)
+    public void registerHandler(Context context)
     {
         try
         {
@@ -81,7 +81,7 @@ public class Server
         }
     }
 
-    private void loginHandler(Context context)
+    public void loginHandler(Context context)
     {
         try
         {
@@ -102,7 +102,7 @@ public class Server
         }
     }
 
-    private void logoutHandler(Context context)
+    public void logoutHandler(Context context)
     {
         try
         {
