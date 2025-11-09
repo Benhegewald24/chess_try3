@@ -1,31 +1,53 @@
-import chess.*;
-import requests.LoginRequest;
-import requests.RegisterRequest;
-import server.Server;
-
+import java.io.IOException;
 import java.util.Scanner;
-
+import results.LoginResult;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 public class Main
 {
-    static boolean logged_in = FALSE;
+    private static Scanner SCANNER = new Scanner(System.in);
+    private static String SERVER_URL = "http://localhost:8080";
+    private static ServerFacade SERVER_FACADE = new ServerFacade(SERVER_URL);
+    private static boolean loggedIn = false;
+    private static LoginResult activeSession;
+
     public static void main(String[] args)
     {
-        System.out.println("Welcome to 240 chess. Type Help to get started.");
-        Scanner scanner = new Scanner(System.in);
-        String user_input = scanner.nextLine();
+        System.out.println("Welcome to 240 chess. Type [H]elp to get started.");
 
-        if (user_input.equalsIgnoreCase("help"))
+        while (loggedIn == false)
         {
-            help();
+            String userInput = SCANNER.nextLine().trim();
+
+            if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("h"))
+            {
+                help();
+            }
+
+            else if (userInput.equalsIgnoreCase("log in") || userInput.equalsIgnoreCase("l"))
+            {
+                login();
+            }
+
+            else if (userInput.equalsIgnoreCase("register") || userInput.equalsIgnoreCase("r"))
+            {
+                register();
+            }
+
+            else if (userInput.equalsIgnoreCase("quit") || userInput.equalsIgnoreCase("q"))
+            {
+                System.out.println("Thanks for playing!");
+                System.exit(0);
+            }
+
+            else
+            {
+                System.out.println("Invalid input.");
+            }
         }
-        else
-        {
-            System.out.println("Invalid input");
-            main(args);
-        }
+
+        loggedInUI();
     }
 
     public static void help()
@@ -33,50 +55,73 @@ public class Main
         System.out.println("What would you like to do?");
         System.out.println("1. [L]og In");
         System.out.println("2. [R]egister");
-        System.out.println("4. [Q]uit");
-        Scanner scanner = new Scanner(System.in);
-        String user_input = scanner.nextLine();
-        if (user_input.equalsIgnoreCase("Log In") || user_input.equalsIgnoreCase("L"))
+        System.out.println("3. [Q]uit");
+    }
+
+    private static void login()
+    {
+        System.out.print("Username: ");
+        var username = SCANNER.nextLine().trim();
+
+        System.out.print("Password: ");
+        var password = SCANNER.nextLine();
+
+        try
         {
-            System.out.println("Username: ");
-            String username = scanner.nextLine();
-            System.out.println("Password: ");
-            String password = scanner.nextLine();
-            Server server = new Server();
-            LoginRequest request = new LoginRequest(username, password);
-
-            logged_in = TRUE;
-            server.loginHandler(context);
-
-            //Prompts the user to input login information. Calls the server login API to login the user.
-            // When successfully logged in, the client should transition to the Postlogin UI.
+            activeSession = SERVER_FACADE.login(username, password);
+            loggedIn = true;
+            System.out.println("Welcome back, " + username + "!");
         }
-
-        if (user_input.equalsIgnoreCase("Register") || user_input.equalsIgnoreCase("R"))
+        catch (Exception ex)
         {
-            System.out.println("Username: ");
-            String username = scanner.nextLine();
-            System.out.println("Password: ");
-            String password = scanner.nextLine();
-            System.out.println("Email: ");
-            String email = scanner.nextLine();
-            RegisterRequest request = new RegisterRequest(username, password, email);
-            logged_in = TRUE;
+            System.out.println("Login failed");
+        }
+    }
 
-            server.registerHandler(request);
-            //. Calls the server register API to register and login the user. If successfully registered,
-            // the client should be logged in and transition to the Postlogin UI.
+    private static void register()
+    {
+        System.out.print("Username: ");
+        var username = SCANNER.nextLine().trim();
 
-            //registerHandler(context);
-        }
-        if (user_input.equalsIgnoreCase("Quit") || user_input.equalsIgnoreCase("Q"))
+        System.out.print("Password: ");
+        var password = SCANNER.nextLine();
+
+        System.out.print("Email: ");
+        var email = SCANNER.nextLine();
+
+        try
         {
-            System.exit(0);
+            activeSession = SERVER_FACADE.register(username, password, email);
+            loggedIn = true;
+            System.out.println("Welcome to chess 240, " + username + "!");
         }
-        else
+        catch (Exception ex)
         {
-            System.out.println("Invalid input");
-            help();
+            System.out.println("Registrationfailed");
         }
+    }
+
+      private static void loggedInUI()
+    {
+        while (loggedIn)
+        {
+            System.out.println("You are now logged in.\nType [H]elp for options");
+            String userInput = SCANNER.nextLine().trim();
+
+            if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("h"))
+            {
+                help_logged_in();
+            }
+        }
+    }
+
+    public static void help_logged_in()
+    {
+        System.out.println("What would you like to do?");
+        System.out.println("1. [L]og Out");
+        System.out.println("2. [C]reate Game");
+        System.out.println("3. [Li]st Games");
+        System.out.println("4. [P]lay Game");
+        System.out.println("5. [L]og Out");
     }
 }
