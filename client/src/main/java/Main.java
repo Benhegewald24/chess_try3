@@ -144,7 +144,7 @@ public class Main
 
             if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("h"))
             {
-                help_logged_in();
+                helpLoggedIn();
             }
             else
             {
@@ -179,7 +179,7 @@ public class Main
         authToken = null;
     }
 
-    public static void help_logged_in()
+    public static void helpLoggedIn()
     {
         System.out.println("What would you like to do?");
         System.out.println("1. [L]og Out");
@@ -197,10 +197,10 @@ public class Main
         else if (userInput.equalsIgnoreCase("create game") || userInput.equalsIgnoreCase("c"))
         {
             System.out.println("New game name: ");
-            String new_game_name = SCANNER.nextLine().trim();
+            String newGameName = SCANNER.nextLine().trim();
             try
             {
-                SERVER_FACADE.createGame(authToken, new_game_name);
+                SERVER_FACADE.createGame(authToken, newGameName);
             }
             catch (Exception exception)
             {
@@ -225,13 +225,13 @@ public class Main
         else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p"))
         {
             System.out.println("Which game would you like to join?: ");
-            String game_id = SCANNER.nextLine().trim();
+            String gameID = SCANNER.nextLine().trim();
             System.out.println("Which color would you like to be? [W]hite or [B]lack?");
             String color = SCANNER.nextLine().trim();
             ChessGame.TeamColor teamColor = color.equalsIgnoreCase("w") ? WHITE : BLACK;
             try
             {
-                SERVER_FACADE.joinGame(authToken, Integer.parseInt(game_id), teamColor);
+                SERVER_FACADE.joinGame(authToken, Integer.parseInt(gameID), teamColor);
                 drawBoard();
             }
             catch (Exception exception)
@@ -244,10 +244,10 @@ public class Main
         else if (userInput.equalsIgnoreCase("observe game") || userInput.equalsIgnoreCase("o"))
         {
             System.out.println("Which game would you like to observe?: ");
-            String game_id = SCANNER.nextLine().trim();
+            String gameID = SCANNER.nextLine().trim();
             try
             {
-                SERVER_FACADE.observeGame(authToken, Integer.parseInt(game_id));
+                SERVER_FACADE.observeGame(authToken, Integer.parseInt(gameID));
                 drawBoard();
             }
             catch (Exception exception)
@@ -259,16 +259,14 @@ public class Main
         else
         {
             System.out.println("Invalid input.");
-            help_logged_in();
+            helpLoggedIn();
         }
     }
 
     private static void drawBoard()
     {
-//        ChessBoard board = new ChessBoard();
-//        board.resetBoard();
-//        DrawBoard bored = new DrawBoard();
-//        bored.displayBoard2(board);
+        DrawBoard bored = new DrawBoard();
+        bored.displayBoard();
     }
 }
 
