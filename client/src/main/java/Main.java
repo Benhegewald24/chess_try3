@@ -1,10 +1,10 @@
 import java.util.Scanner;
-
 import chess.ChessBoard;
 import chess.ChessGame;
 import client.ServerFacade;
 import results.LoginResult;
 import ui.DrawBoard;
+import static chess.ChessGame.TeamColor.*;
 
 public class Main
 {
@@ -170,7 +170,8 @@ public class Main
             //Calls the server logout API to logout user
             //logout request?
             currentState = State.loggedOut;
-            //call main to go back to the beginning
+            String[] args = new String[0];
+            main(args);
         }
 
         else if (userInput.equalsIgnoreCase("create game") || userInput.equalsIgnoreCase("c"))
@@ -183,16 +184,20 @@ public class Main
         else if (userInput.equalsIgnoreCase("list games") || userInput.equalsIgnoreCase("li"))
         {
             //list games()
+            //Lists all the games that currently exist on the server. Calls the server list API to get all the game data, and displays the games in a numbered list, including the game name and players (not observers) in the game. The numbering for the list should be independent of the game IDs and should start at 1.
+            // for (each game in games)
+
         }
 
         else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p"))
         {
             System.out.println("Which game would you like to join?: ");
+            //call list games so the user can see the different options.
             String game_id = SCANNER.nextLine().trim();
             System.out.println("Which color would you like to be? [W]hite or [B]lack?");
             String color = SCANNER.nextLine().trim();
-            if (color.equalsIgnoreCase("w")) { color = String.valueOf(ChessGame.TeamColor.WHITE); }
-            else {color = String.valueOf(ChessGame.TeamColor.BLACK);}
+            if (color.equalsIgnoreCase("w")) { color = String.valueOf(WHITE); }
+            else {color = String.valueOf(BLACK);}
 
             //join game()
         }
@@ -200,6 +205,7 @@ public class Main
         else if (userInput.equalsIgnoreCase("observe game") || userInput.equalsIgnoreCase("o"))
         {
             System.out.println("Which game would you like to observe?: ");
+            //call list games so the user can see the different options.
             String game_id = SCANNER.nextLine().trim();
             //observe games()
         }
