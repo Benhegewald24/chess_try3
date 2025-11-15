@@ -267,6 +267,7 @@ public class Main
     {
         DrawBoard bored = new DrawBoard();
         bored.displayBoard();
+        bored.displayBoard2(new ChessBoard());
     }
 }
 
