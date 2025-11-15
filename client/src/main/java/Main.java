@@ -267,6 +267,11 @@ public class Main
     {
         DrawBoard bored = new DrawBoard();
         bored.displayBoard();
-        //bored.displayBoard2(new ChessBoard());
+        boolean switcher;
+        switcher = false;
+        if (switcher)
+        {
+            bored.displayBoard2(new ChessBoard());
+        }
     }
 }
