@@ -82,7 +82,7 @@ public class ServerFacade
 
     public void joinGame(String authToken, int gameId, ChessGame.TeamColor color) throws Exception
     {
-        var body = gson.toJson(new JoinGameRequest(color.name().toLowerCase(), gameId));
+        var body = gson.toJson(new JoinGameRequest(color.name(), gameId));
         sendJoin(authToken, body);
     }
 

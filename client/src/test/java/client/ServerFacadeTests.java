@@ -124,7 +124,7 @@ public class ServerFacadeTests
         var user2 = facade.register("Ben2", "password2", "Ben2@gmail.com");
         var created = facade.createGame(user1.authToken(), "gameName");
 
-        facade.joinGame(user1.authToken(), created.gameID(), WHITE);
+        assertDoesNotThrow(() -> facade.joinGame(user1.authToken(), created.gameID(), WHITE));
         assertDoesNotThrow(() -> facade.joinGame(user2.authToken(), created.gameID(), BLACK));
     }
 
