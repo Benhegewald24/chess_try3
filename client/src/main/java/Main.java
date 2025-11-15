@@ -19,7 +19,7 @@ public class Main
     public static void main(String[] args)
     {
         System.out.println("Welcome to 240 chess. Type [H]elp to get started.");
-
+        drawBoard();
         while (currentState == State.loggedOut)
         {
             String userInput = SCANNER.nextLine().trim();
@@ -267,7 +267,6 @@ public class Main
     {
         DrawBoard bored = new DrawBoard();
         bored.displayBoard();
-        bored.displayBoard2(new ChessBoard());
+        //bored.displayBoard2(new ChessBoard());
     }
 }
-

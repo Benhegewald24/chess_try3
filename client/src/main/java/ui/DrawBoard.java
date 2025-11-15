@@ -73,8 +73,8 @@ public class DrawBoard
         {
             System.out.print(backgroundColorSwitch());
             String piece = pieceFinder();
-            System.out.print(piece);
-            //System.out.print(EMPTY);
+            //System.out.print(piece);
+            System.out.print(EMPTY);
         }
         counter++;
         System.out.println(DARK_GREY_COLOR);
