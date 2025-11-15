@@ -124,7 +124,7 @@ public class ServerFacadeTests
         var user2 = facade.register("Ben2", "password2", "Ben2@gmail.com");
         var created = facade.createGame(user1.authToken(), "gameName");
 
-        assertDoesNotThrow(() -> facade.joinGame(user1.authToken(), created.gameID(), WHITE));
+        facade.joinGame(user1.authToken(), created.gameID(), WHITE);
         assertDoesNotThrow(() -> facade.joinGame(user2.authToken(), created.gameID(), BLACK));
     }
 
@@ -139,16 +139,12 @@ public class ServerFacadeTests
         assertThrows(Exception.class, () -> facade.joinGame(user2.authToken(), created.gameID(), WHITE));
     }
 
-    @Test
-    void observeGameSuccess() throws Exception
+   @Test
+    void observeGameFailsBadGameId() throws Exception
     {
-        var user1 = facade.register("Ben", "password", "Ben@gmail.com");
-        var user2 = facade.register("Ben2", "password2", "Ben2@gmail.com");
-        var created = facade.createGame(user1.authToken(), "gameToWatch");
-
-        facade.observeGame(user2.authToken(), created.gameID());
-        var games = facade.listGames(user2.authToken());
-        assertEquals(1, games.games().size());
+        var user = facade.register("Ben", "password", "Ben@gmail.com");
+        facade.createGame(user.authToken(), "Observation Game");
+        assertThrows(Exception.class, () -> facade.observeGame(user.authToken(), 999999));
     }
 
     @Test
