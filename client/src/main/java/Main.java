@@ -278,7 +278,8 @@ public class Main
             }
         }
 
-        else if (userInput.equalsIgnoreCase("list games") || userInput.equalsIgnoreCase("li") || userInput.equalsIgnoreCase("list") || userInput.equals("3"))
+        else if (userInput.equalsIgnoreCase("list games") ||
+                userInput.equalsIgnoreCase("li") || userInput.equalsIgnoreCase("list") || userInput.equals("3"))
         {
             try
             {
@@ -289,10 +290,10 @@ public class Main
             {
                 System.out.println("Unable to list games." + exception.getMessage());
             }
-
         }
 
-        else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") || userInput.equals("4") || userInput.equals("play"))
+        else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") ||
+                userInput.equals("4") || userInput.equals("play"))
         {
             System.out.print("Which game would you like to join?: ");
             String gameID = SCANNER.nextLine().trim();
@@ -308,12 +309,12 @@ public class Main
             {
                 System.out.println("Unable to join game." + exception.getMessage());
             }
-
         }
 
-        else if (userInput.equalsIgnoreCase("observe game") || userInput.equals("5") || (userInput.length() == 1 && userInput.equalsIgnoreCase("o") && !Character.isDigit(userInput.charAt(0))))
+        else if (userInput.equalsIgnoreCase("observe game") || userInput.equals("5") ||
+                (userInput.length() == 1 && userInput.equalsIgnoreCase("o") && !Character.isDigit(userInput.charAt(0))))
         {
-            System.out.print("Which game would you like to observe?: ");
+            System.out.print("Which game would you like to observe?: (Enter Game Number)");
             String gameID = SCANNER.nextLine().trim();
             try
             {
@@ -321,7 +322,7 @@ public class Main
                 SERVER_FACADE.observeGame(authToken, gameIdInt);
                 drawBoard();
             }
-            catch (NumberFormatException e)
+            catch (NumberFormatException exception)
             {
                 System.out.println("Invalid game ID. Please enter a number.");
             }
