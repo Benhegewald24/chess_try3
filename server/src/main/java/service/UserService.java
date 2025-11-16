@@ -24,14 +24,14 @@ public class UserService
     {
         if (request.username() == null || request.password() == null)
         {
-            throw new DataAccessException("Error: bad request");
+            throw new DataAccessException("Error: bad request.");
         }
 
         UserData existingUser = dataAccess.getUser(request.username());
 
         if (existingUser != null)
         {
-            throw new DataAccessException("Error: already taken");
+            throw new DataAccessException("Error: User already created.");
         }
 
         // Hash the password before storing
@@ -46,21 +46,22 @@ public class UserService
         return new RegisterResult(request.username(), authToken);
     }
 
-    public LoginResult login(LoginRequest request) throws Exception {
+    public LoginResult login(LoginRequest request) throws Exception
+    {
         if (request.username() == null || request.password() == null)
         {
-            throw new DataAccessException("Error: bad request");
+            throw new DataAccessException("Error: bad request.");
         }
 
         UserData user = dataAccess.getUser(request.username());
         if (user == null || user.password() == null || user.password().isEmpty())
         {
-            throw new DataAccessException("Error: unauthorized");
+            throw new DataAccessException("Error: unauthorized.");
         }
 
         if (!BCrypt.checkpw(request.password(), user.password()))
         {
-            throw new DataAccessException("Error: unauthorized");
+            throw new DataAccessException("Error: unauthorized.");
         }
 
         String authToken = UUID.randomUUID().toString();
@@ -75,7 +76,7 @@ public class UserService
         AuthData authData = dataAccess.getAuth(authToken);
         if (authData == null)
         {
-            throw new DataAccessException("Error: unauthorized");
+            throw new DataAccessException("Error: unauthorized.");
         }
 
         dataAccess.deleteAuth(authToken);

@@ -142,6 +142,6 @@ public class ServerFacade
             }
         }
         catch (Exception ignored) {}
-        return "Unexpected error from server";
+        return "Unexpected error from server.";
     }
 }

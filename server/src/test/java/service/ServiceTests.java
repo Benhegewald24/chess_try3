@@ -69,7 +69,7 @@ class ServiceTests
         }
         catch (Exception e)
         {
-            assertTrue(e.getMessage().contains("already taken"));
+            assertTrue(e.getMessage().contains("already taken."));
         }
     }
 
@@ -84,7 +84,7 @@ class ServiceTests
         }
         catch (Exception e)
         {
-            assertTrue(e.getMessage().contains("bad request"));
+            assertTrue(e.getMessage().contains("bad request."));
         }
     }
 
@@ -111,7 +111,7 @@ class ServiceTests
         }
         catch (Exception e)
         {
-            assertTrue(e.getMessage().contains("unauthorized"));
+            assertTrue(e.getMessage().contains("unauthorized."));
         }
     }
 
@@ -126,7 +126,7 @@ class ServiceTests
         }
         catch (Exception e)
         {
-            assertTrue(e.getMessage().contains("unauthorized"));
+            assertTrue(e.getMessage().contains("unauthorized."));
         }
     }
 
@@ -149,7 +149,7 @@ class ServiceTests
         }
         catch (DataAccessException e)
         {
-            assertTrue(e.getMessage().contains("unauthorized"));
+            assertTrue(e.getMessage().contains("unauthorized."));
         }
     }
 
@@ -176,7 +176,7 @@ class ServiceTests
         }
         catch (DataAccessException e)
         {
-            assertTrue(e.getMessage().contains("unauthorized"));
+            assertTrue(e.getMessage().contains("unauthorized."));
         }
     }
 
@@ -204,7 +204,7 @@ class ServiceTests
         }
         catch (DataAccessException e)
         {
-            assertTrue(e.getMessage().contains("unauthorized"));
+            assertTrue(e.getMessage().contains("unauthorized."));
         }
     }
 
@@ -219,7 +219,7 @@ class ServiceTests
         }
         catch (DataAccessException e)
         {
-            assertTrue(e.getMessage().contains("bad request"));
+            assertTrue(e.getMessage().contains("bad request."));
         }
     }
 
@@ -248,7 +248,7 @@ class ServiceTests
         }
         catch (DataAccessException e)
         {
-            assertTrue(e.getMessage().contains("unauthorized"));
+            assertTrue(e.getMessage().contains("unauthorized."));
         }
     }
 
@@ -273,7 +273,7 @@ class ServiceTests
         }
         catch (DataAccessException e)
         {
-            assertTrue(e.getMessage().contains("already taken"));
+            assertTrue(e.getMessage().contains("already taken."));
         }
     }
 
@@ -288,7 +288,7 @@ class ServiceTests
         }
         catch (DataAccessException e)
         {
-            assertTrue(e.getMessage().contains("bad request"));
+            assertTrue(e.getMessage().contains("bad request."));
         }
     }
 }

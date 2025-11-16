@@ -77,12 +77,12 @@ public class MySqlDataAccess extends DataAccess
     {
         if (user == null || user.username() == null)
         {
-            throw new DataAccessException("Invalid username");
+            throw new DataAccessException("Invalid username.");
         }
 
         if (user.password() == null)
         {
-            throw new DataAccessException("Error: bad request");
+            throw new DataAccessException("Error: bad request.");
         }
 
         try
@@ -90,7 +90,7 @@ public class MySqlDataAccess extends DataAccess
             UserData existingUser = getUser(user.username());
             if (existingUser != null)
             {
-                throw new DataAccessException("Username already taken");
+                throw new DataAccessException("Username already taken.");
             }
         }
         catch (SQLException ignored) {}
@@ -117,7 +117,7 @@ public class MySqlDataAccess extends DataAccess
     {
         if (username == null)
         {
-            throw new DataAccessException("Username can't be null");
+            throw new DataAccessException("Username can't be null.");
         }
 
         try (var connection = DatabaseManager.getConnection())
@@ -149,7 +149,7 @@ public class MySqlDataAccess extends DataAccess
     {
         if (gameName == null)
         {
-            throw new DataAccessException("Game name can't be null / empty");
+            throw new DataAccessException("Game name can't be null / empty.");
         }
 
         ChessGame newGame = new ChessGame();
@@ -176,14 +176,14 @@ public class MySqlDataAccess extends DataAccess
                     }
                     else
                     {
-                        throw new DataAccessException("Error: createGame FAILED");
+                        throw new DataAccessException("Error: createGame FAILED.");
                     }
                 }
             }
         }
         catch (SQLException e)
         {
-            throw new DataAccessException("Error: Game NOT created");
+            throw new DataAccessException("Error: Game NOT created.");
         }
     }
 
@@ -251,7 +251,7 @@ public class MySqlDataAccess extends DataAccess
     {
         if (game == null)
         {
-            throw new DataAccessException("Invalid game");
+            throw new DataAccessException("Invalid game.");
         }
 
         try (var connection = DatabaseManager.getConnection())
@@ -275,7 +275,7 @@ public class MySqlDataAccess extends DataAccess
         }
         catch (SQLException e)
         {
-            throw new DataAccessException("Error: Game update failed");
+            throw new DataAccessException("Error: Game update failed.");
         }
     }
 
@@ -283,7 +283,7 @@ public class MySqlDataAccess extends DataAccess
     {
         if (auth == null || auth.authToken() == null)
         {
-            throw new DataAccessException("Auth / authToken can't be null");
+            throw new DataAccessException("Auth / authToken can't be null.");
         }
 
         try (var connection = DatabaseManager.getConnection())
@@ -307,7 +307,7 @@ public class MySqlDataAccess extends DataAccess
     {
         if (authToken == null)
         {
-            throw new DataAccessException("AuthToken can't be null");
+            throw new DataAccessException("AuthToken can't be null.");
         }
 
         try (var connection = DatabaseManager.getConnection())
@@ -327,7 +327,7 @@ public class MySqlDataAccess extends DataAccess
         }
         catch (SQLException e)
         {
-            throw new DataAccessException("authToken delete unsuccessful");
+            throw new DataAccessException("authToken delete unsuccessful.");
         }
         return null;
     }
@@ -336,7 +336,7 @@ public class MySqlDataAccess extends DataAccess
     {
         if (authToken == null)
         {
-            throw new DataAccessException("AuthToken can't be null");
+            throw new DataAccessException("AuthToken can't be null.");
         }
 
         try (var connection = DatabaseManager.getConnection())
@@ -350,7 +350,7 @@ public class MySqlDataAccess extends DataAccess
         }
         catch (SQLException e)
         {
-            throw new DataAccessException("authToken delete unsuccessful");
+            throw new DataAccessException("authToken delete unsuccessful.");
         }
     }
 }

@@ -73,13 +73,13 @@ public class Main
     private static void register()
     {
         System.out.print("Username: ");
-        var username = SCANNER.nextLine();
+        var username = SCANNER.nextLine().trim();
 
         System.out.print("Password: ");
-        var password = SCANNER.nextLine();
+        var password = SCANNER.nextLine().trim();
 
         System.out.print("Email: ");
-        var email = SCANNER.nextLine();
+        var email = SCANNER.nextLine().trim();
 
         if (username.contains(" ") || password.contains(" ") || email.contains(" "))
         {
@@ -111,7 +111,12 @@ public class Main
         }
         catch (Exception exception)
         {
-            System.out.println("Registration failed: " + exception.getMessage());
+            String errorMessage = exception.getMessage();
+            if (errorMessage == null || errorMessage.isEmpty())
+            {
+                errorMessage = "Unable to connect to server. Please ensure the server is running.";
+            }
+            System.out.println("Registration failed: " + errorMessage);
         }
     }
 
@@ -170,6 +175,7 @@ public class Main
         try
         {
             SERVER_FACADE.logout(authToken);
+            System.out.println("User logged out. Thanks for playing!");
         }
         catch (Exception exception)
         {
@@ -266,7 +272,7 @@ public class Main
     private static void drawBoard()
     {
         DrawBoard bored = new DrawBoard();
-        bored.displayBoard();
+//        bored.displayBoard();
         boolean switcher;
         switcher = false;
         if (switcher)

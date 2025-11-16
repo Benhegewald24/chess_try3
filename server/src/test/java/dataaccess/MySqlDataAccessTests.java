@@ -136,7 +136,7 @@ public class MySqlDataAccessTests
         GameData game = new GameData(1, null, null, "gamefortest", null);
 
         try { dataAccess.updateGame(game);}
-        catch (Exception e) { assertTrue(e.getMessage().contains("Invalid game")); }
+        catch (Exception e) { assertTrue(e.getMessage().contains("Invalid game.")); }
     }
 
     @Test
@@ -154,7 +154,7 @@ public class MySqlDataAccessTests
         AuthData auth = new AuthData(null, "username");
 
         try { dataAccess.createAuth(auth);}
-        catch (Exception e) { assertTrue(e.getMessage().contains("Auth / authToken can't be null")); }
+        catch (Exception e) { assertTrue(e.getMessage().contains("Auth / authToken can't be null.")); }
     }
 
     @Test
@@ -172,7 +172,7 @@ public class MySqlDataAccessTests
         AuthData auth = new AuthData(null, "username");
 
         try { dataAccess.getAuth(auth.authToken());}
-        catch (Exception e) { assertTrue(e.getMessage().contains("AuthToken can't be null")); }
+        catch (Exception e) { assertTrue(e.getMessage().contains("AuthToken can't be null.")); }
     }
 
     @Test
@@ -191,6 +191,6 @@ public class MySqlDataAccessTests
         AuthData auth = new AuthData(null, "username");
 
         try { dataAccess.deleteAuth(auth.authToken());}
-        catch (Exception e) { assertTrue(e.getMessage().contains("AuthToken can't be null")); }
+        catch (Exception e) { assertTrue(e.getMessage().contains("AuthToken can't be null.")); }
     }
 }
