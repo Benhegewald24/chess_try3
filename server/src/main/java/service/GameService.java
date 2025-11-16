@@ -58,16 +58,16 @@ public class GameService
             throw new DataAccessException("Error: unauthorized.");
         }
 
-        if (request.playerColor() == null)
-        {
-            throw new DataAccessException("Error: bad request.");
-        }
-
         GameData game = dataAccess.getGame(request.gameID());
 
         if (game == null)
         {
             throw new DataAccessException("Error: bad request.");
+        }
+
+        if (request.playerColor() == null)
+        {
+            return new JoinGameResult();
         }
 
         String playerColor = request.playerColor();

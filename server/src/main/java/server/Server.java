@@ -204,6 +204,11 @@ public class Server
         {
             handleDataAccessException(context, e);
         }
+        catch (Exception e)
+        {
+            context.status(500);
+            context.result(gson.toJson(Map.of("message", "Error")));
+        }
     }
 
     private void handleDataAccessException(Context context, DataAccessException e)
