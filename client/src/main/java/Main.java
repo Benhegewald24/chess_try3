@@ -137,7 +137,12 @@ public class Main {
                 String gameNum = SCANNER.nextLine().trim();
                 System.out.print("Which color would you like to be? [W]hite or [B]lack?: ");
                 String color = SCANNER.nextLine().trim();
-                ChessGame.TeamColor teamColor = color.equalsIgnoreCase("b") ? BLACK : WHITE;
+                if (!color.equalsIgnoreCase("w") && !color.equalsIgnoreCase("white") &&
+                    !color.equalsIgnoreCase("b") && !color.equalsIgnoreCase("black")) {
+                    System.out.println("\nInvalid color. Please enter [W]hite or [B]lack.");
+                    continue;
+                }
+                ChessGame.TeamColor teamColor = color.equalsIgnoreCase("b") || color.equalsIgnoreCase("black") ? BLACK : WHITE;
                 try {
                     listGameHelper(gameNum, teamColor);}
                 catch (Exception exception) {
@@ -228,8 +233,13 @@ public class Main {
             String gameNum = SCANNER.nextLine().trim();
             System.out.print("Which color would you like to be? [W]hite or [B]lack?: ");
             String color = SCANNER.nextLine().trim();
+            if (!color.equalsIgnoreCase("w") && !color.equalsIgnoreCase("white") &&
+                !color.equalsIgnoreCase("b") && !color.equalsIgnoreCase("black")) {
+                System.out.println("\nInvalid color. Please enter [W]hite or [B]lack.");
+                return;
+            }
             System.out.print("\n");
-            ChessGame.TeamColor teamColor = color.equalsIgnoreCase("w") ? WHITE : BLACK;
+            ChessGame.TeamColor teamColor = color.equalsIgnoreCase("b") || color.equalsIgnoreCase("black") ? BLACK : WHITE;
             try {
                 listGameHelper(gameNum, teamColor);}
             catch (Exception exception) {
