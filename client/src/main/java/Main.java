@@ -65,9 +65,10 @@ public class Main {
         System.out.print("Email: ");
         String email = SCANNER.nextLine().trim();
 
-        if (username.contains(" ") || password.contains(" ") || email.contains(" ")) {
+        if (username.contains(" ") || password.contains(" ") || email.contains(" ") || username.isBlank())
+        {
             System.out.println("Invalid input. Please try again.");
-            register();
+            help();
             return;}
 
         if (password.equalsIgnoreCase("password")) {
@@ -125,18 +126,20 @@ public class Main {
                 try {
                     var games = SERVER_FACADE.listGames(authToken);
                     lastGamesList = new ArrayList<>(games.games());
+                    int counter = 1;
                     for (GameData game : lastGamesList) {
-                        System.out.println(game.gameName());}}
+                        System.out.println(counter + ". " + game.gameName());
+                        counter++;}}
                 catch (Exception exception) {
                     System.out.println("Unable to list games." + exception.getMessage());}}
             else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") || userInput.equalsIgnoreCase("play")) {
-                System.out.print("Which game would you like to join? ");
-                String gameName = SCANNER.nextLine().trim();
+                System.out.print("Which game would you like to join? (Enter Game #): ");
+                String gameNum = SCANNER.nextLine().trim();
                 System.out.print("Which color would you like to be? [W]hite or [B]lack?: ");
                 String color = SCANNER.nextLine().trim();
                 ChessGame.TeamColor teamColor = color.equalsIgnoreCase("b") ? BLACK : WHITE;
                 try {
-                    listGameHelper(gameName, teamColor);}
+                    listGameHelper(gameNum, teamColor);}
                 catch (Exception exception) {
                     String errorMessage = exception.getMessage();
                     if (errorMessage != null && errorMessage.contains("already taken")) {
@@ -144,18 +147,24 @@ public class Main {
                         continue;}
                     System.out.println("Unable to join game. " + errorMessage);}}
             else if (userInput.equalsIgnoreCase("observe game") || userInput.equalsIgnoreCase("observe") || userInput.equalsIgnoreCase("o")) {
-                System.out.print("Which game would you like to observe? ");
-                String gameName = SCANNER.nextLine().trim();
+                System.out.print("Which game would you like to observe? (Enter Game #): ");
+                String gameNum = SCANNER.nextLine().trim();
                 try {
                     var games = SERVER_FACADE.listGames(authToken);
                     lastGamesList = new ArrayList<>(games.games());
-                    GameData selectedGame = findGameByName(gameName);
-                    if (selectedGame == null) {
-                        System.out.println("Invalid game name.\n");
-                        continue;}
+                    int gameNumber = Integer.parseInt(gameNum);
+                    if (gameNumber < 1 || gameNumber > lastGamesList.size()) {
+                        System.out.println("Invalid game number.\n");
+                        continue;
+                    }
+                    GameData selectedGame = lastGamesList.get(gameNumber - 1);
                     System.out.println("White Pieces: " + selectedGame.whiteUsername() + "   |   Black Pieces: " + selectedGame.blackUsername());
                     SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
-                    drawBoard(WHITE);}
+                    drawBoard(WHITE);
+                }
+                catch (NumberFormatException e) {
+                    System.out.println("Invalid game number. Please enter a number.\n");
+                }
                 catch (Exception exception) {
                     System.out.println("Unable to observe game. " + exception.getMessage());}}
             else if (userInput.equalsIgnoreCase("quit") || userInput.equalsIgnoreCase("q")) {
@@ -193,9 +202,11 @@ public class Main {
             try {
                 var games = SERVER_FACADE.listGames(authToken);
                 lastGamesList = new ArrayList<>(games.games());
+                int counter = 1;
                 System.out.print("\n");
                 for (GameData game : lastGamesList) {
-                    System.out.print("- " + game.gameName());
+                    System.out.print("- " + counter + ". " + game.gameName());
+                    counter++;
                     int lengthOfGameName = game.gameName().length();
                     int helper = 17 - lengthOfGameName;
                     System.out.print(" ".repeat(helper));
@@ -213,31 +224,37 @@ public class Main {
 
         else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") ||
                 userInput.equals("4") || userInput.equals("play")) {
-            System.out.print("Which game would you like to join? ");
-            String gameName = SCANNER.nextLine().trim();
+            System.out.print("Which game would you like to join? (Enter Game #): ");
+            String gameNum = SCANNER.nextLine().trim();
             System.out.print("Which color would you like to be? [W]hite or [B]lack?: ");
             String color = SCANNER.nextLine().trim();
             System.out.print("\n");
             ChessGame.TeamColor teamColor = color.equalsIgnoreCase("w") ? WHITE : BLACK;
             try {
-                listGameHelper(gameName, teamColor);}
+                listGameHelper(gameNum, teamColor);}
             catch (Exception exception) {
-                System.out.println("Unable to join game." + exception.getMessage());}}
+                System.out.println("Unable to join game. " + exception.getMessage());}}
 
         else if (userInput.equalsIgnoreCase("observe game") || userInput.equals("5") || userInput.equals("observe") ||
                 userInput.equalsIgnoreCase("o")) {
-            System.out.print("Which game would you like to observe?: ");
-            String gameName = SCANNER.nextLine().trim();
+            System.out.print("Which game would you like to observe? (Enter Game #): ");
+            String gameNum = SCANNER.nextLine().trim();
             try {
                 var games = SERVER_FACADE.listGames(authToken);
                 lastGamesList = new ArrayList<>(games.games());
-                GameData selectedGame = findGameByName(gameName);
-                if (selectedGame == null) {
-                    System.out.println("Invalid game name.\n");
-                    return;}
+                int gameNumber = Integer.parseInt(gameNum);
+                if (gameNumber < 1 || gameNumber > lastGamesList.size()) {
+                    System.out.println("Invalid game number.\n");
+                    return;
+                }
+                GameData selectedGame = lastGamesList.get(gameNumber - 1);
                 System.out.println("White Pieces: " + selectedGame.whiteUsername() + "     |     Black Pieces: " + selectedGame.blackUsername());
                 SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
-                drawBoard(WHITE);}
+                drawBoard(WHITE);
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Invalid game number. Please enter a number.\n");
+            }
             catch (Exception exception) {
                 System.out.println("Unable to observe game. " + exception.getMessage());}}
 
@@ -262,15 +279,18 @@ public class Main {
                 return game;}}
         return null;}
 
-    private static void listGameHelper(String gameName, ChessGame.TeamColor teamColor) throws Exception {
+    private static void listGameHelper(String gameNum, ChessGame.TeamColor teamColor) throws Exception {
         var games = SERVER_FACADE.listGames(authToken);
         lastGamesList = new ArrayList<>(games.games());
-        GameData selectedGame = findGameByName(gameName);
-        if (selectedGame == null) {
-            System.out.println("Invalid game name.\n");}
-        else {
-            SERVER_FACADE.joinGame(authToken, selectedGame.gameID(), teamColor);
-            drawBoard(teamColor);}}
+        int gameNumber = Integer.parseInt(gameNum);
+        if (gameNumber < 1 || gameNumber > lastGamesList.size()) {
+            System.out.println("Invalid game number.\n");
+            return;
+        }
+        GameData selectedGame = lastGamesList.get(gameNumber - 1);
+        SERVER_FACADE.joinGame(authToken, selectedGame.gameID(), teamColor);
+        drawBoard(teamColor);
+    }
 
     private static void drawBoard(ChessGame.TeamColor teamColor) {
         DrawBoard bored = new DrawBoard();
