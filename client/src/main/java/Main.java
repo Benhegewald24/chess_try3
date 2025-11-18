@@ -183,14 +183,9 @@ public class Main
                 try {
                     var games = SERVER_FACADE.listGames(authToken);
                     lastGamesList = new ArrayList<>(games.games());
-                    if (lastGamesList.isEmpty()) {
-                        System.out.println("No games have been created.");}
-                    else
+                    for (GameData game : lastGamesList)
                     {
-                        for (GameData game : lastGamesList)
-                        {
-                            System.out.println(game.gameName());
-                        }
+                        System.out.println(game.gameName());
                     }
                 }
                 catch (Exception exception) {
@@ -276,7 +271,8 @@ public class Main
         if (userInput.equalsIgnoreCase("log out") || userInput.equalsIgnoreCase("lo") || userInput.equals("1")) {
             logout();}
 
-        else if (userInput.equalsIgnoreCase("create game") || userInput.equalsIgnoreCase("c") || userInput.equals("2") || userInput.equals("create")) {
+        else if (userInput.equalsIgnoreCase("create game") || userInput.equalsIgnoreCase("c") || userInput.equals("2")
+                || userInput.equalsIgnoreCase("create")) {
             System.out.print("New game name: ");
             String newGameName = SCANNER.nextLine().trim();
             try {
