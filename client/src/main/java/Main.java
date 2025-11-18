@@ -10,8 +10,7 @@ import results.RegisterResult;
 import ui.DrawBoard;
 import static chess.ChessGame.TeamColor.*;
 
-public class Main
-{
+public class Main {
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final String SERVER_URL = "http://localhost:8080";
     private static final ServerFacade SERVER_FACADE = new ServerFacade(SERVER_URL);
@@ -20,71 +19,41 @@ public class Main
     enum State {loggedIn, loggedOut}
     static State currentState = State.loggedOut;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         System.out.println("Welcome to 240 chess. Type [H]elp to get started.");
 
-        while (true)
-        {
-            if (currentState == State.loggedOut)
-            {
-                loggedOutUI();
-            }
+        while (true) {
+            if (currentState == State.loggedOut) {
+                loggedOutUI();}
 
-            else if (currentState == State.loggedIn)
-            {
-                loggedInUI();
-            }
-        }
-    }
+            else if (currentState == State.loggedIn) {
+                loggedInUI();}}}
 
-    public static void loggedOutUI()
-    {
-        while (currentState == State.loggedOut)
-        {
+    public static void loggedOutUI() {
+        while (currentState == State.loggedOut) {
             String userInput = SCANNER.nextLine().trim();
 
-            if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("h"))
-            {
-                help();
-            }
+            if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("h")) {
+                help();}
 
-            else if (userInput.equalsIgnoreCase("register") || userInput.equalsIgnoreCase("r"))
-            {
-                register();
-            }
+            else if (userInput.equalsIgnoreCase("register") || userInput.equalsIgnoreCase("r")) {
+                register();}
 
-            else if (userInput.equalsIgnoreCase("log in") || userInput.equalsIgnoreCase("l"))
-            {
-                login();
-            }
+            else if (userInput.equalsIgnoreCase("log in") || userInput.equalsIgnoreCase("l")) {
+                login();}
 
-            else if (userInput.equalsIgnoreCase("quit") || userInput.equalsIgnoreCase("q"))
-            {
+            else if (userInput.equalsIgnoreCase("quit") || userInput.equalsIgnoreCase("q")) {
                 System.out.println("Thanks for playing! We hope to see you again soon.");
-                System.exit(0);
-            }
+                System.exit(0);}
 
-            else if (userInput.isEmpty())
-            {
-                System.out.println("User input empty. Type [H]elp to get started.");
-            }
+            else if (userInput.isEmpty()) {
+                System.out.println("User input empty. Type [H]elp to get started.");}
 
-            else
-            {
-                System.out.println("Invalid input. Type [H]elp to get started or [Q]uit to exit.");
-            }
-        }
-    }
+            else {
+                System.out.println("Invalid input. Type [H]elp to get started or [Q]uit to exit.");}}}
 
-    public static void help()
-    {
-        System.out.println("\nWhat would you like to do?");
-        System.out.println("1. [R]egister");
-        System.out.println("2. [L]og In");
-        System.out.println("3. [Q]uit");
-        System.out.println("4. [H]elp");
-    }
+    public static void help() {
+        System.out.println("\nWhat would you like to do?\n1. [R]egister\n2. [L]og In\n3. [Q]uit\n4. [H]elp");}
 
     private static void register()
     {
