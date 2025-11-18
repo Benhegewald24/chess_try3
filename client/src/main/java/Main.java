@@ -84,7 +84,7 @@ public class Main
         System.out.print("Email: ");
         var email = SCANNER.nextLine().trim();
 
-        if (username.contains(" ") || password.contains(" ") || email.contains(" "))
+        if (username.isBlank() || password.isBlank() || email.isBlank())
         {
             System.out.println("Invalid input. Please try again.");
             register();
@@ -115,7 +115,7 @@ public class Main
         catch (Exception exception)
         {
             String errorMessage = exception.getMessage();
-            if (errorMessage == null || errorMessage.isEmpty())
+            if (errorMessage.isBlank())
             {
                 errorMessage = "Unable to connect to server. Please ensure the server is running.";
             }
