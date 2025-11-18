@@ -89,13 +89,13 @@ public class Main
     private static void register()
     {
         System.out.print("\nUsername: ");
-        var username = SCANNER.nextLine().trim();
+        String username = SCANNER.nextLine().trim();
 
         System.out.print("Password: ");
-        var password = SCANNER.nextLine().trim();
+        String password = SCANNER.nextLine().trim();
 
         System.out.print("Email: ");
-        var email = SCANNER.nextLine().trim();
+        String email = SCANNER.nextLine().trim();
 
         if (username.contains(" ") || password.contains(" ") || email.contains(" "))
         {
@@ -140,10 +140,10 @@ public class Main
     private static void login()
     {
         System.out.print("\nUsername: ");
-        var username = SCANNER.nextLine().trim();
+        String username = SCANNER.nextLine().trim();
 
         System.out.print("Password: ");
-        var password = SCANNER.nextLine();
+        String password = SCANNER.nextLine();
 
         try {
             LoginResult result = SERVER_FACADE.login(username, password);
@@ -183,10 +183,16 @@ public class Main
                 try {
                     var games = SERVER_FACADE.listGames(authToken);
                     lastGamesList = new ArrayList<>(games.games());
-                    for (GameData game : lastGamesList) {
-                        if (lastGamesList.isEmpty()) {
-                            System.out.println("No games have been created.");} else {
-                            System.out.println(game.gameName());}}}
+                    if (lastGamesList.isEmpty()) {
+                        System.out.println("No games have been created.");}
+                    else
+                    {
+                        for (GameData game : lastGamesList)
+                        {
+                            System.out.println(game.gameName());
+                        }
+                    }
+                }
                 catch (Exception exception) {
                     System.out.println("Unable to list games." + exception.getMessage());}}
             else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") || userInput.equalsIgnoreCase("play")) {
@@ -262,173 +268,102 @@ public class Main
         help();
     }
 
-    public static void helpLoggedIn()
-    {
+    public static void helpLoggedIn() {
         System.out.println("\nYou are logged in. What would you like to do?");
-        System.out.println("1. [Lo]g Out");
-        System.out.println("2. [C]reate Game");
-        System.out.println("3. [Li]st Games");
-        System.out.println("4. [P]lay Game");
-        System.out.println("5. [O]bserve Game");
-        System.out.println("6. [H]elp");
+        System.out.println("1. [Lo]g Out\n2. [C]reate Game\n3. [Li]st Games\n4. [P]lay Game\n5. [O]bserve Game\n6. [H]elp");
         String userInput = SCANNER.nextLine().trim();
 
-        if (userInput.equalsIgnoreCase("log out") || userInput.equalsIgnoreCase("lo") || userInput.equals("1"))
-        {
-            logout();
-        }
+        if (userInput.equalsIgnoreCase("log out") || userInput.equalsIgnoreCase("lo") || userInput.equals("1")) {
+            logout();}
 
-        else if (userInput.equalsIgnoreCase("create game") || userInput.equalsIgnoreCase("c") || userInput.equals("2") || userInput.equals("create"))
-        {
+        else if (userInput.equalsIgnoreCase("create game") || userInput.equalsIgnoreCase("c") || userInput.equals("2") || userInput.equals("create")) {
             System.out.print("New game name: ");
             String newGameName = SCANNER.nextLine().trim();
-            try
-            {
-                SERVER_FACADE.createGame(authToken, newGameName);
-            }
-            catch (Exception exception)
-            {
-                System.out.println("Unable to create game." + exception.getMessage());
-            }
-        }
+            try {
+                SERVER_FACADE.createGame(authToken, newGameName);}
+            catch (Exception exception) {
+                System.out.println("Unable to create game." + exception.getMessage());}}
 
         else if (userInput.equalsIgnoreCase("list games") ||
-                userInput.equalsIgnoreCase("li") || userInput.equalsIgnoreCase("list") || userInput.equals("3"))
-        {
-            try
-            {
+                userInput.equalsIgnoreCase("li") || userInput.equalsIgnoreCase("list") || userInput.equals("3")) {
+            try {
                 var games = SERVER_FACADE.listGames(authToken);
                 lastGamesList = new ArrayList<>(games.games());
                 System.out.print("\n");
-                for (GameData game : lastGamesList)
-                {
+                for (GameData game : lastGamesList) {
                     System.out.print("- " + game.gameName());
                     int lengthOfGameName = game.gameName().length();
                     int helper = 17 - lengthOfGameName;
-                    for (int i = 0; i < helper; i++)
-                    {
-                        System.out.print(" ");
-                    }
+                    for (int i = 0; i < helper; i++) {
+                        System.out.print(" ");}
                     System.out.print("White Pieces: " + game.whiteUsername());
-                    if (game.whiteUsername() == null)
-                    {
-                        System.out.print("        ");
-                    }
-                    else
-                    {
+                    if (game.whiteUsername() == null) {
+                        System.out.print("        ");}
+                    else {
                         int lengthOfWhiteUsername = game.whiteUsername().length();
                         int helper2 = 12 - lengthOfWhiteUsername;
-                        for (int i = 0; i < helper2; i++)
-                        {
-                            System.out.print(" ");
-                        }
-                    }
-                    System.out.println("|        Black Pieces: " + game.blackUsername());
-                }
-                System.out.print("\n");
-            }
-            catch (Exception exception)
-            {
-                System.out.println("Unable to list games." + exception.getMessage());
-            }
-        }
+                        for (int i = 0; i < helper2; i++) {
+                            System.out.print(" ");}}
+                    System.out.println("|        Black Pieces: " + game.blackUsername());}
+                System.out.print("\n");}
+            catch (Exception exception) {
+                System.out.println("Unable to list games." + exception.getMessage());}}
 
         else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") ||
-                userInput.equals("4") || userInput.equals("play"))
-        {
+                userInput.equals("4") || userInput.equals("play")) {
             System.out.print("Which game would you like to join? ");
             String gameName = SCANNER.nextLine().trim();
             System.out.print("Which color would you like to be? [W]hite or [B]lack?: ");
             String color = SCANNER.nextLine().trim();
             System.out.print("\n");
             ChessGame.TeamColor teamColor = color.equalsIgnoreCase("w") ? WHITE : BLACK;
-            try
-            {
+            try {
                 var games = SERVER_FACADE.listGames(authToken);
                 lastGamesList = new ArrayList<>(games.games());
                 GameData selectedGame = null;
-                for (GameData game : lastGamesList)
-                {
-                    if (game.gameName().equalsIgnoreCase(gameName))
-                    {
+                for (GameData game : lastGamesList) {
+                    if (game.gameName().equalsIgnoreCase(gameName)) {
                         selectedGame = game;
-                        break;
-                    }
-                }
-                if (selectedGame == null)
-                {
-                    System.out.println("Invalid game name.\n");
-                }
-                else
-                {
+                        break;}}
+                if (selectedGame == null) {
+                    System.out.println("Invalid game name.\n");}
+                else {
                     SERVER_FACADE.joinGame(authToken, selectedGame.gameID(), teamColor);
-                    drawBoard(teamColor);
-                }
-            }
-            catch (Exception exception)
-            {
-                System.out.println("Unable to join game." + exception.getMessage());
-            }
-        }
+                    drawBoard(teamColor);}}
+            catch (Exception exception) {
+                System.out.println("Unable to join game." + exception.getMessage());}}
 
         else if (userInput.equalsIgnoreCase("observe game") || userInput.equals("5") || userInput.equals("observe") ||
-                userInput.equalsIgnoreCase("o"))
-        {
+                userInput.equalsIgnoreCase("o")) {
             System.out.print("Which game would you like to observe?: ");
             String gameName = SCANNER.nextLine().trim();
-            try
-            {
+            try {
                 var games = SERVER_FACADE.listGames(authToken);
                 lastGamesList = new ArrayList<>(games.games());
                 GameData selectedGame = null;
-                for (GameData game : lastGamesList)
-                {
-                    if (game.gameName().equalsIgnoreCase(gameName))
-                    {
+                for (GameData game : lastGamesList) {
+                    if (game.gameName().equalsIgnoreCase(gameName)) {
                         selectedGame = game;
-                        break;
-                    }
-                }
-                if (selectedGame == null)
-                {
-                    System.out.println("Invalid game name.\n");
-                }
-                else
-                {
+                        break;}}
+                if (selectedGame == null) {
+                    System.out.println("Invalid game name.\n");}
+                else {
                     System.out.println("White Pieces: " + selectedGame.whiteUsername() + "     |     Black Pieces: " + selectedGame.blackUsername());
                     SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
-                    drawBoard(WHITE);
-                }
-            }
-            catch (Exception exception)
-            {
-                System.out.println("Unable to observe game. " + exception.getMessage());
-            }
-        }
+                    drawBoard(WHITE);}}
+            catch (Exception exception) {
+                System.out.println("Unable to observe game. " + exception.getMessage());}}
 
-        else if (userInput.equalsIgnoreCase("h") || userInput.equalsIgnoreCase("help"))
-        {
-            helpLoggedIn();
-        }
+        else if (userInput.equalsIgnoreCase("h") || userInput.equalsIgnoreCase("help")) {
+            helpLoggedIn();}
 
-        else
-        {
-            if (!userInput.isEmpty())
-            {
-                System.out.println("Invalid input. Please enter one of the options from the menu.");
-            }
-        }
-    }
+        else {
+            if (!userInput.isEmpty()) {
+                System.out.println("Invalid input. Please enter one of the options from the menu.");}}}
 
-    private static void drawBoard(ChessGame.TeamColor teamColor)
-    {
+    private static void drawBoard(ChessGame.TeamColor teamColor) {
         DrawBoard bored = new DrawBoard();
         bored.displayBoard(teamColor);
-        boolean switcher;
-        switcher = false;
-        if (switcher)
-        {
-            bored.displayBoard2(new ChessBoard());
-        }
-    }
-}
+        boolean switcher = false;
+        if (switcher) {
+            bored.displayBoard2(new ChessBoard());}}}
