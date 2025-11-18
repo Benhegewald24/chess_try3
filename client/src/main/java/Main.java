@@ -55,8 +55,7 @@ public class Main {
     public static void help() {
         System.out.println("\nWhat would you like to do?\n1. [R]egister\n2. [L]og In\n3. [Q]uit\n4. [H]elp");}
 
-    private static void register()
-    {
+    private static void register() {
         System.out.print("\nUsername: ");
         String username = SCANNER.nextLine().trim();
 
@@ -66,51 +65,36 @@ public class Main {
         System.out.print("Email: ");
         String email = SCANNER.nextLine().trim();
 
-        if (username.contains(" ") || password.contains(" ") || email.contains(" "))
-        {
+        if (username.contains(" ") || password.contains(" ") || email.contains(" ")) {
             System.out.println("Invalid input. Please try again.");
             register();
-            return;
-        }
+            return;}
 
-        if (password.equalsIgnoreCase("password"))
-        {
+        if (password.equalsIgnoreCase("password")) {
             System.out.println("Provided password is too weak. Please try again.");
             register();
-            return;
-        }
+            return;}
 
-        if (!email.contains(".") || !email.contains("@"))
-        {
+        if (!email.contains(".") || !email.contains("@")) {
             System.out.println("Invalid email. Please try again.");
             register();
-            return;
-        }
+            return;}
 
-        try
-        {
+        try {
             RegisterResult result = SERVER_FACADE.register(username, password, email);
             authToken = result.authToken();
             currentState = State.loggedIn;
-            System.out.println("\nWelcome to chess 240, " + username + "!");
-        }
-        catch (Exception exception)
-        {
+            System.out.println("\nWelcome to chess 240, " + username + "!");}
+        catch (Exception exception) {
             String errorMessage = exception.getMessage();
-            if (errorMessage == null || errorMessage.isBlank())
-            {
-                errorMessage = "Unable to connect to server. Please ensure the server is running.";
-            }
+            if (errorMessage == null || errorMessage.isBlank()) {
+                errorMessage = "Unable to connect to server. Please ensure the server is running.";}
             System.out.println("Registration " + errorMessage);
-            help();
-        }
-    }
+            help();}}
 
-    private static void login()
-    {
+    private static void login() {
         System.out.print("\nUsername: ");
         String username = SCANNER.nextLine().trim();
-
         System.out.print("Password: ");
         String password = SCANNER.nextLine();
 
@@ -118,19 +102,13 @@ public class Main {
             LoginResult result = SERVER_FACADE.login(username, password);
             authToken = result.authToken();
             currentState = State.loggedIn;
-            System.out.println("\nWelcome back, " + username + "!");
-        }
-        catch (Exception exception)
-        {
+            System.out.println("\nWelcome back, " + username + "!");}
+        catch (Exception exception) {
             String errorMessage = exception.getMessage();
-            if (errorMessage == null || errorMessage.isBlank())
-            {
-                errorMessage = "Unable to connect to server. Please ensure the server is running.";
-            }
+            if (errorMessage == null || errorMessage.isBlank()) {
+                errorMessage = "Unable to connect to server. Please ensure the server is running.";}
             System.out.println("\nLogin failed: " + errorMessage);
-            help();
-        }
-    }
+            help();}}
 
     private static void loggedInUI() {
         while (currentState == State.loggedIn) {
@@ -147,11 +125,8 @@ public class Main {
                 try {
                     var games = SERVER_FACADE.listGames(authToken);
                     lastGamesList = new ArrayList<>(games.games());
-                    for (GameData game : lastGamesList)
-                    {
-                        System.out.println(game.gameName());
-                    }
-                }
+                    for (GameData game : lastGamesList) {
+                        System.out.println(game.gameName());}}
                 catch (Exception exception) {
                     System.out.println("Unable to list games." + exception.getMessage());}}
             else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") || userInput.equalsIgnoreCase("play")) {
@@ -161,17 +136,13 @@ public class Main {
                 String color = SCANNER.nextLine().trim();
                 ChessGame.TeamColor teamColor = color.equalsIgnoreCase("b") ? BLACK : WHITE;
                 try {
-                    listGameHelper(gameName, teamColor);
-                }
+                    listGameHelper(gameName, teamColor);}
                 catch (Exception exception) {
                     String errorMessage = exception.getMessage();
                     if (errorMessage != null && errorMessage.contains("already taken")) {
                         System.out.println("\nColor already taken for this game.");
-                        continue;
-                    }
-                    System.out.println("Unable to join game." + errorMessage);
-                }
-            }
+                        continue;}
+                    System.out.println("Unable to join game." + errorMessage);}}
             else if (userInput.equalsIgnoreCase("observe game") || userInput.equalsIgnoreCase("observe") || userInput.equalsIgnoreCase("o")) {
                 System.out.print("Which game would you like to observe? ");
                 String gameName = SCANNER.nextLine().trim();
@@ -185,8 +156,7 @@ public class Main {
                     }
                     System.out.println("White Pieces: " + selectedGame.whiteUsername() + "   |   Black Pieces: " + selectedGame.blackUsername());
                     SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
-                    drawBoard(WHITE);
-                }
+                    drawBoard(WHITE);}
                 catch (Exception exception) {
                     System.out.println("Unable to observe game. " + exception.getMessage());}}
             else if (userInput.equalsIgnoreCase("quit") || userInput.equalsIgnoreCase("q")) {
@@ -195,27 +165,19 @@ public class Main {
             else {
                 System.out.println("Invalid input. Type [H]elp for options or [Q]uit to exit.");}}}
 
-    private static void logout()
-    {
-        if (authToken == null)
-        {
+    private static void logout() {
+        if (authToken == null) {
             currentState = State.loggedOut;
-            return;
-        }
+            return;}
 
-        try
-        {
+        try {
             SERVER_FACADE.logout(authToken);
-            System.out.println("\nUser logged out.");
-        }
-        catch (Exception exception)
-        {
-            System.out.println("Logout failed." + exception.getMessage());
-        }
+            System.out.println("\nUser logged out.");}
+        catch (Exception exception) {
+            System.out.println("Logout failed." + exception.getMessage());}
         currentState = State.loggedOut;
         authToken = null;
-        help();
-    }
+        help();}
 
     public static void helpLoggedIn() {
         System.out.println("\nYou are logged in. What would you like to do?");
@@ -275,12 +237,10 @@ public class Main {
                 GameData selectedGame = findGameByName(gameName);
                 if (selectedGame == null) {
                     System.out.println("Invalid game name.\n");
-                    return;
-                }
+                    return;}
                 System.out.println("White Pieces: " + selectedGame.whiteUsername() + "     |     Black Pieces: " + selectedGame.blackUsername());
                 SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
-                drawBoard(WHITE);
-            }
+                drawBoard(WHITE);}
             catch (Exception exception) {
                 System.out.println("Unable to observe game. " + exception.getMessage());}}
 
@@ -302,11 +262,8 @@ public class Main {
     private static GameData findGameByName(String gameName) {
         for (GameData game : lastGamesList) {
             if (game.gameName().equalsIgnoreCase(gameName)) {
-                return game;
-            }
-        }
-        return null;
-    }
+                return game;}}
+        return null;}
 
     private static void listGameHelper(String gameName, ChessGame.TeamColor teamColor) throws Exception {
         var games = SERVER_FACADE.listGames(authToken);
