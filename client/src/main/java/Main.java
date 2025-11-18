@@ -23,6 +23,23 @@ public class Main
     public static void main(String[] args)
     {
         System.out.println("Welcome to 240 chess. Type [H]elp to get started.");
+
+        while (true)
+        {
+            if (currentState == State.loggedOut)
+            {
+                loggedOutUI();
+            }
+
+            else if (currentState == State.loggedIn)
+            {
+                loggedInUI();
+            }
+        }
+    }
+
+    public static void loggedOutUI()
+    {
         while (currentState == State.loggedOut)
         {
             String userInput = SCANNER.nextLine().trim();
@@ -58,24 +75,20 @@ public class Main
                 System.out.println("Invalid input. Type [H]elp to get started or [Q]uit to exit.");
             }
         }
-
-        if (currentState == State.loggedIn)
-        {
-            loggedInUI();
-        }
     }
 
     public static void help()
     {
-        System.out.println("What would you like to do?");
+        System.out.println("\nWhat would you like to do?");
         System.out.println("1. [R]egister");
         System.out.println("2. [L]og In");
         System.out.println("3. [Q]uit");
+        System.out.println("4. [H]elp");
     }
 
     private static void register()
     {
-        System.out.print("Username: ");
+        System.out.print("\nUsername: ");
         var username = SCANNER.nextLine().trim();
 
         System.out.print("Password: ");
@@ -84,7 +97,7 @@ public class Main
         System.out.print("Email: ");
         var email = SCANNER.nextLine().trim();
 
-        if (username.isBlank() || password.isBlank() || email.isBlank())
+        if (username.contains(" ") || password.contains(" ") || email.contains(" "))
         {
             System.out.println("Invalid input. Please try again.");
             register();
@@ -119,14 +132,14 @@ public class Main
             {
                 errorMessage = "Unable to connect to server. Please ensure the server is running.";
             }
-            System.out.println("Registration failed: " + errorMessage);
-            register();
+            System.out.println("Registration " + errorMessage);
+            help();
         }
     }
 
     private static void login()
     {
-        System.out.print("Username: ");
+        System.out.print("\nUsername: ");
         var username = SCANNER.nextLine().trim();
 
         System.out.print("Password: ");
@@ -136,7 +149,7 @@ public class Main
             LoginResult result = SERVER_FACADE.login(username, password);
             authToken = result.authToken();
             currentState = State.loggedIn;
-            System.out.println("Welcome back, " + username + "!");
+            System.out.println("\nWelcome back, " + username + "!");
         }
         catch (Exception exception)
         {
@@ -155,7 +168,7 @@ public class Main
             {
                 helpLoggedIn();
             }
-            else if (userInput.equalsIgnoreCase("log out") || userInput.equalsIgnoreCase("l"))
+            else if (userInput.equalsIgnoreCase("log out") || userInput.equalsIgnoreCase("lo"))
             {
                 logout();
             }
@@ -181,7 +194,7 @@ public class Main
                     int counter = 1;
                     for (GameData game : lastGamesList)
                     {
-                        System.out.println(counter + ": " + game.gameName());
+                        System.out.println(game.gameName());
                         counter++;
                     }
                 }
@@ -222,6 +235,7 @@ public class Main
                     if (errorMessage != null && errorMessage.contains("already taken"))
                     {
                         System.out.println("Color already taken for this game.");
+                        loggedInUI();
                     }
                     else
                     {
@@ -280,7 +294,7 @@ public class Main
         try
         {
             SERVER_FACADE.logout(authToken);
-            System.out.println("User logged out. Thanks for playing!");
+            System.out.println("\nUser logged out.");
         }
         catch (Exception exception)
         {
@@ -288,19 +302,21 @@ public class Main
         }
         currentState = State.loggedOut;
         authToken = null;
+        help();
     }
 
     public static void helpLoggedIn()
     {
-        System.out.println("What would you like to do?");
-        System.out.println("1. [L]og Out");
+        System.out.println("\nike to do?");
+        System.out.println("1. [Lo]g Out");
         System.out.println("2. [C]reate Game");
         System.out.println("3. [Li]st Games");
         System.out.println("4. [P]lay Game");
         System.out.println("5. [O]bserve Game");
+        System.out.println("6. [H]elp");
         String userInput = SCANNER.nextLine().trim();
 
-        if (userInput.equalsIgnoreCase("log out") || userInput.equalsIgnoreCase("l") || userInput.equals("1"))
+        if (userInput.equalsIgnoreCase("log out") || userInput.equalsIgnoreCase("lo") || userInput.equals("1"))
         {
             logout();
         }
@@ -326,11 +342,31 @@ public class Main
             {
                 var games = SERVER_FACADE.listGames(authToken);
                 lastGamesList = new ArrayList<>(games.games());
-                int counter = 1;
+                System.out.print("\n");
                 for (GameData game : lastGamesList)
                 {
-                    System.out.println(counter + ": " + game.gameName());
-                    counter++;
+                    System.out.print("- " + game.gameName());
+                    int length_of_gamename = game.gameName().length();
+                    int helper = 17 - length_of_gamename;
+                    for (int i = 0; i < helper; i++)
+                    {
+                        System.out.print(" ");
+                    }
+                    System.out.print("White Pieces: " + game.whiteUsername());
+                    if (game.whiteUsername() == null)
+                    {
+                        System.out.print("        ");
+                    }
+                    else
+                    {
+                        int length_of_white_user = game.whiteUsername().length();
+                        int helper2 = 12 - length_of_white_user;
+                        for (int i = 0; i < helper2; i++)
+                        {
+                            System.out.print(" ");
+                        }
+                    }
+                    System.out.println("|        Black Pieces: " + game.blackUsername());
                 }
             }
             catch (Exception exception)
@@ -400,6 +436,11 @@ public class Main
             {
                 System.out.println("Unable to observe game. " + exception.getMessage());
             }
+        }
+
+        else if (userInput.equalsIgnoreCase("h") || userInput.equalsIgnoreCase("help"))
+        {
+            helpLoggedIn();
         }
 
         else
