@@ -307,7 +307,7 @@ public class Main
 
     public static void helpLoggedIn()
     {
-        System.out.println("\nike to do?");
+        System.out.println("\nYou are logged in. What would you like to do?");
         System.out.println("1. [Lo]g Out");
         System.out.println("2. [C]reate Game");
         System.out.println("3. [Li]st Games");
