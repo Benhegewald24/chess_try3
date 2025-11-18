@@ -245,16 +245,13 @@ public class Main {
                 int gameNumber = Integer.parseInt(gameNum);
                 if (gameNumber < 1 || gameNumber > lastGamesList.size()) {
                     System.out.println("Invalid game number.\n");
-                    return;
-                }
+                    return;}
                 GameData selectedGame = lastGamesList.get(gameNumber - 1);
                 System.out.println("White Pieces: " + selectedGame.whiteUsername() + "     |     Black Pieces: " + selectedGame.blackUsername());
                 SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
-                drawBoard(WHITE);
-            }
+                drawBoard(WHITE);}
             catch (NumberFormatException e) {
-                System.out.println("Invalid game number. Please enter a number.\n");
-            }
+                System.out.println("Invalid game number. Please enter a number.\n");}
             catch (Exception exception) {
                 System.out.println("Unable to observe game. " + exception.getMessage());}}
 
@@ -273,24 +270,16 @@ public class Main {
         catch (Exception exception) {
             System.out.println("Unable to create game." + exception.getMessage()); }}
 
-    private static GameData findGameByName(String gameName) {
-        for (GameData game : lastGamesList) {
-            if (game.gameName().equalsIgnoreCase(gameName)) {
-                return game;}}
-        return null;}
-
     private static void listGameHelper(String gameNum, ChessGame.TeamColor teamColor) throws Exception {
         var games = SERVER_FACADE.listGames(authToken);
         lastGamesList = new ArrayList<>(games.games());
         int gameNumber = Integer.parseInt(gameNum);
         if (gameNumber < 1 || gameNumber > lastGamesList.size()) {
             System.out.println("Invalid game number.\n");
-            return;
-        }
+            return;}
         GameData selectedGame = lastGamesList.get(gameNumber - 1);
         SERVER_FACADE.joinGame(authToken, selectedGame.gameID(), teamColor);
-        drawBoard(teamColor);
-    }
+        drawBoard(teamColor);}
 
     private static void drawBoard(ChessGame.TeamColor teamColor) {
         DrawBoard bored = new DrawBoard();
