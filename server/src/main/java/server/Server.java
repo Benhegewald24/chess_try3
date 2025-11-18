@@ -225,7 +225,7 @@ public class Server
             context.status(401);
         }
 
-        else if (message.contains("already taken"))
+        else if (message.contains("already taken") || message.contains("already created"))
         {
             context.status(403);
         }
