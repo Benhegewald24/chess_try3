@@ -152,8 +152,7 @@ public class Main {
                     GameData selectedGame = findGameByName(gameName);
                     if (selectedGame == null) {
                         System.out.println("Invalid game name.\n");
-                        continue;
-                    }
+                        continue;}
                     System.out.println("White Pieces: " + selectedGame.whiteUsername() + "   |   Black Pieces: " + selectedGame.blackUsername());
                     SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
                     drawBoard(WHITE);}
@@ -207,8 +206,7 @@ public class Main {
                     else {
                         int lengthOfWhiteUsername = game.whiteUsername().length();
                         int helper2 = 12 - lengthOfWhiteUsername;
-                        for (int i = 0; i < helper2; i++) {
-                            System.out.print(" ");}}
+                        System.out.print(" ".repeat(helper2));}
                     System.out.println("|        Black Pieces: " + game.blackUsername());}
                 System.out.print("\n");}
             catch (Exception exception) {
