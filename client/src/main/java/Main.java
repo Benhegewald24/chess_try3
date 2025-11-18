@@ -142,12 +142,7 @@ public class Main {
             else if (userInput.equalsIgnoreCase("log out") || userInput.equalsIgnoreCase("lo")) {
                 logout();}
             else if (userInput.equalsIgnoreCase("create game") || userInput.equalsIgnoreCase("c") || userInput.equalsIgnoreCase("create")) {
-                System.out.print("New game name: ");
-                String newGameName = SCANNER.nextLine().trim();
-                try {
-                    SERVER_FACADE.createGame(authToken, newGameName);}
-                catch (Exception exception) {
-                    System.out.println("Unable to create game." + exception.getMessage());}}
+                createGameHelper();}
             else if (userInput.equalsIgnoreCase("list games") || userInput.equalsIgnoreCase("li") || userInput.equalsIgnoreCase("list")) {
                 try {
                     var games = SERVER_FACADE.listGames(authToken);
@@ -183,13 +178,7 @@ public class Main {
                 try {
                     var games = SERVER_FACADE.listGames(authToken);
                     lastGamesList = new ArrayList<>(games.games());
-                    GameData selectedGame = null;
-                    for (GameData game : lastGamesList) {
-                        if (game.gameName().equalsIgnoreCase(gameName)) {
-                            selectedGame = game;
-                            break;
-                        }
-                    }
+                    GameData selectedGame = findGameByName(gameName);
                     if (selectedGame == null) {
                         System.out.println("Invalid game name.\n");
                         continue;
@@ -236,10 +225,7 @@ public class Main {
         if (userInput.equalsIgnoreCase("log out") || userInput.equalsIgnoreCase("lo") || userInput.equals("1")) {logout();}
 
         else if (userInput.equalsIgnoreCase("create game") || userInput.equalsIgnoreCase("c") || userInput.equals("2")) {
-            System.out.print("New game name: ");
-            String newGameName = SCANNER.nextLine().trim();
-            try {SERVER_FACADE.createGame(authToken, newGameName);}
-            catch (Exception exception) {System.out.println("Unable to create game." + exception.getMessage());}}
+            createGameHelper();}
 
         else if (userInput.equalsIgnoreCase("list games") ||
                 userInput.equalsIgnoreCase("li") || userInput.equalsIgnoreCase("list") || userInput.equals("3")) {
@@ -286,17 +272,15 @@ public class Main {
             try {
                 var games = SERVER_FACADE.listGames(authToken);
                 lastGamesList = new ArrayList<>(games.games());
-                GameData selectedGame = null;
-                for (GameData game : lastGamesList) {
-                    if (game.gameName().equalsIgnoreCase(gameName)) {
-                        selectedGame = game;
-                        break;}}
+                GameData selectedGame = findGameByName(gameName);
                 if (selectedGame == null) {
-                    System.out.println("Invalid game name.\n");}
-                else {
-                    System.out.println("White Pieces: " + selectedGame.whiteUsername() + "     |     Black Pieces: " + selectedGame.blackUsername());
-                    SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
-                    drawBoard(WHITE);}}
+                    System.out.println("Invalid game name.\n");
+                    return;
+                }
+                System.out.println("White Pieces: " + selectedGame.whiteUsername() + "     |     Black Pieces: " + selectedGame.blackUsername());
+                SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
+                drawBoard(WHITE);
+            }
             catch (Exception exception) {
                 System.out.println("Unable to observe game. " + exception.getMessage());}}
 
@@ -307,14 +291,27 @@ public class Main {
             if (!userInput.isEmpty()) {
                 System.out.println("Invalid input. Please enter one of the options from the menu.");}}}
 
+    private static void createGameHelper() {
+        System.out.print("New game name: ");
+        String newGameName = SCANNER.nextLine().trim();
+        try {
+            SERVER_FACADE.createGame(authToken, newGameName);}
+        catch (Exception exception) {
+            System.out.println("Unable to create game." + exception.getMessage()); }}
+
+    private static GameData findGameByName(String gameName) {
+        for (GameData game : lastGamesList) {
+            if (game.gameName().equalsIgnoreCase(gameName)) {
+                return game;
+            }
+        }
+        return null;
+    }
+
     private static void listGameHelper(String gameName, ChessGame.TeamColor teamColor) throws Exception {
         var games = SERVER_FACADE.listGames(authToken);
         lastGamesList = new ArrayList<>(games.games());
-        GameData selectedGame = null;
-        for (GameData game : lastGamesList) {
-            if (game.gameName().equalsIgnoreCase(gameName)) {
-                selectedGame = game;
-                break;}}
+        GameData selectedGame = findGameByName(gameName);
         if (selectedGame == null) {
             System.out.println("Invalid game name.\n");}
         else {
