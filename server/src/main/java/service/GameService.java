@@ -65,12 +65,19 @@ public class GameService
             throw new DataAccessException("Error: bad request.");
         }
 
-        if (request.playerColor() == null)
+        String playerColor = request.playerColor();
+
+        if (playerColor == null)
         {
-            return new JoinGameResult();
+            throw new DataAccessException("Error: bad request.");
         }
 
-        String playerColor = request.playerColor();
+        playerColor = playerColor.trim();
+
+        if (playerColor.isEmpty())
+        {
+            throw new DataAccessException("Error: bad request.");
+        }
 
         if (playerColor.equals("WHITE"))
         {
