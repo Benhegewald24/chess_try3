@@ -79,11 +79,16 @@ public class GameService
             throw new DataAccessException("Error: bad request.");
         }
 
+        if (playerColor.equals("OBSERVER"))
+        {
+            return new JoinGameResult();
+        }
+
         if (playerColor.equals("WHITE"))
         {
             if (game.whiteUsername() != null && !game.whiteUsername().isEmpty())
             {
-                throw new DataAccessException("Error: already taken.");
+                throw new DataAccessException("Error: color already taken.");
             }
 
             GameData updatedGame = new GameData(game.gameID(), authData.username(), game.blackUsername(), game.gameName(), game.game());

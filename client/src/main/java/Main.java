@@ -142,7 +142,7 @@ public class Main {
                     if (errorMessage != null && errorMessage.contains("already taken")) {
                         System.out.println("\nColor already taken for this game.");
                         continue;}
-                    System.out.println("Unable to join game." + errorMessage);}}
+                    System.out.println("Unable to join game. " + errorMessage);}}
             else if (userInput.equalsIgnoreCase("observe game") || userInput.equalsIgnoreCase("observe") || userInput.equalsIgnoreCase("o")) {
                 System.out.print("Which game would you like to observe? ");
                 String gameName = SCANNER.nextLine().trim();
@@ -198,8 +198,7 @@ public class Main {
                     System.out.print("- " + game.gameName());
                     int lengthOfGameName = game.gameName().length();
                     int helper = 17 - lengthOfGameName;
-                    for (int i = 0; i < helper; i++) {
-                        System.out.print(" ");}
+                    System.out.print(" ".repeat(helper));
                     System.out.print("White Pieces: " + game.whiteUsername());
                     if (game.whiteUsername() == null) {
                         System.out.print("        ");}

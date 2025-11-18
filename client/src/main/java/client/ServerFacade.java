@@ -76,7 +76,7 @@ public class ServerFacade
 
     public void observeGame(String authToken, int gameId) throws Exception
     {
-        var body = gson.toJson(new JoinGameRequest(null, gameId));
+        var body = gson.toJson(new JoinGameRequest("OBSERVER", gameId));
         sendJoin(authToken, body);
     }
 
