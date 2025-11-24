@@ -58,7 +58,8 @@ public class WebSocketTests
     }
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown()
+    {
         environment.disconnectAll();
     }
 
@@ -297,37 +298,43 @@ public class WebSocketTests
         leave(white, gameID, Set.of(black, observer), Set.of(white2, black2, observer2), "leave from game 1");
     }
 
-    private void setupNormalGame() {
+    private void setupNormalGame()
+    {
         connectToGame(white, gameID, true, Set.of(), Set.of(), "white player connect");
         connectToGame(black, gameID, true, Set.of(white), Set.of(), "black player connect");
         connectToGame(observer, gameID, true,  Set.of(white, black), Set.of(), "observer connect");
     }
 
-    private WebsocketUser registerUser(String name, String password, String email) {
+    private WebsocketUser registerUser(String name, String password, String email)
+    {
         TestAuthResult authResult = serverFacade.register(new TestUser(name, password, email));
         assertHttpOk(authResult, "registering a new user");
         return new WebsocketUser(authResult.getUsername(), authResult.getAuthToken());
     }
 
-    private int createGame(WebsocketUser user, String name) {
+    private int createGame(WebsocketUser user, String name)
+    {
         TestCreateResult createResult = serverFacade.createGame(new TestCreateRequest(name), user.authToken());
         assertHttpOk(createResult, "creating a new game");
         return createResult.getGameID();
     }
 
-    private void joinGame(int gameID, WebsocketUser user, ChessGame.TeamColor color) {
+    private void joinGame(int gameID, WebsocketUser user, ChessGame.TeamColor color)
+    {
         TestResult result = serverFacade.joinPlayer(new TestJoinRequest(color, gameID), user.authToken());
         assertHttpOk(result, "joining a player to a game");
     }
 
-    private void assertHttpOk(TestResult result, String context) {
+    private void assertHttpOk(TestResult result, String context)
+    {
         Assertions.assertEquals(200, serverFacade.getStatusCode(),
                 String.format("HTTP Status code was not 200 for %s, was %d. Message: %s",
                         context, serverFacade.getStatusCode(), result.getMessage()));
     }
 
     private void connectToGame(WebsocketUser sender, int gameID, boolean expectSuccess,
-                               Set<WebsocketUser> inGame, Set<WebsocketUser> otherClients, String description) {
+                               Set<WebsocketUser> inGame, Set<WebsocketUser> otherClients, String description)
+    {
         TestCommand connectCommand = new TestCommand(UserGameCommand.CommandType.CONNECT, sender.authToken(), gameID);
         Map<String, Integer> numExpectedMessages = expectedMessages(sender, 1, inGame, (expectSuccess ? 1 : 0), otherClients);
         Map<String, List<TestMessage>> actualMessages = environment.exchange(sender.username(), connectCommand, numExpectedMessages, waitTime);
@@ -336,23 +343,28 @@ public class WebSocketTests
     }
 
     private void makeMove(WebsocketUser sender, int gameID, ChessMove move, boolean expectSuccess, boolean extraNotification,
-                          Set<WebsocketUser> inGame, Set<WebsocketUser> otherClients, String description) {
+                          Set<WebsocketUser> inGame, Set<WebsocketUser> otherClients, String description)
+    {
         TestCommand moveCommand = new TestCommand(sender.authToken(), gameID, move);
         Map<String, Integer> numExpectedMessages = expectedMessages(sender, 1, inGame, (expectSuccess ? 2 : 0), otherClients);
         Map<String, List<TestMessage>> actualMessages = environment.exchange(sender.username(), moveCommand, numExpectedMessages, waitTime);
 
-        if(extraNotification && actualMessages.get(sender.username()).size() > 1) {
+        if(extraNotification && actualMessages.get(sender.username()).size() > 1)
+        {
             assertCommandMessages(actualMessages, expectSuccess, sender, types(LOAD_GAME, NOTIFICATION),
                     inGame, types(LOAD_GAME, NOTIFICATION, NOTIFICATION), otherClients, description);
         }
-        else {
+
+        else
+        {
             assertCommandMessages(actualMessages, expectSuccess, sender, types(LOAD_GAME),
                     inGame, types(LOAD_GAME, NOTIFICATION), otherClients, description);
         }
     }
 
     private void resign(WebsocketUser sender, int gameID, boolean expectSuccess,
-                        Set<WebsocketUser> inGame, Set<WebsocketUser> otherClients, String description) {
+                        Set<WebsocketUser> inGame, Set<WebsocketUser> otherClients, String description)
+    {
         TestCommand resignCommand = new TestCommand(UserGameCommand.CommandType.RESIGN, sender.authToken(), gameID);
         Map<String, Integer> numExpectedMessages = expectedMessages(sender, 1, inGame, (expectSuccess ? 1 : 0), otherClients);
         Map<String, List<TestMessage>> actualMessages = environment.exchange(sender.username(), resignCommand, numExpectedMessages, waitTime);
@@ -361,7 +373,8 @@ public class WebSocketTests
                 inGame, types(NOTIFICATION), otherClients, description);
     }
 
-    private void leave(WebsocketUser sender, int gameID, Set<WebsocketUser> inGame, Set<WebsocketUser> otherClients, String description) {
+    private void leave(WebsocketUser sender, int gameID, Set<WebsocketUser> inGame, Set<WebsocketUser> otherClients, String description)
+    {
         TestCommand leaveCommand = new TestCommand(UserGameCommand.CommandType.LEAVE, sender.authToken(), gameID);
         Map<String, Integer> numExpectedMessages = expectedMessages(sender, 0, inGame, 1, otherClients);
         Map<String, List<TestMessage>> actualMessages = environment.exchange(sender.username(), leaveCommand, numExpectedMessages, waitTime);
@@ -370,7 +383,8 @@ public class WebSocketTests
     }
 
     private Map<String, Integer> expectedMessages(WebsocketUser sender, int senderExpected,
-                                                  Set<WebsocketUser> inGame, int inGameExpected, Set<WebsocketUser> otherClients) {
+                                                  Set<WebsocketUser> inGame, int inGameExpected, Set<WebsocketUser> otherClients)
+    {
         Map<String, Integer> expectedMessages = new HashMap<>();
         expectedMessages.put(sender.username(), senderExpected);
         expectedMessages.putAll(inGame.stream().collect(Collectors.toMap(WebsocketUser::username, s -> inGameExpected)));
@@ -381,19 +395,18 @@ public class WebSocketTests
     private void assertCommandMessages(Map<String, List<TestMessage>> messages, boolean expectSuccess,
                                        WebsocketUser user, ServerMessage.ServerMessageType[] userExpectedTypes,
                                        Set<WebsocketUser> inGame, ServerMessage.ServerMessageType[] inGameExpectedTypes,
-                                       Set<WebsocketUser> otherClients, String description) {
+                                       Set<WebsocketUser> otherClients, String description)
+    {
         if(!expectSuccess)
         {
             userExpectedTypes = new ServerMessage.ServerMessageType[]{ERROR};
             inGameExpectedTypes = new ServerMessage.ServerMessageType[0];
         }
         assertMessages(user.username(), userExpectedTypes, messages.get(user.username()), description);
-
         for(WebsocketUser inGameUser : inGame)
         {
             assertMessages(inGameUser.username(), inGameExpectedTypes, messages.get(inGameUser.username()), description);
         }
-
         for(WebsocketUser otherUser : otherClients)
         {
             assertMessages(otherUser.username(), new ServerMessage.ServerMessageType[0], messages.get(otherUser.username()), description);
