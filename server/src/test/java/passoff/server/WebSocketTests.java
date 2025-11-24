@@ -1,13 +1,12 @@
 package passoff.server;
-
 import chess.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.TestFactory;
 import passoff.model.*;
 import passoff.websocket.*;
 import server.Server;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
-
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,7 +14,8 @@ import java.util.stream.Collectors;
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class WebSocketTests {
+public class WebSocketTests
+{
     private static WebsocketTestingEnvironment environment;
     private static TestServerFacade serverFacade;
     private static Server server;
@@ -26,24 +26,27 @@ public class WebSocketTests {
     private Integer gameID;
 
     @AfterAll
-    static void stopServer() {
+    static void stopServer()
+    {
         server.stop();
     }
 
     @BeforeAll
-    public static void init() throws URISyntaxException {
+    public static void init() throws URISyntaxException
+    {
         server = new Server();
         var port = Integer.toString(server.run(0));
         System.out.println("Started test HTTP server on " + port);
 
         serverFacade = new TestServerFacade("localhost", port);
         serverFacade.clear();
-        environment = new WebsocketTestingEnvironment("localhost", port, "/ws", TestFactory.getGsonBuilder());
+        environment = new WebsocketTestingEnvironment("localhost", port, "/ws", org.junit.jupiter.api.TestFactory.getGsonBuilder());
         waitTime = TestFactory.getMessageTime();
     }
 
     @BeforeEach
-    public void setup() {
+    public void setup()
+    {
         //populate database with HTTP calls
         serverFacade.clear();
         white = registerUser("white", "WHITE", "white@chess.com");
@@ -62,21 +65,24 @@ public class WebSocketTests {
     @Test
     @Order(1)
     @DisplayName("Connect 1 User")
-    public void connectSingleUser() {
+    public void connectSingleUser()
+    {
         connectToGame(white, gameID, true, Set.of(), Set.of(), "white player connect");
     }
 
     @Test
     @Order(2)
     @DisplayName("Normal Connect")
-    public void connectGood() {
+    public void connectGood()
+    {
         setupNormalGame();    //Connects 3 Users to the game, and notifies others upon connection
     }
 
     @Test
     @Order(3)
     @DisplayName("Connect Bad GameID")
-    public void connectBadGameID() {
+    public void connectBadGameID()
+    {
         connectToGame(white, gameID + 1, false, Set.of(), Set.of(), "player connect with wrong id");
         connectToGame(observer, gameID + 1, false, Set.of(white), Set.of(), "observer connect with wrong id");
     }
@@ -84,14 +90,16 @@ public class WebSocketTests {
     @Test
     @Order(3)
     @DisplayName("Connect Bad AuthToken")
-    public void connectBadAuthToken() {
+    public void connectBadAuthToken()
+    {
         connectToGame(new WebsocketUser("didn't register", "badAuth"), gameID, false, Set.of(), Set.of(), "connect with bad auth");
     }
 
     @Test
     @Order(4)
     @DisplayName("Normal Make Move")
-    public void validMove() {
+    public void validMove()
+    {
         setupNormalGame();
 
         //make a valid pawn move
@@ -102,7 +110,8 @@ public class WebSocketTests {
     @Test
     @Order(5)
     @DisplayName("Make Move Bad Authtoken")
-    public void makeMoveBadAuthtoken() {
+    public void makeMoveBadAuthtoken()
+    {
         setupNormalGame();
 
         //make valid move command with wrong authtoken
@@ -114,7 +123,8 @@ public class WebSocketTests {
     @Test
     @Order(5)
     @DisplayName("Make Invalid Move")
-    public void invalidMoveBadMove() {
+    public void invalidMoveBadMove()
+    {
         setupNormalGame();
 
         //try to move rook through a pawn - invalid move
@@ -125,7 +135,8 @@ public class WebSocketTests {
     @Test
     @Order(5)
     @DisplayName("Make Move Wrong Turn")
-    public void invalidMoveWrongTurn() {
+    public void invalidMoveWrongTurn()
+    {
         setupNormalGame();
 
         //try to move pawn out of turn - would be valid if in turn
@@ -136,7 +147,8 @@ public class WebSocketTests {
     @Test
     @Order(5)
     @DisplayName("Make Move for Opponent")
-    public void invalidMoveOpponent() {
+    public void invalidMoveOpponent()
+    {
         setupNormalGame();
 
         //attempt to have black player move white piece
@@ -147,7 +159,8 @@ public class WebSocketTests {
     @Test
     @Order(5)
     @DisplayName("Make Move Observer")
-    public void invalidMoveObserver() {
+    public void invalidMoveObserver()
+    {
         setupNormalGame();
 
         //have observer attempt to make an otherwise valid move
@@ -158,7 +171,8 @@ public class WebSocketTests {
     @Test
     @Order(5)
     @DisplayName("Make Move Game Over")
-    public void invalidMoveGameOver() {
+    public void invalidMoveGameOver()
+    {
         setupNormalGame();
 
         //Fools mate setup
@@ -178,7 +192,8 @@ public class WebSocketTests {
     @Test
     @Order(6)
     @DisplayName("Normal Resign")
-    public void validResign() {
+    public void validResign()
+    {
         setupNormalGame();
         resign(white, gameID, true, Set.of(black, observer), Set.of(), "resign");
     }
@@ -186,7 +201,8 @@ public class WebSocketTests {
     @Test
     @Order(7)
     @DisplayName("Cannot Move After Resign")
-    public void moveAfterResign() {
+    public void moveAfterResign()
+    {
         setupNormalGame();
         resign(black, gameID, true, Set.of(white, observer), Set.of(), "resign");
 
@@ -198,7 +214,8 @@ public class WebSocketTests {
     @Test
     @Order(7)
     @DisplayName("Observer Resign")
-    public void invalidResignObserver() {
+    public void invalidResignObserver()
+    {
         setupNormalGame();
 
         //have observer try to resign - should reject
@@ -208,7 +225,8 @@ public class WebSocketTests {
     @Test
     @Order(7)
     @DisplayName("Double Resign")
-    public void invalidResignGameOver() {
+    public void invalidResignGameOver()
+    {
         setupNormalGame();
         resign(black, gameID, true, Set.of(white, observer), Set.of(), "first resign");
 
@@ -219,7 +237,8 @@ public class WebSocketTests {
     @Test
     @Order(8)
     @DisplayName("Leave Game")
-    public void leaveGame() {
+    public void leaveGame()
+    {
         setupNormalGame();
 
         //have white player leave--all other players get notified, white player should not be
@@ -232,7 +251,8 @@ public class WebSocketTests {
     @Test
     @Order(9)
     @DisplayName("Join After Leave Game")
-    public void joinAfterLeaveGame() {
+    public void joinAfterLeaveGame()
+    {
         setupNormalGame();
 
         //have white player leave--all other players get notified, white player should not be
@@ -251,7 +271,8 @@ public class WebSocketTests {
     @Test
     @Order(10)
     @DisplayName("Multiple Concurrent Games")
-    public void multipleConcurrentGames() {
+    public void multipleConcurrentGames()
+    {
         setupNormalGame();
 
         //setup parallel game
@@ -361,15 +382,20 @@ public class WebSocketTests {
                                        WebsocketUser user, ServerMessage.ServerMessageType[] userExpectedTypes,
                                        Set<WebsocketUser> inGame, ServerMessage.ServerMessageType[] inGameExpectedTypes,
                                        Set<WebsocketUser> otherClients, String description) {
-        if(!expectSuccess) {
+        if(!expectSuccess)
+        {
             userExpectedTypes = new ServerMessage.ServerMessageType[]{ERROR};
             inGameExpectedTypes = new ServerMessage.ServerMessageType[0];
         }
         assertMessages(user.username(), userExpectedTypes, messages.get(user.username()), description);
-        for(WebsocketUser inGameUser : inGame) {
+
+        for(WebsocketUser inGameUser : inGame)
+        {
             assertMessages(inGameUser.username(), inGameExpectedTypes, messages.get(inGameUser.username()), description);
         }
-        for(WebsocketUser otherUser : otherClients) {
+
+        for(WebsocketUser otherUser : otherClients)
+        {
             assertMessages(otherUser.username(), new ServerMessage.ServerMessageType[0], messages.get(otherUser.username()), description);
         }
     }
@@ -379,21 +405,27 @@ public class WebSocketTests {
                 .formatted(description, username, expectedTypes.length, Arrays.toString(expectedTypes), messages.size(), messages));
         Arrays.sort(expectedTypes);
         messages.sort(Comparator.comparing(TestMessage::getServerMessageType));
-        try {
-            for(int i = 0; i < expectedTypes.length; i++) {
-                switch (expectedTypes[i]) {
+        try
+        {
+            for(int i = 0; i < expectedTypes.length; i++)
+            {
+                switch (expectedTypes[i])
+                {
                     case LOAD_GAME -> assertLoadGame(username, messages.get(i));
                     case NOTIFICATION -> assertNotification(username, messages.get(i));
                     case ERROR -> assertError(username, messages.get(i));
                 }
             }
-        } catch(AssertionError e) {
+        }
+        catch(AssertionError e)
+        {
             Assertions.fail("\nFor command '%s' user '%s' expected message types matching %s\nGot: %s\nCause: %s"
                     .formatted(description, username, Arrays.toString(expectedTypes), messages, e.getMessage()), e);
         }
     }
 
-    private void assertLoadGame(String username, TestMessage message) {
+    private void assertLoadGame(String username, TestMessage message)
+    {
         Assertions.assertEquals(ServerMessage.ServerMessageType.LOAD_GAME, message.getServerMessageType(),
                 "Message for %s was not a LOAD_GAME message: %s".formatted(username, message));
         Assertions.assertNotNull(message.getGame(),
@@ -404,7 +436,8 @@ public class WebSocketTests {
                 "%s's LOAD_GAME message contained an error message: %s".formatted(username, message.getErrorMessage()));
     }
 
-    private void assertNotification(String username, TestMessage message) {
+    private void assertNotification(String username, TestMessage message)
+    {
         Assertions.assertEquals(ServerMessage.ServerMessageType.NOTIFICATION, message.getServerMessageType(),
                 "Message for %s was not a NOTIFICATION message: %s".formatted(username, message));
         Assertions.assertNotNull(message.getMessage(),
@@ -415,7 +448,8 @@ public class WebSocketTests {
                 "%s's NOTIFICATION message contained an error message: %s".formatted(username, message.getErrorMessage()));
     }
 
-    private void assertError(String username, TestMessage message) {
+    private void assertError(String username, TestMessage message)
+    {
         Assertions.assertEquals(ServerMessage.ServerMessageType.ERROR, message.getServerMessageType(),
                 "Message for %s was not an ERROR message: %s".formatted(username, message));
         Assertions.assertNotNull(message.getErrorMessage(),
@@ -426,7 +460,8 @@ public class WebSocketTests {
                 "%s's ERROR message contained a non-error message: %s".formatted(username, message.getMessage()));
     }
 
-    private ServerMessage.ServerMessageType[] types(ServerMessage.ServerMessageType... types) {
+    private ServerMessage.ServerMessageType[] types(ServerMessage.ServerMessageType... types)
+    {
         return types;
     }
 
