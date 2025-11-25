@@ -243,7 +243,8 @@ public class Main {
             try {
                 listGameHelper(gameNum, teamColor);}
             catch (Exception exception) {
-                System.out.println("Unable to join game. " + exception.getMessage());}}
+                System.out.println("Unable to join game. " + exception.getMessage());}
+            playGameHelper();}
 
         else if (userInput.equalsIgnoreCase("observe game") || userInput.equals("5") || userInput.equals("observe") ||
                 userInput.equalsIgnoreCase("o")) {
@@ -272,6 +273,7 @@ public class Main {
             if (!userInput.isEmpty()) {
                 System.out.println("Invalid input. Please enter one of the options from the menu.");}}}
 
+
     private static void createGameHelper() {
         System.out.print("New game name: ");
         String newGameName = SCANNER.nextLine().trim();
@@ -290,6 +292,34 @@ public class Main {
         GameData selectedGame = lastGamesList.get(gameNumber - 1);
         SERVER_FACADE.joinGame(authToken, selectedGame.gameID(), teamColor);
         drawBoard(teamColor);}
+
+    private static void playGameHelper()
+    {
+        String userInput = SCANNER.nextLine().trim();
+        System.out.println("Let's Play!\n1. [M]ake move\n2. [Hi]ghlight valid moves\n3. [Red]raw board\n4. [Res]ign Game\n5. [L]eave Game\n 6. [He]lp\n");
+
+        if (userInput.equalsIgnoreCase("make") || userInput.equalsIgnoreCase("m") || userInput.equalsIgnoreCase("make move")) {
+            //makeMove();
+        }
+        if (userInput.equalsIgnoreCase("hightlight") || userInput.equalsIgnoreCase("hi") || userInput.equalsIgnoreCase("highlight valid moves")) {
+            //highlightMoves();
+        }
+        if (userInput.equalsIgnoreCase("redraw") || userInput.equalsIgnoreCase("red") || userInput.equalsIgnoreCase("redraw board")) {
+            //redrawBoard();
+        }
+        if (userInput.equalsIgnoreCase("resign") || userInput.equalsIgnoreCase("res") || userInput.equalsIgnoreCase("resign game")) {
+            //resignGame();
+        }
+        if (userInput.equalsIgnoreCase("leave") || userInput.equalsIgnoreCase("l") || userInput.equalsIgnoreCase("leave game")) {
+            //leaveGame();
+        }
+        if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("he")) {
+            System.out.println("What would you like to do?\n1. [M]ake move\n2. [Hi]ghlight valid moves\n3. [Red]raw board\n" +
+                    "4. [Res]ign Game\n5. [L]eave Game\n 6. [He]lp\n");
+        }
+
+        //Ben's Note: With resign and leave add a second confirmation like "are you sure you want to leave? Yes or no"
+    }
 
     private static void drawBoard(ChessGame.TeamColor teamColor) {
         DrawBoard bored = new DrawBoard();
