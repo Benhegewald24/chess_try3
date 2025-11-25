@@ -82,11 +82,11 @@ public class DrawBoard
     public void displayBoard2(ChessBoard board)
     {
         this.board = board;
-        eraseScreen();
+        clearBoard();
         displayBoarders();
     }
 
-    private void eraseScreen()
+    private void clearBoard()
     {
         System.out.println(ERASE_SCREEN);
     }
