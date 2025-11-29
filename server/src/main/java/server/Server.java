@@ -1,4 +1,5 @@
 package server;
+import dataaccess.DataAccess;
 import service.UserService;
 import service.GameService;
 import dataaccess.MySqlDataAccess;
@@ -16,23 +17,27 @@ public class Server
     private final Javalin server;
     private final UserService userService;
     private final GameService gameService;
+    private final DataAccess dataAccess;
     private final Gson gson;
 
     public Server()
     {
-        MySqlDataAccess dataAccess;
+        MySqlDataAccess mySqlDataAccess;
         try
         {
-            dataAccess = new MySqlDataAccess();
+            mySqlDataAccess = new MySqlDataAccess();
         }
         catch (DataAccessException | SQLException e)
         {
             throw new RuntimeException("Failed to initialize database");
         }
 
+        dataAccess = mySqlDataAccess;
         userService = new UserService(dataAccess);
         gameService = new GameService(dataAccess);
         gson = new Gson();
+
+        WebSocketHandler webSocketHandler = new WebSocketHandler(dataAccess);
 
         server = Javalin.create(config -> config.staticFiles.add("web"));
         server.delete("/db", this::clearHandler);
@@ -42,6 +47,12 @@ public class Server
         server.get("/game", this::listGamesHandler);
         server.post("/game", this::createGameHandler);
         server.put("/game", this::joinGameHandler);
+        server.ws("/ws", ws -> {
+            ws.onConnect(webSocketHandler::onConnect);
+            ws.onMessage(webSocketHandler::onMessage);
+            ws.onClose(webSocketHandler::onClose);
+            ws.onError(webSocketHandler::onError);
+        });
         server.exception(Exception.class, this::exceptionHandler);
     }
 

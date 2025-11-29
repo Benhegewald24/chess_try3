@@ -1,5 +1,5 @@
 package websocket.messages;
-
+import chess.ChessGame;
 import java.util.Objects;
 
 /**
@@ -8,36 +8,75 @@ import java.util.Objects;
  * Note: You can add to this class, but you should not alter the existing
  * methods.
  */
-public class ServerMessage {
+public class ServerMessage
+{
     ServerMessageType serverMessageType;
+    private ChessGame game;
+    private String errorMessage;
+    private String message;
 
-    public enum ServerMessageType {
-        LOAD_GAME,
-        ERROR,
-        NOTIFICATION
+    public enum ServerMessageType
+    {
+        LOAD_GAME, ERROR, NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type) {
+    public ServerMessage(ServerMessageType type)
+    {
         this.serverMessageType = type;
     }
 
-    public ServerMessageType getServerMessageType() {
+    public ServerMessageType getServerMessageType()
+    {
         return this.serverMessageType;
     }
 
+    public ChessGame getGame()
+    {
+        return game;
+    }
+
+    public void setGame(ChessGame game)
+    {
+        this.game = game;
+    }
+
+    public String getErrorMessage()
+    {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage)
+    {
+        this.errorMessage = errorMessage;
+    }
+
+    public String getMessage()
+    {
+        return message;
+    }
+
+    public void setMessage(String message)
+    {
+        this.message = message;
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
             return true;
         }
-        if (!(o instanceof ServerMessage that)) {
+        if (!(o instanceof ServerMessage that))
+        {
             return false;
         }
         return getServerMessageType() == that.getServerMessageType();
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(getServerMessageType());
     }
 }
