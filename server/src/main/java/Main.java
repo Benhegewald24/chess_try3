@@ -9,8 +9,6 @@ public class Main
     {
         Server server = new Server();
         server.run(8080);
-
-        //^^^ Here we specify whether we want to use local or SQL database to store data
         System.out.println("♕ 240 Chess Server");
     }
 }
