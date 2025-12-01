@@ -1,5 +1,4 @@
 package passoff.chess.piecemoves;
-
 import chess.ChessPosition;
 import org.junit.jupiter.api.Test;
 import passoff.chess.TestUtilities;
@@ -7,7 +6,8 @@ import passoff.chess.TestUtilities;
 public class BishopMoveTests {
 
     @Test
-    public void bishopMoveUntilEdge() {
+    public void bishopMoveUntilEdge()
+    {
         TestUtilities.validateMoves("""
                         | | | | | | | | |
                         | | | | | | | | |

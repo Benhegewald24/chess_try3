@@ -53,7 +53,7 @@ public class DataAccess
         {
             throw new DataAccessException("Game name can't be null / empty");
         }
-        
+
         int gameId = gameIDCounter++;
         ChessGame newGame = new ChessGame();
         GameData gameData = new GameData(gameId, null, null, gameName, newGame);
@@ -107,5 +107,29 @@ public class DataAccess
             throw new DataAccessException("AuthToken can't be null");
         }
         dictOfAuthTokens.remove(authToken);
+    }
+
+    public void clearUsernameFromGames(String username) throws DataAccessException
+    {
+        if (username == null)
+        {
+            return;
+        }
+        for (GameData game : dictOfGames.values())
+        {
+            GameData updatedGame = null;
+            if (username.equals(game.whiteUsername()))
+            {
+                updatedGame = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game());
+            }
+            else if (username.equals(game.blackUsername()))
+            {
+                updatedGame = new GameData(game.gameID(), game.whiteUsername(), null, game.gameName(), game.game());
+            }
+            if (updatedGame != null)
+            {
+                dictOfGames.put(game.gameID(), updatedGame);
+            }
+        }
     }
 }

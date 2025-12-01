@@ -2,7 +2,6 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-
 import static chess.ChessPiece.PieceType.*;
 
 /**
@@ -31,7 +30,8 @@ public class ChessPiece
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(pieceColor, type);
     }
 
@@ -78,30 +78,30 @@ public class ChessPiece
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
         ArrayList<ChessMove> moves = new ArrayList<>();
-        PieceType type1 = board.getPiece(myPosition).getPieceType();
-
-        if (type1 == ROOK)
+        PieceType type = board.getPiece(myPosition).getPieceType();
+        
+        if (type == ROOK)
         {
             RookMoves r1 = new RookMoves();
             r1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (type1 == KNIGHT)
+        if (type == KNIGHT)
         {
             KnightMoves kn1 = new KnightMoves();
             kn1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (type1 == BISHOP)
+        if (type == BISHOP)
         {
             BishopMoves b1 = new BishopMoves();
             b1.move(board, myPosition, moves);
             return moves;
         }
 
-        if (type1 == QUEEN)
+        if (type == QUEEN)
         {
             RookMoves r2 = new RookMoves();
             BishopMoves b2 = new BishopMoves();
@@ -110,7 +110,7 @@ public class ChessPiece
             return moves;
         }
 
-        if (type1 == KING)
+        if (type == KING)
         {
             KingMoves k1 = new KingMoves();
             k1.move(board, myPosition, moves);
