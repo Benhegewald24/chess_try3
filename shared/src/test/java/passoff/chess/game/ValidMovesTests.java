@@ -1,5 +1,4 @@
 package passoff.chess.game;
-
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
@@ -12,15 +11,19 @@ import passoff.chess.TestUtilities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ValidMovesTests {
+import static chess.ChessGame.TeamColor.BLACK;
+
+public class ValidMovesTests
+{
     private static final String TRAPPED_PIECE_MOVES = "ChessGame validMoves returned valid moves for a trapped piece";
 
     @Test
     @DisplayName("Check Forces Movement")
-    public void forcedMove() throws InvalidMoveException {
+    public void forcedMove()
+    {
 
         var game = new ChessGame();
-        game.setTeamTurn(ChessGame.TeamColor.BLACK);
+        game.setTeamTurn(BLACK);
         game.setBoard(TestUtilities.loadBoard("""
                     | | | | | | | | |
                     | | | | | | | | |
@@ -46,8 +49,8 @@ public class ValidMovesTests {
 
     @Test
     @DisplayName("Piece Partially Trapped")
-    public void moveIntoCheck() throws InvalidMoveException {
-
+    public void moveIntoCheck()
+    {
         var game = new ChessGame();
         game.setBoard(TestUtilities.loadBoard("""
                     | | | | | | | | |
@@ -61,7 +64,8 @@ public class ValidMovesTests {
                     """));
 
         ChessPosition rookPosition = new ChessPosition(5, 6);
-        var validMoves = TestUtilities.loadMoves(rookPosition, new int[][]{
+        var validMoves = TestUtilities.loadMoves(rookPosition, new int[][]
+                {
                 {5, 7}, {5, 5}, {5, 4}, {5, 3}, {5, 2}
         });
 
@@ -70,7 +74,8 @@ public class ValidMovesTests {
 
     @Test
     @DisplayName("Piece Completely Trapped")
-    public void rookPinnedToKing() throws InvalidMoveException {
+    public void rookPinnedToKing()
+    {
 
         var game = new ChessGame();
         game.setBoard(TestUtilities.loadBoard("""
@@ -91,10 +96,10 @@ public class ValidMovesTests {
 
     @Test
     @DisplayName("Pieces Cannot Eliminate Check")
-    public void kingInDanger() throws InvalidMoveException {
-
+    public void kingInDanger()
+    {
         var game = new ChessGame();
-        game.setTeamTurn(ChessGame.TeamColor.BLACK);
+        game.setTeamTurn(BLACK);
         game.setBoard(TestUtilities.loadBoard("""
                     |R| | | | | | | |
                     | | | |k| | | |b|
@@ -130,8 +135,8 @@ public class ValidMovesTests {
 
     @Test
     @DisplayName("King Cannot Move Into Check")
-    public void noPutSelfInDanger() throws InvalidMoveException {
-
+    public void noPutSelfInDanger()
+    {
         var game = new ChessGame();
         game.setBoard(TestUtilities.loadBoard("""
                     | | | | | | | | |
@@ -145,7 +150,8 @@ public class ValidMovesTests {
                     """));
 
         ChessPosition position = new ChessPosition(2, 6);
-        var validMoves = TestUtilities.loadMoves(position, new int[][]{
+        var validMoves = TestUtilities.loadMoves(position, new int[][]
+                {
                 {1, 5}, {1, 6}, {1, 7}, {2, 5}, {2, 7},
         });
         assertMoves(game, validMoves, position);
@@ -153,19 +159,22 @@ public class ValidMovesTests {
 
     @Test
     @DisplayName("Valid Moves Independent of Team Turn")
-    public void validMovesOtherTeam() throws InvalidMoveException {
+    public void validMovesOtherTeam()
+    {
         var game = new ChessGame();
         game.setBoard(TestUtilities.defaultBoard());
-        game.setTeamTurn(ChessGame.TeamColor.BLACK);
+        game.setTeamTurn(BLACK);
 
         ChessPosition position = new ChessPosition(2, 5);
-        var validMoves = TestUtilities.loadMoves(position, new int[][]{
+        var validMoves = TestUtilities.loadMoves(position, new int[][]
+                {
                 {3, 5}, {4, 5}
         });
         assertMoves(game, validMoves, position);
     }
 
-    private static void assertMoves(ChessGame game, List<ChessMove> validMoves, ChessPosition position) throws InvalidMoveException {
+    private static void assertMoves(ChessGame game, List<ChessMove> validMoves, ChessPosition position)
+    {
         var generatedMoves = game.validMoves(position);
         var actualMoves = new ArrayList<>(generatedMoves);
         TestUtilities.validateMoves(validMoves, actualMoves);

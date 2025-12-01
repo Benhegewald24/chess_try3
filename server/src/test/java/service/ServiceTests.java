@@ -29,18 +29,18 @@ class ServiceTests
     @Test
     void clearPositiveTest() throws Exception
     {
-        RegisterRequest registerRequest = new RegisterRequest("user1", "pass1", "email1@test.com");
+        RegisterRequest registerRequest = new RegisterRequest("Ben", "pass1", "email1@test.com");
         userService.register(registerRequest);
 
         userService.clear();
 
-        LoginRequest loginRequest = new LoginRequest("user1", "pass1");
+        LoginRequest loginRequest = new LoginRequest("Ben", "pass1");
         try
         {
             userService.login(loginRequest);
             fail("Expected DataAccessException to be thrown");
         }
-        catch (DataAccessException e) {}
+        catch (DataAccessException ignored) {}
     }
 
     @Test
@@ -69,7 +69,7 @@ class ServiceTests
         }
         catch (Exception e)
         {
-            assertTrue(e.getMessage().contains("already taken."));
+            assertTrue(e.getMessage().contains("User already created"));
         }
     }
 

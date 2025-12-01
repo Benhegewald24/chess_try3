@@ -13,15 +13,10 @@ import java.util.function.Supplier;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DatabaseTests
 {
-
     private static final TestUser TEST_USER = new TestUser("ExistingUser", "existingUserPassword", "eu@mail.com");
-
     private static TestServerFacade serverFacade;
-
     private static Server server;
-
     private static Class<?> databaseManagerClass;
-
 
     @BeforeAll
     public static void startServer()

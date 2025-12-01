@@ -1,10 +1,8 @@
 package passoff.server;
-
 import chess.ChessGame;
 import org.junit.jupiter.api.*;
 import passoff.model.*;
 import server.Server;
-
 import java.net.HttpURLConnection;
 import java.util.*;
 
@@ -26,7 +24,8 @@ public class StandardAPITests
     }
 
     @BeforeAll
-    public static void init() {
+    public static void init()
+    {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
@@ -38,7 +37,8 @@ public class StandardAPITests
     }
 
     @BeforeEach
-    public void setup() {
+    public void setup()
+    {
         serverFacade.clear();
 
         //one user already logged in
@@ -51,7 +51,8 @@ public class StandardAPITests
     @Test
     @Order(1)
     @DisplayName("Static Files")
-    public void staticFilesSuccess() {
+    public void staticFilesSuccess()
+    {
         String htmlFromServer = serverFacade.file("/").replaceAll("\r", "");
         Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
                 "Server response code was not 200 OK");
@@ -63,7 +64,8 @@ public class StandardAPITests
     @Test
     @Order(2)
     @DisplayName("Normal User Login")
-    public void loginSuccess() {
+    public void loginSuccess()
+    {
         TestAuthResult loginResult = serverFacade.login(existingUser);
 
         assertHttpOk(loginResult);
@@ -75,13 +77,16 @@ public class StandardAPITests
     @Test
     @Order(3)
     @DisplayName("Login Bad Request")
-    public void loginBadRequest() {
-        TestUser[] incompleteLoginRequests = {
+    public void loginBadRequest()
+    {
+        TestUser[] incompleteLoginRequests =
+                {
                 new TestUser(null, existingUser.getPassword()),
                 new TestUser(existingUser.getUsername(), null),
         };
 
-        for (TestUser incompleteLoginRequest : incompleteLoginRequests) {
+        for (TestUser incompleteLoginRequest : incompleteLoginRequests)
+        {
             TestAuthResult loginResult = serverFacade.login(incompleteLoginRequest);
 
             assertHttpBadRequest(loginResult);

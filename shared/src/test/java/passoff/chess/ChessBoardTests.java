@@ -1,33 +1,38 @@
 package passoff.chess;
-
 import chess.ChessBoard;
-import chess.ChessGame;
+import chess.ChessGame.TeamColor.*;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
+import static chess.ChessPiece.PieceType.*;
 
-public class ChessBoardTests extends EqualsTestingUtility<ChessBoard> {
-    public ChessBoardTests() {
+
+public class ChessBoardTests extends EqualsTestingUtility<ChessBoard>
+{
+    public ChessBoardTests()
+    {
         super("ChessBoard", "boards");
     }
 
     @Test
     @DisplayName("Construct Empty ChessBoard")
-    public void constructChessBoard() {
+    public void constructChessBoard()
+    {
         ChessBoard board = new ChessBoard();
 
-        for (int row = 1; row <= 8; row++) {
-            for (int col = 1; col <= 8; col++) {
-                Assertions.assertNull(
-                        board.getPiece(new ChessPosition(row, col)),
-                        "Immediately upon construction, a ChessBoard should be empty."
-                );
+        for (int row = 1; row <= 8; row++)
+        {
+            for (int col = 1; col <= 8; col++)
+            {
+                Assertions.assertNull(board.getPiece(new ChessPosition(row, col)),
+                        "Immediately upon construction, a ChessBoard should be empty.");
             }
         }
 
@@ -35,9 +40,10 @@ public class ChessBoardTests extends EqualsTestingUtility<ChessBoard> {
 
     @Test
     @DisplayName("Add and Get Piece")
-    public void getAddPiece() {
+    public void getAddPiece()
+    {
         ChessPosition position = new ChessPosition(4, 4);
-        ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        ChessPiece piece = new ChessPiece(BLACK, BISHOP);
 
         var board = new ChessBoard();
         board.addPiece(position, piece);
@@ -53,7 +59,8 @@ public class ChessBoardTests extends EqualsTestingUtility<ChessBoard> {
 
     @Test
     @DisplayName("Reset Board")
-    public void defaultGameBoard() {
+    public void defaultGameBoard()
+    {
         var expectedBoard = TestUtilities.defaultBoard();
 
         var actualBoard = new ChessBoard();
@@ -63,31 +70,30 @@ public class ChessBoardTests extends EqualsTestingUtility<ChessBoard> {
     }
 
     @Override
-    protected ChessBoard buildOriginal() {
+    protected ChessBoard buildOriginal()
+    {
         var basicBoard = new ChessBoard();
         basicBoard.resetBoard();
         return basicBoard;
     }
 
     @Override
-    protected Collection<ChessBoard> buildAllDifferent() {
+    protected Collection<ChessBoard> buildAllDifferent()
+    {
         List<ChessBoard> differentBoards = new ArrayList<>();
 
         differentBoards.add(new ChessBoard()); // An empty board
 
-        ChessPiece.PieceType[] pieceSchedule = {
-                ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT,
-                ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN,
-                ChessPiece.PieceType.KING, ChessPiece.PieceType.PAWN,
-                ChessPiece.PieceType.KING, ChessPiece.PieceType.ROOK,
-        };
+        ChessPiece.PieceType[] pieceSchedule = { ROOK, KNIGHT, BISHOP, QUEEN, KING, PAWN, KING, ROOK,};
 
         // Generate boards each with one piece added from a static list.
         // The color is assigned in a mixed pattern.
         ChessPiece.PieceType type;
         boolean isWhite;
-        for (int col = 1; col <= 8; col++) {
-            for (int row = 1; row <= 8; row++) {
+        for (int col = 1; col <= 8; col++)
+        {
+            for (int row = 1; row <= 8; row++)
+            {
                 type = pieceSchedule[row-1];
                 isWhite = (row + col) % 2 == 0;
                 differentBoards.add(createBoardWithPiece(row, col, type, isWhite));
@@ -97,10 +103,11 @@ public class ChessBoardTests extends EqualsTestingUtility<ChessBoard> {
         return differentBoards;
     }
 
-    private ChessBoard createBoardWithPiece(int row, int col, ChessPiece.PieceType type, boolean isWhite) {
+    private ChessBoard createBoardWithPiece(int row, int col, ChessPiece.PieceType type, boolean isWhite)
+    {
         var board = new ChessBoard();
 
-        var teamColor = isWhite ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+        var teamColor = isWhite ? WHITE : BLACK;
         var piece = new ChessPiece(teamColor, type);
 
         var position = new ChessPosition(row, col);

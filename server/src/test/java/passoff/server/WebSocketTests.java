@@ -39,6 +39,7 @@ public class WebSocketTests
         serverFacade = new TestServerFacade("localhost", port);
         serverFacade.clear();
         waitTime = TestFactory.getMessageTime();
+        environment = new WebsocketTestingEnvironment("localhost", port, "/ws", TestFactory.getGsonBuilder());
     }
 
     @BeforeEach
@@ -475,5 +476,5 @@ public class WebSocketTests
         return types;
     }
 
-    private record WebsocketUser(String username, String authToken) { }
+    private record WebsocketUser(String username, String authToken) {}
 }
