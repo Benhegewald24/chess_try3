@@ -1,6 +1,7 @@
 package chess;
 import java.util.ArrayList;
 import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessPiece.PieceType.*;
 
 public class PawnMovesHelper
 {
@@ -18,10 +19,7 @@ public class PawnMovesHelper
             }
 
             if (board.getPiece(po5) == null && rrow5 == 1) {
-                ChessMove mo42 = new ChessMove(startPosition, po5, ChessPiece.PieceType.BISHOP); moves.add(mo42);
-                ChessMove mo43 = new ChessMove(startPosition, po5, ChessPiece.PieceType.KNIGHT); moves.add(mo43);
-                ChessMove mo44 = new ChessMove(startPosition, po5, ChessPiece.PieceType.QUEEN); moves.add(mo44);
-                ChessMove mo45 = new ChessMove(startPosition, po5, ChessPiece.PieceType.ROOK); moves.add(mo45);
+                helperFunction(startPosition, moves, po5);
             }
 
             ccol5++;
@@ -34,10 +32,7 @@ public class PawnMovesHelper
 
             if (ccol5 < 9 && board.getPiece(po6) != null && board.getPiece(po6).getTeamColor()
                     != board.getPiece(startPosition).getTeamColor() && rrow5 == 1) { // Black capture right
-                ChessMove mo52 = new ChessMove(startPosition, po6, ChessPiece.PieceType.BISHOP); moves.add(mo52);
-                ChessMove mo53 = new ChessMove(startPosition, po6, ChessPiece.PieceType.KNIGHT); moves.add(mo53);
-                ChessMove mo54 = new ChessMove(startPosition, po6, ChessPiece.PieceType.QUEEN); moves.add(mo54);
-                ChessMove mo55 = new ChessMove(startPosition, po6, ChessPiece.PieceType.ROOK); moves.add(mo55);
+                helperFunction(startPosition, moves, po6);
             }
 
             ccol5 -= 2;
@@ -50,10 +45,7 @@ public class PawnMovesHelper
 
             if (ccol5 > 0 && board.getPiece(po7) != null && board.getPiece(po7).getTeamColor()
                     != board.getPiece(startPosition).getTeamColor() && rrow5 == 1) { //Black capture left
-                ChessMove mo52 = new ChessMove(startPosition, po7, ChessPiece.PieceType.BISHOP); moves.add(mo52);
-                ChessMove mo53 = new ChessMove(startPosition, po7, ChessPiece.PieceType.KNIGHT); moves.add(mo53);
-                ChessMove mo54 = new ChessMove(startPosition, po7, ChessPiece.PieceType.QUEEN); moves.add(mo54);
-                ChessMove mo55 = new ChessMove(startPosition, po7, ChessPiece.PieceType.ROOK); moves.add(mo55);
+                helperFunction(startPosition, moves, po7);
             }
         }
 
@@ -96,4 +88,13 @@ public class PawnMovesHelper
             }
         }
     }
-}
+
+    private void helperFunction(ChessPosition startPosition, ArrayList<ChessMove> moves, ChessPosition pos) {
+        ChessMove mo1 = new ChessMove(startPosition, pos, BISHOP);
+        moves.add(mo1);
+        ChessMove mo2 = new ChessMove(startPosition, pos, KNIGHT);
+        moves.add(mo2);
+        ChessMove mo3 = new ChessMove(startPosition, pos, QUEEN);
+        moves.add(mo3);
+        ChessMove mo4 = new ChessMove(startPosition, pos, ROOK);
+        moves.add(mo4);}}
