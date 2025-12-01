@@ -15,67 +15,119 @@ public class DrawBoard
     private static final int BOARD_SIZE = 8;
     ChessBoard board;
 
-    //hard-coded solution
     public void displayBoard(ChessGame.TeamColor teamColor)
+    {
+        if (board == null)
+        {
+            return;}
+        displayBoardFromPerspective(teamColor);
+    }
+
+    public void displayBoard(ChessGame game, ChessGame.TeamColor teamColor)
+    {
+        if (game == null || game.getBoard() == null)
+        {
+            return;}
+        this.board = game.getBoard();
+        displayBoardFromPerspective(teamColor);
+    }
+
+    private void displayBoardFromPerspective(ChessGame.TeamColor teamColor)
     {
         if (teamColor == WHITE)
         {
-            System.out.println(SET_TEXT_COLOR_WHITE + "8 " + TAN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_ROOK + GREEN_COLOR + SET_TEXT_COLOR_BLACK
-                    + BLACK_KNIGHT + TAN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_BISHOP + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_QUEEN +
-                    TAN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_KING + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_BISHOP + TAN_COLOR +
-                    SET_TEXT_COLOR_BLACK + BLACK_KNIGHT + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_ROOK + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "7 " + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN + TAN_COLOR + SET_TEXT_COLOR_BLACK
-                    + BLACK_PAWN + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN + TAN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN +
-                    GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN + TAN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN + GREEN_COLOR +
-                    SET_TEXT_COLOR_BLACK + BLACK_PAWN + TAN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "6 " + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY
-                    + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "5 " + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY +
-                    GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "4 " + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR +
-                    EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "3 " + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY +
-                    GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "2 " + TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN + GREEN_COLOR + SET_TEXT_COLOR_WHITE
-                    + WHITE_PAWN + TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN + GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN +
-                    TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN + GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN + TAN_COLOR +
-                    SET_TEXT_COLOR_WHITE + WHITE_PAWN + GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "1 " + GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_ROOK + TAN_COLOR +
-                    SET_TEXT_COLOR_WHITE + WHITE_KNIGHT + GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_BISHOP + TAN_COLOR + SET_TEXT_COLOR_WHITE +
-                    WHITE_QUEEN +
-                    GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_KING + TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_BISHOP +
-                    GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_KNIGHT + TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_ROOK
-                    + DARK_GREY_COLOR + RESET_TEXT_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "   a  b  c  d  e  f  g  h ");
+            for (int row = 8; row >= 1; row--)
+            {
+                System.out.print(SET_TEXT_COLOR_WHITE + row + " ");
+                for (int col = 1; col <= 8; col++)
+                {
+                    String backgroundColor = ((row + col) % 2 == 0) ? TAN_COLOR : GREEN_COLOR;
+                    ChessPosition pos = new ChessPosition(row, col);
+                    ChessPiece piece = board.getPiece(pos);
+                    String pieceSymbol = getPieceSymbol(piece);
+                    String textColor = (piece != null && piece.getTeamColor() == WHITE) ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
+                    System.out.print(backgroundColor + textColor + pieceSymbol);
+                }
+                System.out.println(DARK_GREY_COLOR);
+            }
+            System.out.println(SET_TEXT_COLOR_WHITE + "   a  b  c  d  e  f  g  h " + RESET_TEXT_COLOR);
         }
         else
         {
-            System.out.println(SET_TEXT_COLOR_WHITE + "1 " + TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_ROOK + GREEN_COLOR + SET_TEXT_COLOR_WHITE
-                    + WHITE_KNIGHT + TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_BISHOP + GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_KING +
-                    TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_QUEEN + GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_BISHOP + TAN_COLOR +
-                    SET_TEXT_COLOR_WHITE + WHITE_KNIGHT + GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_ROOK + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "2 " + GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN + TAN_COLOR + SET_TEXT_COLOR_WHITE
-                    + WHITE_PAWN + GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN + TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN +
-                    GREEN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN + TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN + GREEN_COLOR +
-                    SET_TEXT_COLOR_WHITE + WHITE_PAWN + TAN_COLOR + SET_TEXT_COLOR_WHITE + WHITE_PAWN + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "3 " + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR +
-                    EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "4 " + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY +
-                    GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "5 " + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR +
-                    EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "6 " + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY +
-                    GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + GREEN_COLOR + EMPTY + TAN_COLOR + EMPTY + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "7 " + TAN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN + GREEN_COLOR + SET_TEXT_COLOR_BLACK
-                    + BLACK_PAWN + TAN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN +
-                    TAN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN + TAN_COLOR +
-                    SET_TEXT_COLOR_BLACK + BLACK_PAWN + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_PAWN + DARK_GREY_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "8 " + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_ROOK + TAN_COLOR +
-                    SET_TEXT_COLOR_BLACK + BLACK_KNIGHT + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_BISHOP + TAN_COLOR +
-                    SET_TEXT_COLOR_BLACK + BLACK_KING + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_QUEEN + TAN_COLOR + SET_TEXT_COLOR_BLACK
-                    + BLACK_BISHOP + GREEN_COLOR + SET_TEXT_COLOR_BLACK + BLACK_KNIGHT + TAN_COLOR + SET_TEXT_COLOR_BLACK +
-                    BLACK_ROOK + DARK_GREY_COLOR + RESET_TEXT_COLOR);
-            System.out.println(SET_TEXT_COLOR_WHITE + "   h  g  f  e  d  c  b  a ");
+            for (int row = 1; row <= 8; row++)
+            {
+                System.out.print(SET_TEXT_COLOR_WHITE + row + " ");
+                for (int col = 8; col >= 1; col--)
+                {
+                    String backgroundColor = ((row + col) % 2 == 0) ? TAN_COLOR : GREEN_COLOR;
+                    ChessPosition pos = new ChessPosition(row, col);
+                    ChessPiece piece = board.getPiece(pos);
+                    String pieceSymbol = getPieceSymbol(piece);
+                    String textColor = (piece != null && piece.getTeamColor() == WHITE) ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
+                    System.out.print(backgroundColor + textColor + pieceSymbol);
+                }
+                System.out.println(DARK_GREY_COLOR);
+            }
+            System.out.println(SET_TEXT_COLOR_WHITE + "   h  g  f  e  d  c  b  a " + RESET_TEXT_COLOR);
+        }
+    }
+
+    private String getPieceSymbol(ChessPiece piece)
+    {
+        if (piece == null)
+        {
+            return EMPTY;}
+
+        ChessGame.TeamColor color = piece.getTeamColor();
+        ChessPiece.PieceType type = piece.getPieceType();
+
+        if (color == WHITE)
+        {
+            if (type == KING)
+            {
+                return WHITE_KING;}
+            else if (type == QUEEN)
+            {
+                return WHITE_QUEEN;}
+            else if (type == BISHOP)
+            {
+                return WHITE_BISHOP;}
+            else if (type == KNIGHT)
+            {
+                return WHITE_KNIGHT;}
+            else if (type == ROOK)
+            {
+                return WHITE_ROOK;}
+            else if (type == PAWN)
+            {
+                return WHITE_PAWN;}
+            else
+            {
+                return EMPTY;}
+        }
+        else
+        {
+            if (type == KING)
+            {
+                return BLACK_KING;}
+            else if (type == QUEEN)
+            {
+                return BLACK_QUEEN;}
+            else if (type == BISHOP)
+            {
+                return BLACK_BISHOP;}
+            else if (type == KNIGHT)
+            {
+                return BLACK_KNIGHT;}
+            else if (type == ROOK)
+            {
+                return BLACK_ROOK;}
+            else if (type == PAWN)
+            {
+                return BLACK_PAWN;}
+            else
+            {
+                return EMPTY;}
         }
     }
 
