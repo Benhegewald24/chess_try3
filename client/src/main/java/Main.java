@@ -28,6 +28,7 @@ public class Main
     private static ChessGame.TeamColor playerColor = null;
     private static Integer currentGameID;
     static State currentState = State.loggedOut;
+    private static volatile boolean waitingForMoveResponse = false;
 
     public static void main(String[] args) {
         System.out.println("Welcome to 240 chess. Type [H]elp to get started.");
@@ -105,7 +106,7 @@ public class Main
             String errorMessage = exception.getMessage();
             if (errorMessage == null || errorMessage.isBlank()) {
                 errorMessage = "Unable to connect to server. Please ensure the server is running.";}
-            System.out.println("Registration " + errorMessage);
+            System.out.println("\nRegistration " + errorMessage);
             help();}}
 
     private static void login() {
@@ -128,7 +129,7 @@ public class Main
 
     private static void loggedInUI() {
         while (currentState == State.loggedIn) {
-            System.out.println("\nYou are logged in. What would you like to do next? Type [H]elp for options");
+            System.out.println("\nYou are logged in. What would you like to do next? Type [H]elp.");
             String userInput = SCANNER.nextLine().trim();
 
             if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("h")) {
@@ -201,12 +202,24 @@ public class Main
             return;}
 
         try {
+            if (webSocketClient != null && webSocketClient.isConnected())
+            {
+                if (currentGameID != null)
+                {
+                    webSocketClient.sendLeave(authToken, currentGameID);
+                }
+                webSocketClient.disconnect();
+            }
             SERVER_FACADE.logout(authToken);
             System.out.println("\nUser logged out.");}
         catch (Exception exception) {
             System.out.println("Logout failed." + exception.getMessage());}
         currentState = State.loggedOut;
         authToken = null;
+        currentGame = null;
+        currentGameID = null;
+        playerColor = null;
+        webSocketClient = null;
         help();}
 
     public static void helpLoggedIn() {
@@ -230,7 +243,7 @@ public class Main
                     System.out.print("- " + counter + ". " + game.gameName());
                     counter++;
                     int lengthOfGameName = game.gameName().length();
-                    int helper = 17 - lengthOfGameName;
+                    int helper = 20 - lengthOfGameName;
                     System.out.print(" ".repeat(helper));
                     System.out.print("White Pieces: " + game.whiteUsername());
                     if (game.whiteUsername() == null) {
@@ -331,9 +344,17 @@ public class Main
                 if (currentGame != null)
                 {
                     drawGameBoard();}
+                if (waitingForMoveResponse)
+                {
+                    waitingForMoveResponse = false;
+                }
                 break;
             case ERROR:
                 System.out.println("\n" + message.getErrorMessage());
+                if (waitingForMoveResponse)
+                {
+                    waitingForMoveResponse = false;
+                }
                 break;
             case NOTIFICATION:
                 System.out.println("\n" + message.getMessage());
@@ -345,7 +366,7 @@ public class Main
     {
         while (currentState == State.inGame)
         {
-            System.out.println("\nWhat would you like to do? Type [H]elp for options");
+            System.out.println("\nWhat would you like to do? Type [H]elp for options.");
             String userInput = SCANNER.nextLine().trim();
 
             if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("h"))
@@ -369,17 +390,12 @@ public class Main
             {
                 if (playerColor == null)
                 {
-                    System.out.println("Observers cannot resign.");
                     continue;
                 }
                 resign();}
             else if (userInput.equalsIgnoreCase("leave") || userInput.equalsIgnoreCase("l") || userInput.equalsIgnoreCase("leave game"))
             {
                 leaveGame();}
-            else if (userInput.isEmpty()) {}
-            else
-            {
-                System.out.println("Invalid input. Type [H]elp for options.");}
         }
     }
 
@@ -401,7 +417,7 @@ public class Main
     {
         try
         {
-            System.out.print("Enter move (e.g., e2 e4): ");
+            System.out.print("Enter move: ");
             String moveInput = SCANNER.nextLine().trim();
             String[] parts = moveInput.split("\\s+");
             if (parts.length != 2)
@@ -417,10 +433,27 @@ public class Main
                 return;}
 
             ChessMove move = new ChessMove(start, end, null);
-            webSocketClient.sendMakeMove(authToken, currentGameID, move);}
+            waitingForMoveResponse = true;
+            webSocketClient.sendMakeMove(authToken, currentGameID, move);
+
+            while (waitingForMoveResponse)
+            {
+                try
+                {
+                    Thread.sleep(50);
+                }
+                catch (InterruptedException e)
+                {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
         catch (Exception exception)
         {
-            System.out.println("Error making move: " + exception.getMessage());}
+            System.out.println("Error making move: " + exception.getMessage());
+            waitingForMoveResponse = false;
+        }
     }
 
     private static void highlightMoves()
@@ -464,7 +497,7 @@ public class Main
             try
             {
                 webSocketClient.sendResign(authToken, currentGameID);
-                System.out.println("You have resigned the game.");}
+                System.out.println("Game Over!");}
             catch (Exception exception)
             {
                 System.out.println("Error resigning: " + exception.getMessage());}
@@ -513,17 +546,11 @@ public class Main
         return new ChessPosition(row, col);
     }
 
-    private static String positionToString(ChessPosition pos)
-    {
-        char col = (char)('a' + pos.getColumn() - 1);
-        return col + String.valueOf(pos.getRow());
-    }
-
     private static void drawGameBoard()
     {
         if (currentGame == null || currentGame.getBoard() == null)
         {
-            System.out.println("No game board available.");
+            System.out.println("Board unavailable.");
             return;
         }
 
