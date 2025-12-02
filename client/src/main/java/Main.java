@@ -196,11 +196,9 @@ public class Main
                 SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
                 currentGameID = selectedGame.gameID();
                 playerColor = null;
-                setupWebSocket(selectedGame.gameID());
-                }
+                setupWebSocket(selectedGame.gameID());}
                 catch (NumberFormatException e) {
-                    System.out.println("Invalid game number. Please enter a number.\n");
-                }
+                    System.out.println("Invalid game number. Please enter a number.\n");}
                 catch (Exception exception) {
                     System.out.println("Unable to observe game. " + exception.getMessage());}}
             else if (userInput.equalsIgnoreCase("quit") || userInput.equalsIgnoreCase("q")) {
@@ -217,12 +215,9 @@ public class Main
         try {
             if (webSocketClient != null && webSocketClient.isConnected())
             {
-                if (currentGameID != null)
-                {
-                    webSocketClient.sendLeave(authToken, currentGameID);
-                }
-                webSocketClient.disconnect();
-            }
+                if (currentGameID != null) {
+                    webSocketClient.sendLeave(authToken, currentGameID);}
+                webSocketClient.disconnect();}
             SERVER_FACADE.logout(authToken);
             System.out.println("\nUser logged out.");}
         catch (Exception exception) {
@@ -345,104 +340,72 @@ public class Main
         webSocketClient.setMessageHandler(Main::handleServerMessage);
         webSocketClient.connect();
         webSocketClient.sendConnect(authToken, gameID);
-        currentState = State.inGame;
-    }
+        currentState = State.inGame;}
 
-    private static void handleServerMessage(ServerMessage message)
-    {
-        switch (message.getServerMessageType())
-        {
+    private static void handleServerMessage(ServerMessage message) {
+        switch (message.getServerMessageType()) {
             case LOAD_GAME:
                 currentGame = message.getGame();
-                if (currentGame != null)
-                {
+                if (currentGame != null) {
                     drawGameBoard();}
-                if (waitingForMoveResponse)
-                {
-                    waitingForMoveResponse = false;
-                }
+                if (waitingForMoveResponse) {
+                    waitingForMoveResponse = false;}
                 break;
             case ERROR:
                 System.out.println("\n" + message.getErrorMessage());
-                if (waitingForMoveResponse)
-                {
-                    waitingForMoveResponse = false;
-                }
+                if (waitingForMoveResponse) {
+                    waitingForMoveResponse = false;}
                 break;
             case NOTIFICATION:
                 System.out.println("\n" + message.getMessage());
-                break;
-        }
-    }
+                break;}}
 
-    private static void gameplayUI()
-    {
-        while (currentState == State.inGame)
-        {
+    private static void gameplayUI() {
+        while (currentState == State.inGame) {
             System.out.println("\nWhat would you like to do? Type [H]elp for options.");
             String userInput = SCANNER.nextLine().trim();
 
-            if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("h"))
-            {
+            if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("h")) {
                 gameplayHelp();}
             else if (userInput.equalsIgnoreCase("make move") || userInput.equalsIgnoreCase("m") ||
-                    userInput.equalsIgnoreCase("make"))
-            {
-                if (playerColor == null)
-                {
+                    userInput.equalsIgnoreCase("make")) {
+                if (playerColor == null) {
                     System.out.println("Observers cannot make moves.");
-                    continue;
-                }
+                    continue;}
                 makeMove();}
-            else if (userInput.equalsIgnoreCase("highlight") || userInput.equalsIgnoreCase("hi") || userInput.equalsIgnoreCase("highlight valid moves"))
-            {
+            else if (userInput.equalsIgnoreCase("highlight") || userInput.equalsIgnoreCase("hi") || userInput.equalsIgnoreCase("highlight valid moves")) {
                 highlightMoves();}
-            else if (userInput.equalsIgnoreCase("redraw") || userInput.equalsIgnoreCase("red") || userInput.equalsIgnoreCase("redraw board"))
-            {
+            else if (userInput.equalsIgnoreCase("redraw") || userInput.equalsIgnoreCase("red") || userInput.equalsIgnoreCase("redraw board")) {
                 drawGameBoard();}
-            else if (userInput.equalsIgnoreCase("resign") || userInput.equalsIgnoreCase("res") || userInput.equalsIgnoreCase("resign game"))
-            {
-                if (playerColor == null)
-                {
-                    continue;
-                }
+            else if (userInput.equalsIgnoreCase("resign") || userInput.equalsIgnoreCase("res") || userInput.equalsIgnoreCase("resign game")) {
+                if (playerColor == null) {
+                    continue;}
                 resign();}
-            else if (userInput.equalsIgnoreCase("leave") || userInput.equalsIgnoreCase("l") || userInput.equalsIgnoreCase("leave game"))
-            {
-                leaveGame();}
-        }
-    }
+            else if (userInput.equalsIgnoreCase("leave") || userInput.equalsIgnoreCase("l") || userInput.equalsIgnoreCase("leave game")) {
+                leaveGame();}}}
 
-    private static void gameplayHelp()
-    {
+    private static void gameplayHelp() {
         System.out.println("\nWhat would you like to do?");
         System.out.println("1. [Hi]ghlight Valid Moves");
         System.out.println("2. [Red]raw Board");
         System.out.println("3. [L]eave Game");
         System.out.println("4. [H]elp");
-        if (playerColor != null)
-        {
+        if (playerColor != null) {
             System.out.println("5. [M]ake Move");
-            System.out.println("6. [Res]ign Game");
-        }
-    }
+            System.out.println("6. [Res]ign Game");}}
 
-    private static void makeMove()
-    {
-        try
-        {
+    private static void makeMove() {
+        try {
             System.out.print("Enter move: ");
             String moveInput = SCANNER.nextLine().trim();
             String[] parts = moveInput.split("\\s+");
-            if (parts.length != 2)
-            {
+            if (parts.length != 2) {
                 System.out.println("Invalid move format.");
                 return;}
 
             ChessPosition start = parsePosition(parts[0]);
             ChessPosition end = parsePosition(parts[1]);
-            if (start == null || end == null)
-            {
+            if (start == null || end == null) {
                 System.out.println("Invalid position format.");
                 return;}
 
@@ -450,126 +413,86 @@ public class Main
             waitingForMoveResponse = true;
             webSocketClient.sendMakeMove(authToken, currentGameID, move);
 
-            while (waitingForMoveResponse)
-            {
-                try
-                {
-                    Thread.sleep(50);
-                }
-                catch (InterruptedException e)
-                {
+            while (waitingForMoveResponse) {
+                try {
+                    Thread.sleep(50);}
+                catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        }
-        catch (Exception exception)
-        {
+                    break;}}}
+        catch (Exception exception) {
             System.out.println("Error making move: " + exception.getMessage());
-            waitingForMoveResponse = false;
-        }
-    }
+            waitingForMoveResponse = false;}}
 
-    private static void highlightMoves()
-    {
-        if (currentGame == null)
-        {
+    private static void highlightMoves() {
+        if (currentGame == null) {
             System.out.println("No game loaded.");
             return;}
 
         System.out.print("Enter piece position to highlight: ");
         String posInput = SCANNER.nextLine().trim();
         ChessPosition pos = parsePosition(posInput);
-        if (pos == null)
-        {
+        if (pos == null) {
             System.out.println("Invalid position format.");
             return;}
 
         var validMoves = currentGame.validMoves(pos);
-        if (validMoves.isEmpty())
-        {
+        if (validMoves.isEmpty()) {
             System.out.println("No valid moves for piece at " + posInput + "!");
             return;}
 
         java.util.Set<ChessPosition> highlightedPositions = new java.util.HashSet<>();
         highlightedPositions.add(pos);
-        for (ChessMove move : validMoves)
-        {
+        for (ChessMove move : validMoves) {
             highlightedPositions.add(move.getEndPosition());}
 
         ChessGame.TeamColor perspective = (playerColor != null) ? playerColor : ChessGame.TeamColor.WHITE;
         DrawBoard drawBoard = new DrawBoard();
-        drawBoard.displayBoard(currentGame, perspective, highlightedPositions);
-    }
+        drawBoard.displayBoard(currentGame, perspective, highlightedPositions);}
 
-    private static void resign()
-    {
+    private static void resign() {
         System.out.print("Are you sure you want to resign? [Y]es or [N]o: ");
         String confirm = SCANNER.nextLine().trim();
-        if (confirm.equalsIgnoreCase("yes") || confirm.equalsIgnoreCase("y"))
-        {
-            try
-            {
+        if (confirm.equalsIgnoreCase("yes") || confirm.equalsIgnoreCase("y")) {
+            try {
                 webSocketClient.sendResign(authToken, currentGameID);
                 System.out.println("Game Over!");}
-            catch (Exception exception)
-            {
-                System.out.println("Error resigning: " + exception.getMessage());}
-        }
-    }
+            catch (Exception exception) {
+                System.out.println("Error resigning: " + exception.getMessage());}}}
 
-    private static void leaveGame()
-    {
+    private static void leaveGame() {
         System.out.print("Are you sure you want to leave? [Y]es or [N]o: ");
         String confirm = SCANNER.nextLine().trim();
-        if (confirm.equalsIgnoreCase("yes") || confirm.equalsIgnoreCase("y"))
-        {
-            try
-            {
-                if (webSocketClient != null && webSocketClient.isConnected())
-                {
+        if (confirm.equalsIgnoreCase("yes") || confirm.equalsIgnoreCase("y")) {
+            try {
+                if (webSocketClient != null && webSocketClient.isConnected()) {
                     webSocketClient.sendLeave(authToken, currentGameID);
-                    webSocketClient.disconnect();
-                }
+                    webSocketClient.disconnect();}
                 currentState = State.loggedIn;
                 currentGame = null;
                 currentGameID = null;
                 playerColor = null;
                 System.out.println("You have left the game.");}
-            catch (Exception exception)
-            {
+            catch (Exception exception) {
                 System.out.println("Error leaving game: " + exception.getMessage());
-                currentState = State.loggedIn;}
-        }
-    }
+                currentState = State.loggedIn;}}}
 
     private static ChessPosition parsePosition(String pos)
     {
-        if (pos == null || pos.length() != 2)
-        {
-            return null;}
+        if (pos == null || pos.length() != 2) {return null;}
 
         char colChar = pos.charAt(0);
         char rowChar = pos.charAt(1);
-        if (colChar < 'a' || colChar > 'h' || rowChar < '1' || rowChar > '8')
-        {
-            return null;}
+        if (colChar < 'a' || colChar > 'h' || rowChar < '1' || rowChar > '8') {return null;}
 
         int col = colChar - 'a' + 1;
         int row = rowChar - '0';
-        return new ChessPosition(row, col);
-    }
+        return new ChessPosition(row, col);}
 
-    private static void drawGameBoard()
-    {
-        if (currentGame == null || currentGame.getBoard() == null)
-        {
+    private static void drawGameBoard() {
+        if (currentGame == null || currentGame.getBoard() == null) {
             System.out.println("Board unavailable.");
-            return;
-        }
+            return;}
 
         ChessGame.TeamColor viewColor = playerColor != null ? playerColor : WHITE;
         DrawBoard drawer = new DrawBoard();
-        drawer.displayBoard(currentGame, viewColor, null);
-    }
-}
+        drawer.displayBoard(currentGame, viewColor, null);}}
