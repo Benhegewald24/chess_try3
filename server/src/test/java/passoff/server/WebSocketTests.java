@@ -38,7 +38,8 @@ public class WebSocketTests
 
         serverFacade = new TestServerFacade("localhost", port);
         serverFacade.clear();
-        waitTime = TestFactory.getMessageTime();
+        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("jdwp");
+        waitTime = isDebug ? 300000L : 3000L;
         environment = new WebsocketTestingEnvironment("localhost", port, "/ws", TestFactory.getGsonBuilder());
     }
 
