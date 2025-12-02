@@ -128,7 +128,7 @@ public class WebSocketHandler
         Connection connection = sessionToConnection.get(context);
         if (connection == null || !connection.gameID.equals(gameID))
         {
-            sendError(context, "Error: unauthorized.");
+            sendError(context, "Error: not authorized.");
             return;
         }
 
