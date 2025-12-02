@@ -143,9 +143,22 @@ public class Main
                     var games = SERVER_FACADE.listGames(authToken);
                     lastGamesList = new ArrayList<>(games.games());
                     int counter = 1;
+                    System.out.print("\n");
                     for (GameData game : lastGamesList) {
-                        System.out.println(counter + ". " + game.gameName());
-                        counter++;}}
+                        System.out.print("- " + counter + ". " + game.gameName());
+                        counter++;
+                        int lengthOfGameName = game.gameName().length();
+                        int helper = 20 - lengthOfGameName;
+                        System.out.print(" ".repeat(helper));
+                        System.out.print("White Pieces: " + game.whiteUsername());
+                        if (game.whiteUsername() == null) {
+                            System.out.print("        ");}
+                        else {
+                            int lengthOfWhiteUsername = game.whiteUsername().length();
+                            int helper2 = 12 - lengthOfWhiteUsername;
+                            System.out.print(" ".repeat(helper2));}
+                        System.out.println("|        Black Pieces: " + game.blackUsername());}
+                    System.out.print("\n");}
                 catch (Exception exception) {
                     System.out.println("Unable to list games." + exception.getMessage());}}
             else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") || userInput.equalsIgnoreCase("play")) {
@@ -183,7 +196,7 @@ public class Main
                 SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
                 currentGameID = selectedGame.gameID();
                 playerColor = null;
-                setupWebSocket(selectedGame.gameID(), null);
+                setupWebSocket(selectedGame.gameID());
                 }
                 catch (NumberFormatException e) {
                     System.out.println("Invalid game number. Please enter a number.\n");
@@ -291,7 +304,7 @@ public class Main
                 SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
                 currentGameID = selectedGame.gameID();
                 playerColor = null;
-                setupWebSocket(selectedGame.gameID(), null);}
+                setupWebSocket(selectedGame.gameID());}
             catch (NumberFormatException e) {
                 System.out.println("Invalid game number. Please enter a number.\n");}
             catch (Exception exception) {
@@ -324,9 +337,9 @@ public class Main
         SERVER_FACADE.joinGame(authToken, selectedGame.gameID(), teamColor);
         currentGameID = selectedGame.gameID();
         playerColor = teamColor;
-        setupWebSocket(selectedGame.gameID(), playerColor);}
+        setupWebSocket(selectedGame.gameID());}
 
-    private static void setupWebSocket(Integer gameID, ChessGame.TeamColor playerColor) throws Exception
+    private static void setupWebSocket(Integer gameID) throws Exception
     {
         webSocketClient = new WebSocketClient(SERVER_URL);
         webSocketClient.setMessageHandler(Main::handleServerMessage);
@@ -556,6 +569,6 @@ public class Main
 
         ChessGame.TeamColor viewColor = playerColor != null ? playerColor : WHITE;
         DrawBoard drawer = new DrawBoard();
-        drawer.displayBoard(currentGame, viewColor);
+        drawer.displayBoard(currentGame, viewColor, null);
     }
 }

@@ -79,6 +79,8 @@ public class UserService
             throw new DataAccessException("Error: unauthorized.");
         }
 
+        String username = authData.username();
+        dataAccess.clearUsernameFromGames(username);
         dataAccess.deleteAuth(authToken);
         return new LogoutResult();
     }

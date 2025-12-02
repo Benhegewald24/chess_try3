@@ -15,24 +15,16 @@ public class DataAccess
     private final Map<String, AuthData> dictOfAuthTokens = new HashMap<>();
     private int gameIDCounter = 1;
 
-    public void clear()
-    {
-        dictOfUsers.clear();
-        dictOfGames.clear();
-        dictOfAuthTokens.clear();
-        gameIDCounter = 1;
-    }
-
     public void createUser(UserData user) throws Exception
     {
         if (user == null || user.username() == null)
         {
-            throw new DataAccessException("Invalid username");
+            throw new DataAccessException("Invalid username!");
         }
 
         if (dictOfUsers.containsKey(user.username()))
         {
-            throw new DataAccessException("Username already taken");
+            throw new DataAccessException("Username already taken!");
         }
 
         dictOfUsers.put(user.username(), user);
@@ -42,7 +34,7 @@ public class DataAccess
     {
         if (username == null)
         {
-            throw new DataAccessException("Username can't be null");
+            throw new DataAccessException("Username can't be null!");
         }
         return dictOfUsers.get(username);
     }
@@ -51,7 +43,7 @@ public class DataAccess
     {
         if (gameName == null)
         {
-            throw new DataAccessException("Game name can't be null / empty");
+            throw new DataAccessException("Game name can't be empty!");
         }
 
         int gameId = gameIDCounter++;
@@ -77,7 +69,7 @@ public class DataAccess
     {
         if (game == null || !dictOfGames.containsKey(game.gameID()))
         {
-            throw new DataAccessException("Invalid game");
+            throw new DataAccessException("Invalid game!");
         }
         dictOfGames.put(game.gameID(), game);
     }
@@ -86,7 +78,7 @@ public class DataAccess
     {
         if (auth == null || auth.authToken() == null)
         {
-            throw new DataAccessException("Auth / authToken can't be null");
+            throw new DataAccessException("AuthToken can't be null.");
         }
         dictOfAuthTokens.put(auth.authToken(), auth);
     }
@@ -95,7 +87,7 @@ public class DataAccess
     {
         if (authToken == null)
         {
-            throw new DataAccessException("AuthToken can't be null");
+            throw new DataAccessException("AuthToken can't be null.");
         }
         return dictOfAuthTokens.get(authToken);
     }
@@ -104,7 +96,7 @@ public class DataAccess
     {
         if (authToken == null)
         {
-            throw new DataAccessException("AuthToken can't be null");
+            throw new DataAccessException("AuthToken can't be null.");
         }
         dictOfAuthTokens.remove(authToken);
     }
@@ -131,5 +123,13 @@ public class DataAccess
                 dictOfGames.put(game.gameID(), updatedGame);
             }
         }
+    }
+
+    public void clear()
+    {
+        dictOfUsers.clear();
+        dictOfGames.clear();
+        dictOfAuthTokens.clear();
+        gameIDCounter = 1;
     }
 }

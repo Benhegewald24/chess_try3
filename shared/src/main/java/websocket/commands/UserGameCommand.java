@@ -1,5 +1,5 @@
 package websocket.commands;
-
+import chess.ChessMove;
 import java.util.Objects;
 
 /**
@@ -8,45 +8,60 @@ import java.util.Objects;
  * Note: You can add to this class, but you should not alter the existing
  * methods.
  */
-public class UserGameCommand {
-
+public class UserGameCommand
+{
     private final CommandType commandType;
-
     private final String authToken;
-
     private final Integer gameID;
+    private ChessMove move;
 
-    public UserGameCommand(CommandType commandType, String authToken, Integer gameID) {
+    public UserGameCommand(CommandType commandType, String authToken, Integer gameID)
+    {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
     }
 
-    public enum CommandType {
-        CONNECT,
-        MAKE_MOVE,
-        LEAVE,
-        RESIGN
+    public enum CommandType
+    {
+        CONNECT, MAKE_MOVE, LEAVE, RESIGN
     }
 
-    public CommandType getCommandType() {
+    public CommandType getCommandType()
+    {
         return commandType;
     }
 
-    public String getAuthToken() {
+    public String getAuthToken()
+    {
         return authToken;
     }
 
-    public Integer getGameID() {
+    public Integer getGameID()
+    {
         return gameID;
     }
 
+    public ChessMove getMove()
+    {
+        return move;
+    }
+
+    public void setMove(ChessMove move)
+    {
+        this.move = move;
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
             return true;
         }
-        if (!(o instanceof UserGameCommand that)) {
+
+        if (!(o instanceof UserGameCommand that))
+        {
             return false;
         }
         return getCommandType() == that.getCommandType() &&
@@ -55,7 +70,8 @@ public class UserGameCommand {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(getCommandType(), getAuthToken(), getGameID());
     }
 }

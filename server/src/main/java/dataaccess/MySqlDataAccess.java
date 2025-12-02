@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+
 public class MySqlDataAccess extends DataAccess
 {
     public MySqlDataAccess() throws DataAccessException, SQLException
@@ -53,10 +55,10 @@ public class MySqlDataAccess extends DataAccess
     {
         String[] statements =
                 {
-                "TRUNCATE user",
-                "TRUNCATE game",
-                "TRUNCATE auth"
-        };
+                    "TRUNCATE user",
+                    "TRUNCATE game",
+                    "TRUNCATE auth"
+                };
         try (var connection = DatabaseManager.getConnection())
         {
             for (var statement : statements)
@@ -82,7 +84,7 @@ public class MySqlDataAccess extends DataAccess
 
         if (user.password() == null)
         {
-            throw new DataAccessException("Error: bad request.");
+            throw new DataAccessException("Error: Invalid password.");
         }
 
         try
@@ -126,7 +128,7 @@ public class MySqlDataAccess extends DataAccess
             try (var preparedStatement = connection.prepareStatement(statement))
             {
                 preparedStatement.setString(1, username);
-                try(var result = preparedStatement.executeQuery())
+                try (var result = preparedStatement.executeQuery())
                 {
                     if (!result.next())
                     {
@@ -149,7 +151,7 @@ public class MySqlDataAccess extends DataAccess
     {
         if (gameName == null)
         {
-            throw new DataAccessException("Game name can't be null / empty.");
+            throw new DataAccessException("Game name can't be empty.");
         }
 
         ChessGame newGame = new ChessGame();
@@ -159,7 +161,7 @@ public class MySqlDataAccess extends DataAccess
         try (var connection = DatabaseManager.getConnection())
         {
             var statement = "INSERT INTO game (whiteUsername, blackUsername, gameName, gameJSON) VALUES (?, ?, ?, ?)";
-            try (var preparedStatement = connection.prepareStatement(statement, java.sql.Statement.RETURN_GENERATED_KEYS))
+            try (var preparedStatement = connection.prepareStatement(statement, RETURN_GENERATED_KEYS))
             {
                 preparedStatement.setString(1, null);
                 preparedStatement.setString(2, null);
@@ -171,8 +173,7 @@ public class MySqlDataAccess extends DataAccess
                 {
                     if (generatedKeys.next())
                     {
-                        int gameID = generatedKeys.getInt(1);
-                        return gameID;
+                        return generatedKeys.getInt(1);
                     }
                     else
                     {
@@ -195,7 +196,7 @@ public class MySqlDataAccess extends DataAccess
             try (var preparedStatement = connection.prepareStatement(statement))
             {
                 preparedStatement.setInt(1, gameID);
-                try(var result = preparedStatement.executeQuery())
+                try (var result = preparedStatement.executeQuery())
                 {
                     if (result.next())
                     {
@@ -224,7 +225,7 @@ public class MySqlDataAccess extends DataAccess
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, gameJSON FROM game";
             try (var preparedStatement = connection.prepareStatement(statement))
             {
-                try(var result = preparedStatement.executeQuery())
+                try (var result = preparedStatement.executeQuery())
                 {
                     Gson gson = new Gson();
                     while (result.next())
@@ -351,6 +352,34 @@ public class MySqlDataAccess extends DataAccess
         catch (SQLException e)
         {
             throw new DataAccessException("authToken delete unsuccessful.");
+        }
+    }
+
+    @Override
+    public void clearUsernameFromGames(String username) throws DataAccessException
+    {
+        if (username == null)
+        {
+            return;
+        }
+        try (var connection = DatabaseManager.getConnection())
+        {
+            var statement = "UPDATE game SET whiteUsername = 'NULL' WHERE whiteUsername=?";
+            try (var preparedStatement = connection.prepareStatement(statement))
+            {
+                preparedStatement.setString(1, username);
+                preparedStatement.executeUpdate();
+            }
+            statement = "UPDATE game SET blackUsername = 'NULL' WHERE blackUsername=?";
+            try (var preparedStatement = connection.prepareStatement(statement))
+            {
+                preparedStatement.setString(1, username);
+                preparedStatement.executeUpdate();
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new DataAccessException("Error: Failed to clear username from games.");
         }
     }
 }

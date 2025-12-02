@@ -18,12 +18,6 @@ public class DrawBoard
     private static final String TAN_COLOR_HIGHLIGHT = "\u001b[48;2;244;246;140m";
     ChessBoard board;
 
-
-    public void displayBoard(ChessGame game, ChessGame.TeamColor teamColor)
-    {
-        displayBoard(game, teamColor, null);
-    }
-
     public void displayBoard(ChessGame game, ChessGame.TeamColor teamColor, Set<ChessPosition> highlightedPositions)
     {
         if (game == null)
@@ -44,12 +38,7 @@ public class DrawBoard
                 System.out.print(SET_TEXT_COLOR_WHITE + row + " ");
                 for (int col = 1; col <= 8; col++)
                 {
-                    ChessPosition pos = new ChessPosition(row, col);
-                    String backgroundColor = getBackgroundColor(pos, highlightedPositions);
-                    ChessPiece pie = board.getPiece(pos);
-                    String pieceSymbol = pieceFinder(pie);
-                    String textColor = (pie != null && pie.getTeamColor() == WHITE) ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
-                    System.out.print(backgroundColor + textColor + pieceSymbol);
+                    positionHelper(highlightedPositions, row, col);
                 }
                 System.out.println(DARK_GREY_COLOR);
             }
@@ -62,17 +51,22 @@ public class DrawBoard
                 System.out.print(SET_TEXT_COLOR_WHITE + row + " ");
                 for (int col = 8; col >= 1; col--)
                 {
-                    ChessPosition pos = new ChessPosition(row, col);
-                    String backgroundColor = getBackgroundColor(pos, highlightedPositions);
-                    ChessPiece piece = board.getPiece(pos);
-                    String pieceSymbol = pieceFinder(piece);
-                    String textColor = (piece != null && piece.getTeamColor() == WHITE) ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
-                    System.out.print(backgroundColor + textColor + pieceSymbol);
+                    positionHelper(highlightedPositions, row, col);
                 }
                 System.out.println(DARK_GREY_COLOR);
             }
             System.out.println(SET_TEXT_COLOR_WHITE + "   h  g  f  e  d  c  b  a " + RESET_TEXT_COLOR);
         }
+    }
+
+    private void positionHelper(Set<ChessPosition> highlightedPositions, int row, int col)
+    {
+        ChessPosition pos = new ChessPosition(row, col);
+        String backgroundColor = getBackgroundColor(pos, highlightedPositions);
+        ChessPiece pie = board.getPiece(pos);
+        String pieceSymbol = pieceFinder(pie);
+        String textColor = (pie != null && pie.getTeamColor() == WHITE) ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK;
+        System.out.print(backgroundColor + textColor + pieceSymbol);
     }
 
     private String getBackgroundColor(ChessPosition pos, Set<ChessPosition> highlightedPositions)

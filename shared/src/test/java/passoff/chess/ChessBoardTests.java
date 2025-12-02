@@ -1,6 +1,5 @@
 package passoff.chess;
 import chess.ChessBoard;
-import chess.ChessGame.TeamColor.*;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import org.junit.jupiter.api.Assertions;

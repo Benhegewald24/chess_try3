@@ -1,7 +1,7 @@
 package server;
-import chess.ChessGame;
+import chess.ChessGame.TeamColor;
 import chess.ChessMove;
-import chess.InvalidMoveException;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
@@ -13,9 +13,11 @@ import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsErrorContext;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import static chess.ChessGame.TeamColor.*;
+import static websocket.messages.ServerMessage.ServerMessageType.*;
+
 
 public class WebSocketHandler
 {
@@ -26,14 +28,14 @@ public class WebSocketHandler
 
     private static class Connection
     {
-        WsMessageContext ctx;
+        WsMessageContext context;
         String username;
         Integer gameID;
-        ChessGame.TeamColor playerColor;
+        TeamColor playerColor;
 
-        Connection(WsMessageContext ctx, String username, Integer gameID, ChessGame.TeamColor playerColor)
+        Connection(WsMessageContext context, String username, Integer gameID, TeamColor playerColor)
         {
-            this.ctx = ctx;
+            this.context = context;
             this.username = username;
             this.gameID = gameID;
             this.playerColor = playerColor;
@@ -45,16 +47,16 @@ public class WebSocketHandler
         this.dataAccess = dataAccess;
     }
 
-    public void onConnect(WsConnectContext ctx)
+    public void onConnect(WsConnectContext context)
     {
-        ctx.enableAutomaticPings();
+        context.enableAutomaticPings();
     }
 
-    public void onMessage(WsMessageContext ctx)
+    public void onMessage(WsMessageContext context)
     {
         try
         {
-            String message = ctx.message();
+            String message = context.message();
             UserGameCommand command = gson.fromJson(message, UserGameCommand.class);
             String authToken = command.getAuthToken();
             Integer gameID = command.getGameID();
@@ -62,7 +64,7 @@ public class WebSocketHandler
             AuthData authData = dataAccess.getAuth(authToken);
             if (authData == null)
             {
-                sendError(ctx, "Error: unauthorized");
+                sendError(context, "Error: unauthorized");
                 return;
             }
 
@@ -70,89 +72,90 @@ public class WebSocketHandler
 
             switch (command.getCommandType())
             {
-                case CONNECT -> connect(ctx, username, gameID);
-                case MAKE_MOVE -> makeMove(ctx, username, gameID, command.getMove());
-                case LEAVE -> leave(ctx, username, gameID);
-                case RESIGN -> resign(ctx, username, gameID);
+                case CONNECT -> connect(context, username, gameID);
+                case MAKE_MOVE -> makeMove(context, username, gameID, command.getMove());
+                case LEAVE -> leave(context, username, gameID);
+                case RESIGN -> resign(context, username, gameID);
             }
         }
         catch (Exception e)
         {
-            sendError(ctx, "Error: " + e.getMessage());
+            sendError(context, "Error: " + e.getMessage());
         }
     }
 
-    private void connect(WsMessageContext ctx, String username, Integer gameID) throws IOException {
+    private void connect(WsMessageContext context, String username, Integer gameID) throws Exception
+    {
         GameData game = dataAccess.getGame(gameID);
         if (game == null)
         {
-            sendError(ctx, "Error: bad request.");
+            sendError(context, "Error: bad request.");
             return;
         }
 
-        ChessGame.TeamColor playerColor = null;
+        TeamColor playerColor = null;
         if (username.equals(game.whiteUsername()))
         {
-            playerColor = ChessGame.TeamColor.WHITE;
+            playerColor = WHITE;
         }
         else if (username.equals(game.blackUsername()))
         {
-            playerColor = ChessGame.TeamColor.BLACK;
+            playerColor = BLACK;
         }
 
-        Connection connection = new Connection(ctx, username, gameID, playerColor);
+        Connection connection = new Connection(context, username, gameID, playerColor);
         connections.computeIfAbsent(gameID, k -> new ArrayList<>()).add(connection);
-        sessionToConnection.put(ctx, connection);
+        sessionToConnection.put(context, connection);
 
-        ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+        ServerMessage loadGameMessage = new ServerMessage(LOAD_GAME);
         loadGameMessage.setGame(game.game());
-        sendMessage(ctx, loadGameMessage);
+        sendMessage(context, loadGameMessage);
 
         String notificationText;
         if (playerColor != null)
         {
-            notificationText = username + " joined the game as " + playerColor + ".";
+            notificationText = username + " joined the game as " + playerColor + "!";
         }
         else
         {
             notificationText = username + " joined the game as an observer.";
         }
-        broadcastToOthers(ctx, gameID, createNotification(notificationText));
+        broadcastToOthers(context, gameID, createNotification(notificationText));
     }
 
-    private void makeMove(WsMessageContext ctx, String username, Integer gameID, ChessMove move) throws DataAccessException
+    private void makeMove(WsMessageContext context, String username, Integer gameID, ChessMove move)
     {
-        Connection connection = sessionToConnection.get(ctx);
+        Connection connection = sessionToConnection.get(context);
         if (connection == null || !connection.gameID.equals(gameID))
         {
-            sendError(ctx, "Error: unauthorized.");
+            sendError(context, "Error: unauthorized.");
             return;
         }
 
         GameData game = dataAccess.getGame(gameID);
         if (game == null)
         {
-            sendError(ctx, "Error: bad request.");
+            sendError(context, "Error: bad request.");
             return;
         }
 
         if (game.game() == null)
         {
-            sendError(ctx, "Error: game is over.");
+            sendError(context, "Error: game is over.");
             return;
         }
 
-        ChessGame.TeamColor currentTurn = game.game().getTeamTurn();
+        TeamColor currentTurn = game.game().getTeamTurn();
         if (connection.playerColor == null || connection.playerColor != currentTurn)
         {
-            sendError(ctx, "Error: not your turn");
+            sendError(context, "Error: not your turn.");
             return;
         }
 
-        if (!username.equals(game.whiteUsername()) && currentTurn == ChessGame.TeamColor.WHITE ||
-                !username.equals(game.blackUsername()) && currentTurn == ChessGame.TeamColor.BLACK)
+        if (!username.equals(game.whiteUsername()) && currentTurn == WHITE ||
+                !username.equals(game.blackUsername()) && currentTurn == BLACK)
         {
-            sendError(ctx, "Error: unauthorized");
+            sendError(context, "Error: unauthorized.");
             return;
         }
 
@@ -164,22 +167,24 @@ public class WebSocketHandler
 
             String moveDescription = describeMove(move, username);
 
-            ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
+            ServerMessage loadGameMessage = new ServerMessage(LOAD_GAME);
             loadGameMessage.setGame(game.game());
             broadcastToAll(gameID, loadGameMessage);
 
-            broadcastToAll(gameID, createNotification(moveDescription));
+            broadcastToOthers(context, gameID, createNotification(moveDescription));
 
-            ChessGame.TeamColor nextTurn = game.game().getTeamTurn();
+            TeamColor nextTurn = game.game().getTeamTurn();
             if (game.game().isInCheckmate(nextTurn))
             {
-                broadcastToAll(gameID, createNotification(getPlayerName(game, nextTurn) + " is in checkmate!\n Game Over!"));
+                broadcastToAll(gameID, createNotification(getPlayerName(game, nextTurn) +
+                        " is in checkmate!\n------------------------\n|          Game Over!          | \n------------------------"));
                 GameData endedGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), null);
                 dataAccess.updateGame(endedGame);
             }
             else if (game.game().isInStalemate(nextTurn))
             {
-                broadcastToAll(gameID, createNotification(getPlayerName(game, nextTurn) + " is in stalemate!\n Game Over!"));
+                broadcastToAll(gameID, createNotification(getPlayerName(game, nextTurn) +
+                        " is in stalemate!\n------------------------\n|          Game Over!          | \n------------------------"));
                 GameData endedGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), null);
                 dataAccess.updateGame(endedGame);
             }
@@ -187,20 +192,19 @@ public class WebSocketHandler
             {
                 broadcastToAll(gameID, createNotification(getPlayerName(game, nextTurn) + " is in check!"));
             }
-
         }
-        catch (InvalidMoveException e)
+        catch (Exception e)
         {
-            sendError(ctx, "Error: invalid move");
+            sendError(context, "Error: invalid move");
         }
     }
 
-    private void leave(WsMessageContext ctx, String username, Integer gameID) throws DataAccessException
+    private void leave(WsMessageContext context, String username, Integer gameID) throws DataAccessException
     {
-        Connection connection = sessionToConnection.get(ctx);
+        Connection connection = sessionToConnection.get(context);
         if (connection == null || !connection.gameID.equals(gameID))
         {
-            sendError(ctx, "Error: unauthorized");
+            sendError(context, "Error: unauthorized.");
             return;
         }
 
@@ -210,7 +214,7 @@ public class WebSocketHandler
             if (game != null)
             {
                 GameData updatedGame;
-                if (connection.playerColor == ChessGame.TeamColor.WHITE)
+                if (connection.playerColor == WHITE)
                 {
                     updatedGame = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game());
                 }
@@ -222,24 +226,29 @@ public class WebSocketHandler
             }
         }
 
-        removeConnection(ctx, gameID);
-
-        broadcastToOthers(ctx, gameID, createNotification(username + " left the game!"));
+        removeConnection(context, gameID);
+        broadcastToOthers(context, gameID, createNotification(username + " left the game!"));
     }
 
-    private void resign(WsMessageContext ctx, String username, Integer gameID) throws DataAccessException
+    private void resign(WsMessageContext context, String username, Integer gameID) throws Exception
     {
-        Connection connection = sessionToConnection.get(ctx);
+        Connection connection = sessionToConnection.get(context);
         if (connection == null || !connection.gameID.equals(gameID) || connection.playerColor == null)
         {
-            sendError(ctx, "Error: unauthorized");
+            sendError(context, "Error: unauthorized.");
             return;
         }
 
         GameData game = dataAccess.getGame(gameID);
         if (game == null)
         {
-            sendError(ctx, "Error: bad request");
+            sendError(context, "Error: bad request.");
+            return;
+        }
+
+        if (game.game() == null)
+        {
+            sendError(context, "Error: game is over.");
             return;
         }
 
@@ -249,33 +258,55 @@ public class WebSocketHandler
         broadcastToAll(gameID, createNotification(username + " resigned the game!"));
     }
 
-    private void sendError(WsMessageContext ctx, String errorMessage)
+    private void sendError(WsMessageContext context, String errorMessage)
     {
         try
         {
-            ServerMessage errorMsg = new ServerMessage(ServerMessage.ServerMessageType.ERROR);
+            ServerMessage errorMsg = new ServerMessage(ERROR);
             errorMsg.setErrorMessage(errorMessage);
-            sendMessage(ctx, errorMsg);
+            sendMessage(context, errorMsg);
         }
-        catch (IOException e) {}
+        catch (Exception ignored) {}
     }
 
     private ServerMessage createNotification(String message)
     {
-        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        ServerMessage notification = new ServerMessage(NOTIFICATION);
         notification.setMessage(message);
         return notification;
     }
 
-    private void sendMessage(WsMessageContext ctx, ServerMessage message) throws IOException
+    private void sendMessage(WsMessageContext context, ServerMessage message) throws Exception
     {
         try
         {
-            ctx.send(gson.toJson(message));
+            context.send(gson.toJson(message));
         }
         catch (Exception e)
         {
-            throw new IOException(e);
+            throw new Exception(e);
+        }
+    }
+
+    private void broadcastToOthers(WsMessageContext excludeContext, Integer gameID, ServerMessage message)
+    {
+        ArrayList<Connection> gameConnections = connections.get(gameID);
+        if (gameConnections != null)
+        {
+            for (Connection connection : new ArrayList<>(gameConnections))
+            {
+                if (connection != null && connection.context != null && !connection.context.equals(excludeContext))
+                {
+                    try
+                    {
+                        sendMessage(connection.context, message);
+                    }
+                    catch (Exception e)
+                    {
+                        removeConnection(connection.context, gameID);
+                    }
+                }
+            }
         }
     }
 
@@ -284,45 +315,26 @@ public class WebSocketHandler
         ArrayList<Connection> gameConnections = connections.get(gameID);
         if (gameConnections != null)
         {
-            for (Connection conn : new ArrayList<>(gameConnections))
+            for (Connection connection : new ArrayList<>(gameConnections))
             {
-                try
-                {
-                    sendMessage(conn.ctx, message);
-                }
-                catch (Exception e)
-                {
-                    removeConnection(conn.ctx, gameID);
-                }
-            }
-        }
-    }
-
-    private void broadcastToOthers(WsMessageContext excludeCtx, Integer gameID, ServerMessage message)
-    {
-        ArrayList<Connection> gameConnections = connections.get(gameID);
-        if (gameConnections != null)
-        {
-            for (Connection conn : new ArrayList<>(gameConnections))
-            {
-                if (!conn.ctx.equals(excludeCtx))
+                if (connection != null && connection.context != null)
                 {
                     try
                     {
-                        sendMessage(conn.ctx, message);
+                        sendMessage(connection.context, message);
                     }
                     catch (Exception e)
                     {
-                        removeConnection(conn.ctx, gameID);
+                        removeConnection(connection.context, gameID);
                     }
                 }
             }
         }
     }
 
-    private void removeConnection(WsMessageContext ctx, Integer gameID)
+    private void removeConnection(WsMessageContext context, Integer gameID)
     {
-        Connection connection = sessionToConnection.remove(ctx);
+        Connection connection = sessionToConnection.remove(context);
         if (connection != null)
         {
             ArrayList<Connection> gameConnections = connections.get(gameID);
@@ -339,18 +351,18 @@ public class WebSocketHandler
 
     private String describeMove(ChessMove move, String username)
     {
-        return username + " moved from " + positionToString(move.getStartPosition()) + " to " + positionToString(move.getEndPosition()) + ".";
+        return username + ": " + positionToString(move.getStartPosition()) + " -> " + positionToString(move.getEndPosition()) + ".";
     }
 
-    private String positionToString(chess.ChessPosition pos)
+    private String positionToString(ChessPosition pos)
     {
         char col = (char)('a' + pos.getColumn() - 1);
         return col + String.valueOf(pos.getRow());
     }
 
-    private String getPlayerName(GameData game, ChessGame.TeamColor color)
+    private String getPlayerName(GameData game, TeamColor color)
     {
-        if (color == ChessGame.TeamColor.WHITE)
+        if (color == WHITE)
         {
             return game.whiteUsername() != null ? game.whiteUsername() : "White";
         }
@@ -360,14 +372,14 @@ public class WebSocketHandler
         }
     }
 
-    public void onClose(WsCloseContext ctx)
+    public void onClose(WsCloseContext context)
     {
-        Connection toRemove = null;
         Integer gameIDToRemove = null;
+        Connection toRemove = null;
         for (var entry : sessionToConnection.entrySet())
         {
-            WsMessageContext msgCtx = entry.getKey();
-            if (msgCtx.sessionId().equals(ctx.sessionId()))
+            WsMessageContext messageContext = entry.getKey();
+            if (messageContext.sessionId().equals(context.sessionId()))
             {
                 toRemove = entry.getValue();
                 gameIDToRemove = toRemove.gameID;
@@ -384,7 +396,7 @@ public class WebSocketHandler
                     if (game != null)
                     {
                         GameData updatedGame;
-                        if (toRemove.playerColor == ChessGame.TeamColor.WHITE)
+                        if (toRemove.playerColor == WHITE)
                         {
                             updatedGame = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game());
                         }
@@ -396,18 +408,18 @@ public class WebSocketHandler
                     }
                 }
             }
-            catch (DataAccessException e) {}
-            removeConnection(toRemove.ctx, gameIDToRemove);
+            catch (DataAccessException ignored) {}
+            removeConnection(toRemove.context, gameIDToRemove);
         }
     }
 
-    public void onError(WsErrorContext ctx)
+    public void onError(WsErrorContext context)
     {
         Connection connection = null;
         for (var entry : sessionToConnection.entrySet())
         {
-            WsMessageContext msgCtx = entry.getKey();
-            if (msgCtx.sessionId().equals(ctx.sessionId()))
+            WsMessageContext messageContext = entry.getKey();
+            if (messageContext.sessionId().equals(context.sessionId()))
             {
                 connection = entry.getValue();
                 break;
@@ -415,7 +427,9 @@ public class WebSocketHandler
         }
         if (connection != null)
         {
-            sendError(connection.ctx, "Error: " + ctx.error().getMessage());
+            assert context.error() != null;
+            sendError(connection.context, "Error: " + context.error().getMessage());
         }
     }
 }
+

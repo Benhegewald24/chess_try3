@@ -17,7 +17,6 @@ public class Server
     private final Javalin server;
     private final UserService userService;
     private final GameService gameService;
-    private final DataAccess dataAccess;
     private final Gson gson;
 
     public Server()
@@ -32,7 +31,7 @@ public class Server
             throw new RuntimeException("Failed to initialize database");
         }
 
-        dataAccess = mySqlDataAccess;
+        DataAccess dataAccess = mySqlDataAccess;
         userService = new UserService(dataAccess);
         gameService = new GameService(dataAccess);
         gson = new Gson();
@@ -47,7 +46,8 @@ public class Server
         server.get("/game", this::listGamesHandler);
         server.post("/game", this::createGameHandler);
         server.put("/game", this::joinGameHandler);
-        server.ws("/ws", ws -> {
+        server.ws("/ws", ws ->
+        {
             ws.onConnect(webSocketHandler::onConnect);
             ws.onMessage(webSocketHandler::onMessage);
             ws.onClose(webSocketHandler::onClose);
@@ -158,9 +158,9 @@ public class Server
             context.result(gson.toJson(result));
         }
 
-        catch (DataAccessException dae)
+        catch (DataAccessException e)
         {
-            handleDataAccessException(context, dae);
+            handleDataAccessException(context, e);
         }
         catch (Exception e)
         {

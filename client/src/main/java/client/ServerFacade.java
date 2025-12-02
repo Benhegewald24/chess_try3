@@ -1,5 +1,5 @@
 package client;
-import chess.ChessGame;
+import chess.ChessGame.TeamColor;
 import com.google.gson.Gson;
 import requests.CreateGameRequest;
 import requests.JoinGameRequest;
@@ -22,7 +22,11 @@ public class ServerFacade
 
     public ServerFacade(String baseUrl)
     {
-        this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
+        if (baseUrl.endsWith("/"))
+        {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+        this.baseUrl = baseUrl;
     }
 
     public ServerFacade(int port)
@@ -68,7 +72,7 @@ public class ServerFacade
     public CreateGameResult createGame(String authToken, String gameName) throws Exception
     {
         var body = gson.toJson(new CreateGameRequest(gameName));
-        var request = authorizedJsonRequest("/game", authToken).POST(HttpRequest.BodyPublishers.ofString(body)).build();
+        var request = authorizedJsonRequest(authToken).POST(HttpRequest.BodyPublishers.ofString(body)).build();
         var response = send(request);
         ensureSuccess(response);
         return gson.fromJson(response.body(), CreateGameResult.class);
@@ -80,7 +84,7 @@ public class ServerFacade
         sendJoin(authToken, body);
     }
 
-    public void joinGame(String authToken, int gameId, ChessGame.TeamColor color) throws Exception
+    public void joinGame(String authToken, int gameId, TeamColor color) throws Exception
     {
         var body = gson.toJson(new JoinGameRequest(color.name(), gameId));
         sendJoin(authToken, body);
@@ -95,7 +99,7 @@ public class ServerFacade
 
     private void sendJoin(String authToken, String body) throws Exception
     {
-        var request = authorizedJsonRequest("/game", authToken).PUT(HttpRequest.BodyPublishers.ofString(body)).build();
+        var request = authorizedJsonRequest(authToken).PUT(HttpRequest.BodyPublishers.ofString(body)).build();
         var response = send(request);
         ensureSuccess(response);
     }
@@ -110,9 +114,9 @@ public class ServerFacade
         return HttpRequest.newBuilder().uri(URI.create(baseUrl + path)).header("Content-Type", "application/json");
     }
 
-    private HttpRequest.Builder authorizedJsonRequest(String path, String authToken)
+    private HttpRequest.Builder authorizedJsonRequest(String authToken)
     {
-        return authorizedRequest(path, authToken).header("Content-Type", "application/json");
+        return authorizedRequest("/game", authToken).header("Content-Type", "application/json");
     }
 
     private HttpResponse<String> send(HttpRequest request) throws Exception

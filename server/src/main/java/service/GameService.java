@@ -86,7 +86,7 @@ public class GameService
 
         if (playerColor.equals("WHITE"))
         {
-            if (game.whiteUsername() != null && !game.whiteUsername().isEmpty())
+            if (game.whiteUsername() != null && !game.whiteUsername().isEmpty() && !game.whiteUsername().equals(authData.username()))
             {
                 throw new DataAccessException("Error: color already taken.");
             }
@@ -97,7 +97,7 @@ public class GameService
 
         else if (playerColor.equals("BLACK"))
         {
-            if (game.blackUsername() != null && !game.blackUsername().isEmpty())
+            if (game.blackUsername() != null && !game.blackUsername().isEmpty() && !game.blackUsername().equals(authData.username()))
             {
                 throw new DataAccessException("Error: already taken.");
             }

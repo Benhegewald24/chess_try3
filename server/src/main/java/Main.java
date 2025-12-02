@@ -1,7 +1,5 @@
 import chess.*;
-import dataaccess.MySqlDataAccess;
 import server.Server;
-import service.UserService;
 
 public class Main
 {
