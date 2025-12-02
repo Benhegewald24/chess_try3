@@ -208,6 +208,12 @@ public class WebSocketHandler
             return;
         }
 
+        helperFunction(gameID, connection);
+        removeConnection(context, gameID);
+        broadcastToOthers(context, gameID, createNotification(username + " left the game!"));
+    }
+
+    private void helperFunction(Integer gameID, Connection connection) throws DataAccessException {
         if (connection.playerColor != null)
         {
             GameData game = dataAccess.getGame(gameID);
@@ -225,9 +231,6 @@ public class WebSocketHandler
                 dataAccess.updateGame(updatedGame);
             }
         }
-
-        removeConnection(context, gameID);
-        broadcastToOthers(context, gameID, createNotification(username + " left the game!"));
     }
 
     private void resign(WsMessageContext context, String username, Integer gameID) throws Exception
@@ -390,23 +393,7 @@ public class WebSocketHandler
         {
             try
             {
-                if (toRemove.playerColor != null)
-                {
-                    GameData game = dataAccess.getGame(gameIDToRemove);
-                    if (game != null)
-                    {
-                        GameData updatedGame;
-                        if (toRemove.playerColor == WHITE)
-                        {
-                            updatedGame = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game());
-                        }
-                        else
-                        {
-                            updatedGame = new GameData(game.gameID(), game.whiteUsername(), null, game.gameName(), game.game());
-                        }
-                        dataAccess.updateGame(updatedGame);
-                    }
-                }
+                helperFunction(gameIDToRemove, toRemove);
             }
             catch (DataAccessException ignored) {}
             removeConnection(toRemove.context, gameIDToRemove);
