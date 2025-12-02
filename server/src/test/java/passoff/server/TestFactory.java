@@ -15,6 +15,12 @@ public class TestFactory
      * If for some reason the tests seem to time out before reaching a point in the test you feel like they
      * should be, consider changing the last return value, instead of the default debug value.
      */
+    public static Long getMessageTime()
+    {
+        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("jdwp");
+
+        return isDebug ? 300000L : 3000L;
+    }
 
     public static GsonBuilder getGsonBuilder()
     {
