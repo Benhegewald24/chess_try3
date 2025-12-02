@@ -19,7 +19,11 @@ public class TestFactory
     {
         boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().contains("jdwp");
 
-        return isDebug ? 300000L : 3000L;
+        if (isDebug)
+        {
+            return 300000L;
+        }
+        return 3000L;
     }
 
     public static GsonBuilder getGsonBuilder()
