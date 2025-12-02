@@ -88,7 +88,6 @@ public class StandardAPITests
         for (TestUser incompleteLoginRequest : incompleteLoginRequests)
         {
             TestAuthResult loginResult = serverFacade.login(incompleteLoginRequest);
-
             assertHttpBadRequest(loginResult);
             assertAuthFieldsMissing(loginResult);
         }
@@ -185,7 +184,6 @@ public class StandardAPITests
         serverFacade.logout(existingAuth);
 
         TestCreateResult createResult = serverFacade.createGame(createRequest, existingAuth);
-
         assertHttpUnauthorized(createResult);
         Assertions.assertNull(createResult.getGameID(), "Bad result returned a game ID");
     }
@@ -195,7 +193,6 @@ public class StandardAPITests
     @DisplayName("Create Bad Request")
     public void createGameBadRequest() {
         TestCreateResult createResult = serverFacade.createGame(new TestCreateRequest(null), existingAuth);
-
         assertHttpBadRequest(createResult);
         Assertions.assertNull(createResult.getGameID(), "Bad result returned a game ID");
     }
@@ -384,15 +381,12 @@ public class StandardAPITests
         TestCreateResult createResult = serverFacade.createGame(createRequest, existingAuth);
         assertHttpOk(createResult);
 
-
         TestResult logoutResult = serverFacade.logout(existingAuth);
         assertHttpOk(logoutResult);
-
 
         TestJoinRequest joinRequest = new TestJoinRequest(ChessGame.TeamColor.WHITE, createResult.getGameID());
         TestResult joinResult = serverFacade.joinPlayer(joinRequest, loginOne.getAuthToken());
         assertHttpOk(joinResult);
-
 
         TestListResult listResult = serverFacade.listGames(loginTwo.getAuthToken());
         assertHttpOk(listResult);
@@ -499,5 +493,4 @@ public class StandardAPITests
         Assertions.assertNull(result.getUsername(), "Response incorrectly returned username");
         Assertions.assertNull(result.getAuthToken(), "Response incorrectly return authentication String");
     }
-
 }

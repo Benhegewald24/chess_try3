@@ -139,28 +139,8 @@ public class Main
             else if (userInput.equalsIgnoreCase("create game") || userInput.equalsIgnoreCase("c") || userInput.equalsIgnoreCase("create")) {
                 createGameHelper();}
             else if (userInput.equalsIgnoreCase("list games") || userInput.equalsIgnoreCase("li") || userInput.equalsIgnoreCase("list")) {
-                try {
-                    var games = SERVER_FACADE.listGames(authToken);
-                    lastGamesList = new ArrayList<>(games.games());
-                    int counter = 1;
-                    System.out.print("\n");
-                    for (GameData game : lastGamesList) {
-                        System.out.print("- " + counter + ". " + game.gameName());
-                        counter++;
-                        int lengthOfGameName = game.gameName().length();
-                        int helper = 20 - lengthOfGameName;
-                        System.out.print(" ".repeat(helper));
-                        System.out.print("White Pieces: " + game.whiteUsername());
-                        if (game.whiteUsername() == null) {
-                            System.out.print("        ");}
-                        else {
-                            int lengthOfWhiteUsername = game.whiteUsername().length();
-                            int helper2 = 12 - lengthOfWhiteUsername;
-                            System.out.print(" ".repeat(helper2));}
-                        System.out.println("|        Black Pieces: " + game.blackUsername());}
-                    System.out.print("\n");}
-                catch (Exception exception) {
-                    System.out.println("Unable to list games." + exception.getMessage());}}
+                helper();
+            }
             else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") || userInput.equalsIgnoreCase("play")) {
                 System.out.print("Which game would you like to join? (Enter Game #): ");
                 String gameNum = SCANNER.nextLine().trim();
@@ -242,28 +222,8 @@ public class Main
 
         else if (userInput.equalsIgnoreCase("list games") ||
                 userInput.equalsIgnoreCase("li") || userInput.equalsIgnoreCase("list") || userInput.equals("3")) {
-            try {
-                var games = SERVER_FACADE.listGames(authToken);
-                lastGamesList = new ArrayList<>(games.games());
-                int counter = 1;
-                System.out.print("\n");
-                for (GameData game : lastGamesList) {
-                    System.out.print("- " + counter + ". " + game.gameName());
-                    counter++;
-                    int lengthOfGameName = game.gameName().length();
-                    int helper = 20 - lengthOfGameName;
-                    System.out.print(" ".repeat(helper));
-                    System.out.print("White Pieces: " + game.whiteUsername());
-                    if (game.whiteUsername() == null) {
-                        System.out.print("        ");}
-                    else {
-                        int lengthOfWhiteUsername = game.whiteUsername().length();
-                        int helper2 = 12 - lengthOfWhiteUsername;
-                        System.out.print(" ".repeat(helper2));}
-                    System.out.println("|        Black Pieces: " + game.blackUsername());}
-                System.out.print("\n");}
-            catch (Exception exception) {
-                System.out.println("Unable to list games." + exception.getMessage());}}
+            helper();
+        }
 
         else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") ||
                 userInput.equals("4") || userInput.equals("play")) {
@@ -311,6 +271,31 @@ public class Main
         else {
             if (!userInput.isEmpty()) {
                 System.out.println("Invalid input. Please enter one of the options from the menu.");}}}
+
+    private static void helper() {
+        try {
+            var games = SERVER_FACADE.listGames(authToken);
+            lastGamesList = new ArrayList<>(games.games());
+            int counter = 1;
+            System.out.print("\n");
+            for (GameData game : lastGamesList) {
+                System.out.print("- " + counter + ". " + game.gameName());
+                counter++;
+                int lengthOfGameName = game.gameName().length();
+                int helper = 20 - lengthOfGameName;
+                System.out.print(" ".repeat(helper));
+                System.out.print("White Pieces: " + game.whiteUsername());
+                if (game.whiteUsername() == null) {
+                    System.out.print("        ");}
+                else {
+                    int lengthOfWhiteUsername = game.whiteUsername().length();
+                    int helper2 = 12 - lengthOfWhiteUsername;
+                    System.out.print(" ".repeat(helper2));}
+                System.out.println("|        Black Pieces: " + game.blackUsername());}
+            System.out.print("\n");}
+        catch (Exception exception) {
+            System.out.println("Unable to list games." + exception.getMessage());}
+    }
 
 
     private static void createGameHelper() {
@@ -373,7 +358,8 @@ public class Main
                     System.out.println("Observers cannot make moves.");
                     continue;}
                 makeMove();}
-            else if (userInput.equalsIgnoreCase("highlight") || userInput.equalsIgnoreCase("hi") || userInput.equalsIgnoreCase("highlight valid moves")) {
+            else if (userInput.equalsIgnoreCase("highlight") || userInput.equalsIgnoreCase("hi")
+                    || userInput.equalsIgnoreCase("highlight valid moves")) {
                 highlightMoves();}
             else if (userInput.equalsIgnoreCase("redraw") || userInput.equalsIgnoreCase("red") || userInput.equalsIgnoreCase("redraw board")) {
                 drawGameBoard();}
