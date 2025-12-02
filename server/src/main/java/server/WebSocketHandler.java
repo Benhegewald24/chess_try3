@@ -351,7 +351,7 @@ public class WebSocketHandler
 
     private String describeMove(ChessMove move, String username)
     {
-        return username + ": " + positionToString(move.getStartPosition()) + " -> " + positionToString(move.getEndPosition()) + ".";
+        return username + " made a move: " + positionToString(move.getStartPosition()) + " -> " + positionToString(move.getEndPosition()) + ".";
     }
 
     private String positionToString(ChessPosition pos)

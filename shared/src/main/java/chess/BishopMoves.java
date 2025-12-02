@@ -11,7 +11,7 @@ public class BishopMoves {
             ccol1++;
             ChessPosition po1 = new ChessPosition(rrow1, ccol1);
 
-            if (helper(board, startPosition, moves, po1)) break;
+            if (helper(board, startPosition, moves, po1)) {break;}
         }
 
         int rrow2 = startPosition.getRow();
@@ -22,7 +22,7 @@ public class BishopMoves {
             ccol2++;
             ChessPosition po2 = new ChessPosition(rrow2, ccol2);
 
-            if (helper(board, startPosition, moves, po2)) break;
+            if (helper(board, startPosition, moves, po2)) {break;}
         }
 
         int rrow3 = startPosition.getRow();
@@ -33,7 +33,7 @@ public class BishopMoves {
             ccol3--;
             ChessPosition po3 = new ChessPosition(rrow3, ccol3);
 
-            if (helper(board, startPosition, moves, po3)) break;
+            if (helper(board, startPosition, moves, po3)) {break;}
         }
 
         int rrow4 = startPosition.getRow();
@@ -44,7 +44,7 @@ public class BishopMoves {
             ccol4--;
             ChessPosition po4 = new ChessPosition(rrow4, ccol4);
 
-            if (helper(board, startPosition, moves, po4)) break;
+            if (helper(board, startPosition, moves, po4)) {break;}
         }
     }
 
