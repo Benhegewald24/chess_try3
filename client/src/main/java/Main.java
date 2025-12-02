@@ -385,7 +385,8 @@ public class Main
             if (userInput.equalsIgnoreCase("help") || userInput.equalsIgnoreCase("h"))
             {
                 gameplayHelp();}
-            else if (userInput.equalsIgnoreCase("make move") || userInput.equalsIgnoreCase("m") || userInput.equalsIgnoreCase("make"))
+            else if (userInput.equalsIgnoreCase("make move") || userInput.equalsIgnoreCase("m") ||
+                    userInput.equalsIgnoreCase("make"))
             {
                 if (playerColor == null)
                 {
