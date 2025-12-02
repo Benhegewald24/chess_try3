@@ -169,7 +169,7 @@ public class MySqlDataAccessTests
     @Test
     void getAuthNegativeTest()
     {
-        AuthData auth = new AuthData(null, "username");
+        AuthData auth = new AuthData(null, "user123");
 
         try { dataAccess.getAuth(auth.authToken());}
         catch (Exception e) { assertTrue(e.getMessage().contains("AuthToken can't be null.")); }
@@ -188,7 +188,7 @@ public class MySqlDataAccessTests
     @Test
     void deleteAuthNegativeTest()
     {
-        AuthData auth = new AuthData(null, "username");
+        AuthData auth = new AuthData(null, "user123");
 
         try { dataAccess.deleteAuth(auth.authToken());}
         catch (Exception e) { assertTrue(e.getMessage().contains("AuthToken can't be null.")); }
