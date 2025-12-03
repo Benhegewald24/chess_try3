@@ -210,8 +210,7 @@ public class Main {
 
         else if (userInput.equalsIgnoreCase("list games") ||
                 userInput.equalsIgnoreCase("li") || userInput.equalsIgnoreCase("list") || userInput.equals("3")) {
-            helper();
-        }
+            helper(); }
 
         else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") ||
                 userInput.equals("4") || userInput.equals("play")) {
@@ -222,8 +221,7 @@ public class Main {
             if (!color.equalsIgnoreCase("w") && !color.equalsIgnoreCase("white") &&
                 !color.equalsIgnoreCase("b") && !color.equalsIgnoreCase("black")) {
                 System.out.println("\nInvalid color. Please enter [W]hite or [B]lack.");
-                return;
-            }
+                return;}
             System.out.print("\n");
             ChessGame.TeamColor teamColor = color.equalsIgnoreCase("b") || color.equalsIgnoreCase("black") ? BLACK : WHITE;
             try {
@@ -282,8 +280,7 @@ public class Main {
                 System.out.println("|        Black Pieces: " + game.blackUsername());}
             System.out.print("\n");}
         catch (Exception exception) {
-            System.out.println("Unable to list games." + exception.getMessage());}
-    }
+            System.out.println("Unable to list games." + exception.getMessage());} }
 
 
     private static void createGameHelper() {
@@ -307,8 +304,7 @@ public class Main {
         playerColor = teamColor;
         setupWebSocket(selectedGame.gameID());}
 
-    private static void setupWebSocket(Integer gameID) throws Exception
-    {
+    private static void setupWebSocket(Integer gameID) throws Exception {
         webSocketClient = new WebSocketClient(SERVER_URL);
         webSocketClient.setMessageHandler(Main::handleServerMessage);
         webSocketClient.connect();
@@ -385,15 +381,18 @@ public class Main {
 
             ChessPiece.PieceType promotionPiece = null;
             if (currentGame != null && currentGame.getBoard() != null) {
-                ChessPiece piece = currentGame.getBoard().getPiece(start);
-                if (piece != null && piece.getPieceType() == PAWN) {
-                    boolean isWhitePromotion = piece.getTeamColor() == WHITE && end.getRow() == 8;
-                    boolean isBlackPromotion = piece.getTeamColor() == BLACK && end.getRow() == 1;
-                    if (isWhitePromotion || isBlackPromotion) {
-                        promotionPiece = promptForPromotionPiece();
-                        if (promotionPiece == null) {
-                            System.out.println("Invalid promotion piece. Move cancelled.");
-                            return;}}}}
+                var validMoves = currentGame.validMoves(start);
+                boolean requiresPromotion = false;
+                for (ChessMove validMove : validMoves) {
+                    if (validMove.getEndPosition().equals(end)) {
+                        if (validMove.getPromotionPiece() != null) {
+                            requiresPromotion = true;
+                            break;}}}
+                if (requiresPromotion) {
+                    promotionPiece = promptForPromotionPiece();
+                    if (promotionPiece == null) {
+                        System.out.println("Invalid promotion piece. Move cancelled.");
+                        return; }}}
 
             ChessMove move = new ChessMove(start, end, promotionPiece);
             waitingForMoveResponse = true;
