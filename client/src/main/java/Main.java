@@ -10,13 +10,10 @@ import results.RegisterResult;
 import ui.DrawBoard;
 import websocket.messages.ServerMessage;
 import static chess.ChessGame.TeamColor.*;
+import static chess.ChessPiece.PieceType.*;
 
-public class Main
-{
-    enum State
-    {
-        loggedIn, loggedOut, inGame
-    }
+public class Main {
+    enum State { loggedIn, loggedOut, inGame }
 
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final String SERVER_URL = "http://localhost:8080";
@@ -38,12 +35,8 @@ public class Main
                 loggedOutUI();}
             else if (currentState == State.loggedIn) {
                 loggedInUI();}
-            else
-            {
-                gameplayUI();
-            }
-        }
-    }
+            else {
+                gameplayUI();}}}
 
     public static void loggedOutUI() {
         while (currentState == State.loggedOut) {
@@ -81,8 +74,7 @@ public class Main
         System.out.print("Email: ");
         String email = SCANNER.nextLine().trim();
 
-        if (username.contains(" ") || password.contains(" ") || email.contains(" ") || username.isBlank() || password.isBlank())
-        {
+        if (username.contains(" ") || password.contains(" ") || email.contains(" ") || username.isBlank() || password.isBlank()) {
             System.out.println("Invalid input. Please try again.");
             help();
             return;}
@@ -139,8 +131,7 @@ public class Main
             else if (userInput.equalsIgnoreCase("create game") || userInput.equalsIgnoreCase("c") || userInput.equalsIgnoreCase("create")) {
                 createGameHelper();}
             else if (userInput.equalsIgnoreCase("list games") || userInput.equalsIgnoreCase("li") || userInput.equalsIgnoreCase("list")) {
-                helper();
-            }
+                helper();}
             else if (userInput.equalsIgnoreCase("play game") || userInput.equalsIgnoreCase("p") || userInput.equalsIgnoreCase("play")) {
                 System.out.print("Which game would you like to join? (Enter Game #): ");
                 String gameNum = SCANNER.nextLine().trim();
@@ -149,8 +140,7 @@ public class Main
                 if (!color.equalsIgnoreCase("w") && !color.equalsIgnoreCase("white") &&
                     !color.equalsIgnoreCase("b") && !color.equalsIgnoreCase("black")) {
                     System.out.println("\nInvalid color. Please enter [W]hite or [B]lack.");
-                    continue;
-                }
+                    continue;}
                 ChessGame.TeamColor teamColor = color.equalsIgnoreCase("b") || color.equalsIgnoreCase("black") ? BLACK : WHITE;
                 try {
                     listGameHelper(gameNum, teamColor);}
@@ -169,8 +159,7 @@ public class Main
                     int gameNumber = Integer.parseInt(gameNum);
                     if (gameNumber < 1 || gameNumber > lastGamesList.size()) {
                         System.out.println("Invalid game number.\n");
-                        continue;
-                    }
+                        continue;}
                 GameData selectedGame = lastGamesList.get(gameNumber - 1);
                 System.out.println("White Pieces: " + selectedGame.whiteUsername() + "   |   Black Pieces: " + selectedGame.blackUsername());
                 SERVER_FACADE.observeGame(authToken, selectedGame.gameID());
@@ -193,8 +182,7 @@ public class Main
             return;}
 
         try {
-            if (webSocketClient != null && webSocketClient.isConnected())
-            {
+            if (webSocketClient != null && webSocketClient.isConnected()) {
                 if (currentGameID != null) {
                     webSocketClient.sendLeave(authToken, currentGameID);}
                 webSocketClient.disconnect();}
@@ -395,7 +383,19 @@ public class Main
                 System.out.println("Invalid position format.");
                 return;}
 
-            ChessMove move = new ChessMove(start, end, null);
+            ChessPiece.PieceType promotionPiece = null;
+            if (currentGame != null && currentGame.getBoard() != null) {
+                ChessPiece piece = currentGame.getBoard().getPiece(start);
+                if (piece != null && piece.getPieceType() == PAWN) {
+                    boolean isWhitePromotion = piece.getTeamColor() == WHITE && end.getRow() == 8;
+                    boolean isBlackPromotion = piece.getTeamColor() == BLACK && end.getRow() == 1;
+                    if (isWhitePromotion || isBlackPromotion) {
+                        promotionPiece = promptForPromotionPiece();
+                        if (promotionPiece == null) {
+                            System.out.println("Invalid promotion piece. Move cancelled.");
+                            return;}}}}
+
+            ChessMove move = new ChessMove(start, end, promotionPiece);
             waitingForMoveResponse = true;
             webSocketClient.sendMakeMove(authToken, currentGameID, move);
 
@@ -462,8 +462,20 @@ public class Main
                 System.out.println("Error leaving game: " + exception.getMessage());
                 currentState = State.loggedIn;}}}
 
-    private static ChessPosition parsePosition(String pos)
-    {
+    private static ChessPiece.PieceType promptForPromotionPiece() {
+        System.out.print("Promote pawn to [Q]ueen, [R]ook, [B]ishop, or [K]night: ");
+        String input = SCANNER.nextLine().trim().toLowerCase();
+        if (input.equals("q") || input.equals("queen")) {
+            return QUEEN;}
+        else if (input.equals("r") || input.equals("rook")) {
+            return ROOK;}
+        else if (input.equals("b") || input.equals("bishop")) {
+            return BISHOP;}
+        else if (input.equals("k") || input.equals("knight")) {
+            return KNIGHT;}
+        return null;}
+
+    private static ChessPosition parsePosition(String pos) {
         if (pos == null || pos.length() != 2) {return null;}
 
         char colChar = pos.charAt(0);
